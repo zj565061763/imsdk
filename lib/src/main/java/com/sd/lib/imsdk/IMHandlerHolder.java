@@ -4,19 +4,19 @@ import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMFactoryHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessagePersistence;
-import com.sd.lib.imsdk.handler.IMSender;
+import com.sd.lib.imsdk.handler.IMMessageSender;
 import com.sd.lib.imsdk.handler.IMUserProvider;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMFactoryHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessagePersistenceEmpty;
-import com.sd.lib.imsdk.handler.impl.IMSenderEmpty;
+import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
 import com.sd.lib.imsdk.handler.impl.IMUserProviderEmpty;
 
 public class IMHandlerHolder
 {
     private IMFactoryHandler mFactoryHandler;
-    private IMSender mSender;
+    private IMMessageSender mMessageSender;
     private IMMessagePersistence mMessagePersistence;
     private IMUserProvider mUserProvider;
     private IMConversationHandler mConversationHandler;
@@ -34,16 +34,16 @@ public class IMHandlerHolder
         mFactoryHandler = factoryHandler;
     }
 
-    public IMSender getSender()
+    public IMMessageSender getMessageSender()
     {
-        if (mSender == null)
-            mSender = new IMSenderEmpty();
-        return mSender;
+        if (mMessageSender == null)
+            mMessageSender = new IMMessageSenderEmpty();
+        return mMessageSender;
     }
 
-    public void setSender(IMSender sender)
+    public void setMessageSender(IMMessageSender messageSender)
     {
-        mSender = sender;
+        mMessageSender = messageSender;
     }
 
     public IMMessagePersistence getMessagePersistence()

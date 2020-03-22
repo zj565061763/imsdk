@@ -6,7 +6,7 @@ import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMMessage;
 import com.sd.lib.imsdk.callback.IMCallback;
 
-public interface IMSender
+public interface IMMessageSender
 {
     void sendMessage(SendMessageRequest request, IMCallback<IMMessage> callback);
 

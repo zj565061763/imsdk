@@ -2,7 +2,7 @@ package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.handler.IMSender;
+import com.sd.lib.imsdk.handler.IMMessageSender;
 
 import java.util.List;
 
@@ -36,8 +36,8 @@ public class IMConversation
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
         final IMMessage message = IMFactory.newMessageSend(item);
 
-        final IMSender.SendMessageRequest request = new IMSender.SendMessageRequest(peer, type, message, message.persistenceAccessor());
-        holder.getSender().sendMessage(request, callback);
+        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(peer, type, message, message.persistenceAccessor());
+        holder.getMessageSender().sendMessage(request, callback);
         return message;
     }
 
