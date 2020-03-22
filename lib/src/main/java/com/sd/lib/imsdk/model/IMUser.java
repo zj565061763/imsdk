@@ -1,4 +1,4 @@
-package com.sd.lib.imsdk;
+package com.sd.lib.imsdk.model;
 
 public class IMUser
 {

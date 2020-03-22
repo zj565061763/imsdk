@@ -1,5 +1,7 @@
 package com.sd.lib.imsdk;
 
+import com.sd.lib.imsdk.model.IMUser;
+
 public class IMMessage
 {
     IMMessageItem item;
