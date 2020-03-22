@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IncomingMessageCallback;
 import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
+import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,8 @@ public class IMManager
         }
         return sInstance;
     }
+
+    private IMUser mLoginUser;
 
     private final IMHandlerHolder mHandlerHolder = new IMHandlerHolder();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
@@ -62,6 +65,26 @@ public class IMManager
 
         final String type = annotation.type();
         mMapMessageItemClass.put(type, clazz);
+    }
+
+    /**
+     * 返回登录的用户
+     *
+     * @return
+     */
+    public IMUser getLoginUser()
+    {
+        return mLoginUser;
+    }
+
+    /**
+     * 设置登录用户
+     *
+     * @param user
+     */
+    public void setLoginUser(IMUser user)
+    {
+        mLoginUser = user;
     }
 
     /**
@@ -124,5 +147,30 @@ public class IMManager
             mMapConversation.put(key, conversation);
         }
         return conversation;
+    }
+
+    /**
+     * 处理消息接收
+     */
+    public boolean handleReceiveMessage(String type, String messageId, long timestamp,
+                                        IMConversationType conversationType, IMUser user, String content)
+    {
+        final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(type);
+        if (clazz == null)
+            return false;
+
+        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, clazz);
+        if (item == null)
+            return false;
+
+        final IMMessage message = IMFactory.newMessageReceive();
+        message.id = messageId;
+        message.timestamp = timestamp;
+        message.state = IMMessageState.SendSuccess;
+        message.sender = user;
+        message.item = item;
+
+        getHandlerHolder().getMessagePersistence().saveMessage(message, conversationType);
+        return true;
     }
 }

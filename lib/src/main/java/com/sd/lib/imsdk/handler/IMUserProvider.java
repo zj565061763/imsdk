@@ -5,6 +5,4 @@ import com.sd.lib.imsdk.model.IMUser;
 public interface IMUserProvider
 {
     IMUser getUser(String userId);
-
-    IMUser getLoginUser();
 }

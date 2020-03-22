@@ -6,5 +6,5 @@ public interface IMMessageItemSerializer
 {
     String serialize(IMMessageItem item);
 
-    <T extends IMMessageItem> T deserialize(String content, Class<T> clazz);
+    IMMessageItem deserialize(String content, Class<? extends IMMessageItem> clazz);
 }

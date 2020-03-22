@@ -10,10 +10,4 @@ public class IMUserProviderEmpty implements IMUserProvider
     {
         return null;
     }
-
-    @Override
-    public IMUser getLoginUser()
-    {
-        return null;
-    }
 }

@@ -4,20 +4,15 @@ import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
 {
-    IMMessageItem item;
-
     String id;
     long timestamp;
     IMMessageState state;
-    IMUser user;
+    IMUser sender;
+
+    IMMessageItem item;
 
     IMMessage()
     {
-    }
-
-    public IMMessageItem getItem()
-    {
-        return item;
     }
 
     public String getId()
@@ -35,9 +30,14 @@ public class IMMessage
         return state;
     }
 
-    public IMUser getUser()
+    public IMUser getSender()
     {
-        return user;
+        return sender;
+    }
+
+    public IMMessageItem getItem()
+    {
+        return item;
     }
 
     PersistenceAccessor persistenceAccessor()
