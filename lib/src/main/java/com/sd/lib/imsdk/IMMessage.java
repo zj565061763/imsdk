@@ -8,7 +8,6 @@ public class IMMessage
 
     String id;
     long timestamp;
-    boolean isRead;
     IMMessageState state;
     IMUser user;
 
@@ -29,11 +28,6 @@ public class IMMessage
     public long getTimestamp()
     {
         return timestamp;
-    }
-
-    public boolean isRead()
-    {
-        return isRead;
     }
 
     public IMMessageState getState()
