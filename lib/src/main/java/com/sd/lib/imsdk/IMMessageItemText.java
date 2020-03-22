@@ -1,6 +1,7 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
+import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 
 @AIMMessageItem(type = IMMessageItem.TYPE_TEXT)
 public class IMMessageItemText extends IMMessageItem
@@ -18,8 +19,10 @@ public class IMMessageItemText extends IMMessageItem
     }
 
     @Override
-    public String toJson()
+    public String serialize(SerializeCallback callback)
     {
-        return null;
+        final IMMessageItemSerializer serializer = IMManager.getInstance().getHandlerHolder().getMessageItemSerializer();
+        final String content = serializer.serialize(this);
+        return content;
     }
 }

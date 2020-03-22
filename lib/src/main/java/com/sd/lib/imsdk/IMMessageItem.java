@@ -32,8 +32,20 @@ public abstract class IMMessageItem
         return message;
     }
 
-    public String toJson()
+    /**
+     * 序列化
+     *
+     * @param callback null-同步返回，不为null-异步返回
+     * @return 序列化的字符串
+     */
+    public abstract String serialize(SerializeCallback callback);
+
+    public interface SerializeCallback
     {
-        return null;
+        void onProgress(int progress);
+
+        void onSuccess(String serializeContent);
+
+        void onError(String desc);
     }
 }

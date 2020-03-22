@@ -2,11 +2,13 @@ package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMFactoryHandler;
+import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessagePersistence;
 import com.sd.lib.imsdk.handler.IMSender;
 import com.sd.lib.imsdk.handler.IMUserProvider;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMFactoryHandlerEmpty;
+import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessagePersistenceEmpty;
 import com.sd.lib.imsdk.handler.impl.IMSenderEmpty;
 import com.sd.lib.imsdk.handler.impl.IMUserProviderEmpty;
@@ -18,6 +20,7 @@ public class IMHandlerHolder
     private IMMessagePersistence mMessagePersistence;
     private IMUserProvider mUserProvider;
     private IMConversationHandler mConversationHandler;
+    private IMMessageItemSerializer mMessageItemSerializer;
 
     public IMFactoryHandler getFactoryHandler()
     {
@@ -77,5 +80,17 @@ public class IMHandlerHolder
     public void setConversationHandler(IMConversationHandler conversationHandler)
     {
         mConversationHandler = conversationHandler;
+    }
+
+    public IMMessageItemSerializer getMessageItemSerializer()
+    {
+        if (mMessageItemSerializer == null)
+            mMessageItemSerializer = new IMMessageItemSerializerGson();
+        return mMessageItemSerializer;
+    }
+
+    public void setMessageItemSerializer(IMMessageItemSerializer messageItemSerializer)
+    {
+        mMessageItemSerializer = messageItemSerializer;
     }
 }
