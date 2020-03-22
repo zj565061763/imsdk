@@ -7,6 +7,8 @@ public abstract class IMMessageItem
     public static final String TYPE_TEXT = "text";
     public static final String TYPE_FILE = "file";
     public static final String TYPE_IMAGE = "image";
+    public static final String TYPE_AUDIO = "audio";
+    public static final String TYPE_VIDEO = "video";
 
     private final String type;
     IMMessage message;
