@@ -152,8 +152,8 @@ public class IMManager
     /**
      * 处理消息接收
      */
-    public boolean handleReceiveMessage(String type, String messageId, long timestamp,
-                                        IMConversationType conversationType, IMUser user, String content)
+    public synchronized boolean handleReceiveMessage(String type, String messageId, long timestamp,
+                                                     IMConversationType conversationType, IMUser user, String content)
     {
         final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(type);
         if (clazz == null)
@@ -168,9 +168,16 @@ public class IMManager
         message.timestamp = timestamp;
         message.state = IMMessageState.SendSuccess;
         message.sender = user;
+        message.isSelf = false;
         message.item = item;
 
         getHandlerHolder().getMessagePersistence().saveMessage(message, conversationType);
+
+        final IMConversation conversation = getConversation(user.getId(), conversationType);
+        for (IncomingMessageCallback callback : mListIncomingMessageCallback)
+        {
+            callback.onReceiveMessage(message, conversation);
+        }
         return true;
     }
 }

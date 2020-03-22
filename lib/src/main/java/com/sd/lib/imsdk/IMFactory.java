@@ -11,8 +11,10 @@ class IMFactory
         final IMMessage message = new IMMessage();
         message.id = UUID.randomUUID().toString();
         message.timestamp = System.currentTimeMillis();
-        message.item = item;
+        message.state = IMMessageState.None;
         message.sender = IMManager.getInstance().getLoginUser();
+        message.isSelf = true;
+        message.item = item;
         item.message = message;
 
         final IMFactoryHandler factoryHandler = IMManager.getInstance().getHandlerHolder().getFactoryHandler();

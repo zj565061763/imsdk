@@ -8,6 +8,7 @@ public class IMMessage
     long timestamp;
     IMMessageState state;
     IMUser sender;
+    boolean isSelf;
 
     IMMessageItem item;
 
@@ -33,6 +34,11 @@ public class IMMessage
     public IMUser getSender()
     {
         return sender;
+    }
+
+    public boolean isSelf()
+    {
+        return isSelf;
     }
 
     public IMMessageItem getItem()
