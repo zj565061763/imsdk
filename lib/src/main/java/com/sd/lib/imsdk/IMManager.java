@@ -3,10 +3,14 @@ package com.sd.lib.imsdk;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
+import com.sd.lib.imsdk.callback.IncomingMessageCallback;
+import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class IMManager
 {
@@ -33,6 +37,9 @@ public class IMManager
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
+    private final List<IncomingMessageCallback> mListIncomingMessageCallback = new CopyOnWriteArrayList<>();
+    private final List<OutgoingMessageCallback> mListOutgoingMessageCallback = new CopyOnWriteArrayList<>();
+
     public IMHandlerHolder getHandlerHolder()
     {
         return mHandlerHolder;
@@ -55,6 +62,46 @@ public class IMManager
 
         final String type = annotation.type();
         mMapMessageItemClass.put(type, clazz);
+    }
+
+    /**
+     * 添加新消息回调
+     *
+     * @param callback
+     */
+    public synchronized void addIncomingMessageCallback(IncomingMessageCallback callback)
+    {
+        mListIncomingMessageCallback.add(callback);
+    }
+
+    /**
+     * 移除新消息回调
+     *
+     * @param callback
+     */
+    public synchronized void removeIncomingMessageCallback(IncomingMessageCallback callback)
+    {
+        mListIncomingMessageCallback.remove(callback);
+    }
+
+    /**
+     * 添加消息发送回调
+     *
+     * @param callback
+     */
+    public synchronized void addOutgoingMessageCallback(OutgoingMessageCallback callback)
+    {
+        mListOutgoingMessageCallback.add(callback);
+    }
+
+    /**
+     * 移除消息发送回调
+     *
+     * @param callback
+     */
+    public synchronized void removeOutgoingMessageCallback(OutgoingMessageCallback callback)
+    {
+        mListOutgoingMessageCallback.remove(callback);
     }
 
     /**
