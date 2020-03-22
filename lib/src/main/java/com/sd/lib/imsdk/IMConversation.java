@@ -24,6 +24,13 @@ public class IMConversation
         return unreadCount;
     }
 
+    /**
+     * 发送消息
+     *
+     * @param item
+     * @param callback
+     * @return
+     */
     public IMMessage send(IMMessageItem item, IMCallback<IMMessage> callback)
     {
         if (item == null)
