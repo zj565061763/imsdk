@@ -2,6 +2,9 @@ package com.sd.lib.imsdk;
 
 import android.text.TextUtils;
 
+import com.sd.lib.imsdk.annotation.AIMMessageItem;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,10 +31,30 @@ public class IMManager
 
     private final IMHandlerHolder mHandlerHolder = new IMHandlerHolder();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
+    private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
     public IMHandlerHolder getHandlerHolder()
     {
         return mHandlerHolder;
+    }
+
+    /**
+     * 注册{@link IMMessageItem}
+     *
+     * @param clazz
+     * @param <T>
+     */
+    public synchronized <T extends IMMessageItem> void registerMessageItem(Class<T> clazz)
+    {
+        if (clazz == null)
+            return;
+
+        final AIMMessageItem annotation = clazz.getAnnotation(AIMMessageItem.class);
+        if (annotation == null)
+            throw new IllegalArgumentException(AIMMessageItem.class + " annotation was not found in class " + clazz);
+
+        final String type = annotation.type();
+        mMapMessageItemClass.put(type, clazz);
     }
 
     /**
