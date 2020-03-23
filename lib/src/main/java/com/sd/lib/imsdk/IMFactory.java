@@ -47,9 +47,22 @@ public class IMFactory
         return conversation;
     }
 
-    public static IMMessage newMessageQuery()
+    public static IMMessageQuery newMessageQuery()
     {
         final IMMessage message = new IMMessage();
-        return message;
+        final IMMessageQuery messageQuery = new IMMessageQuery(message, message.persistenceAccessor());
+        return messageQuery;
+    }
+
+    public static class IMMessageQuery
+    {
+        public final IMMessage message;
+        public final IMMessage.PersistenceAccessor accessor;
+
+        private IMMessageQuery(IMMessage message, IMMessage.PersistenceAccessor accessor)
+        {
+            this.message = message;
+            this.accessor = accessor;
+        }
     }
 }
