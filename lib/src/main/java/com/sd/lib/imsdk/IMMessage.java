@@ -64,10 +64,17 @@ public class IMMessage
 
     public final class InterceptAccessor
     {
+        private InterceptAccessor()
+        {
+        }
     }
 
     public final class PersistenceAccessor
     {
+        private PersistenceAccessor()
+        {
+        }
+
         public void setState(IMMessageState state)
         {
             IMMessage.this.state = state;

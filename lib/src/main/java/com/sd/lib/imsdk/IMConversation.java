@@ -98,6 +98,10 @@ public class IMConversation
 
     public final class PersistenceAccessor
     {
+        private PersistenceAccessor()
+        {
+        }
+
         public void setLastMessage(IMMessage message)
         {
             IMConversation.this.lastMessage = message;
