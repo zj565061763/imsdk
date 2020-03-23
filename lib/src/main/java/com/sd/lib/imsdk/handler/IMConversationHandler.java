@@ -13,7 +13,7 @@ public interface IMConversationHandler
 
     void removeConversation(String peer, IMConversationType conversationType);
 
-    void load(IMConversation.PersistenceAccessor accessor);
+    void load(String peer, IMConversationType conversationType, IMConversation.PersistenceAccessor accessor);
 
     void loadMessage(IMConversation conversation, int count, IMMessage lastMessage, IMCallback<List<IMMessage>> callback);
 }
