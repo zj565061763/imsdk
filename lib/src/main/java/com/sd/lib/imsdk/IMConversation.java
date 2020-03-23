@@ -86,6 +86,8 @@ public class IMConversation
             @Override
             public void onSuccess(final IMMessage value)
             {
+                holder.getMessageHandler().updateMessageState(message, IMMessageState.SendSuccess);
+
                 if (callback != null)
                     callback.onSuccess(value);
                 IMUtils.runOnUiThread(new Runnable()
@@ -104,6 +106,8 @@ public class IMConversation
             @Override
             public void onError(int code, String desc)
             {
+                holder.getMessageHandler().updateMessageState(message, IMMessageState.SendFail);
+
                 if (callback != null)
                     callback.onError(code, desc);
                 IMUtils.runOnUiThread(new Runnable()
@@ -125,6 +129,7 @@ public class IMConversation
             @Override
             public void run()
             {
+                holder.getMessageHandler().updateMessageState(message, IMMessageState.Sending);
                 for (OutgoingMessageCallback item : listCallback)
                 {
                     item.onSend(message);
