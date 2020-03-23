@@ -75,7 +75,7 @@ public class IMConversation
         message.item = item;
         item.message = message;
 
-        holder.getConversationHandler().saveConversation(peer, type, message);
+        holder.getConversationHandler().saveConversation(message);
         holder.getMessageHandler().saveMessage(message, type);
 
         final List<OutgoingMessageCallback> listCallback = IMManager.getInstance().getListOutgoingMessageCallback();

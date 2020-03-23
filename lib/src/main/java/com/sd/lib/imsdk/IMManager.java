@@ -216,7 +216,7 @@ public class IMManager
         message.state = IMMessageState.Receive;
         message.item = item;
 
-        getHandlerHolder().getConversationHandler().saveConversation(user.getId(), conversationType, message);
+        getHandlerHolder().getConversationHandler().saveConversation(message);
         getHandlerHolder().getMessageHandler().saveMessage(message, conversationType);
 
         IMUtils.runOnUiThread(new Runnable()
