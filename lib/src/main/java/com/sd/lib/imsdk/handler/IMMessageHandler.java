@@ -8,7 +8,7 @@ public interface IMMessageHandler
 {
     void interceptNewMessageSend(IMMessage.InterceptAccessor accessor);
 
-    void saveMessage(IMMessage message, IMConversationType conversationType);
+    void saveMessage(IMMessage message);
 
     void updateMessageState(String id, IMMessageState state, IMConversationType conversationType);
 }

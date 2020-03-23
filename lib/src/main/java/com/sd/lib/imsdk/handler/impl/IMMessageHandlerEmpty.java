@@ -10,11 +10,11 @@ public class IMMessageHandlerEmpty implements IMMessageHandler
     @Override
     public void interceptNewMessageSend(IMMessage.InterceptAccessor accessor)
     {
-        
+
     }
 
     @Override
-    public void saveMessage(IMMessage message, IMConversationType conversationType)
+    public void saveMessage(IMMessage message)
     {
 
     }

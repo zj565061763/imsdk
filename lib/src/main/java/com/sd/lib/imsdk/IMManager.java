@@ -217,7 +217,7 @@ public class IMManager
         message.item = item;
 
         getHandlerHolder().getConversationHandler().saveConversation(message);
-        getHandlerHolder().getMessageHandler().saveMessage(message, conversationType);
+        getHandlerHolder().getMessageHandler().saveMessage(message);
 
         IMUtils.runOnUiThread(new Runnable()
         {
