@@ -1,14 +1,12 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.handler.IMConversationPersistence;
 import com.sd.lib.imsdk.handler.IMFactoryHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessagePersistence;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 import com.sd.lib.imsdk.handler.IMUserProvider;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
-import com.sd.lib.imsdk.handler.impl.IMConversationPersistenceEmpty;
 import com.sd.lib.imsdk.handler.impl.IMFactoryHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessagePersistenceEmpty;
@@ -19,12 +17,11 @@ public class IMHandlerHolder
 {
     private IMMessageItemSerializer mMessageItemSerializer;
     private IMMessageSender mMessageSender;
+    private IMMessagePersistence mMessagePersistence;
     private IMConversationHandler mConversationHandler;
     private IMUserProvider mUserProvider;
 
     private IMFactoryHandler mFactoryHandler;
-    private IMMessagePersistence mMessagePersistence;
-    private IMConversationPersistence mConversationPersistence;
 
     public IMMessageItemSerializer getMessageItemSerializer()
     {
@@ -48,6 +45,18 @@ public class IMHandlerHolder
     public void setMessageSender(IMMessageSender messageSender)
     {
         mMessageSender = messageSender;
+    }
+
+    public IMMessagePersistence getMessagePersistence()
+    {
+        if (mMessagePersistence == null)
+            mMessagePersistence = new IMMessagePersistenceEmpty();
+        return mMessagePersistence;
+    }
+
+    public void setMessagePersistence(IMMessagePersistence persistence)
+    {
+        mMessagePersistence = persistence;
     }
 
     public IMConversationHandler getConversationHandler()
@@ -84,29 +93,5 @@ public class IMHandlerHolder
     public void setFactoryHandler(IMFactoryHandler factoryHandler)
     {
         mFactoryHandler = factoryHandler;
-    }
-
-    public IMMessagePersistence getMessagePersistence()
-    {
-        if (mMessagePersistence == null)
-            mMessagePersistence = new IMMessagePersistenceEmpty();
-        return mMessagePersistence;
-    }
-
-    public void setMessagePersistence(IMMessagePersistence persistence)
-    {
-        mMessagePersistence = persistence;
-    }
-
-    public IMConversationPersistence getConversationPersistence()
-    {
-        if (mConversationPersistence == null)
-            mConversationPersistence = new IMConversationPersistenceEmpty();
-        return mConversationPersistence;
-    }
-
-    public void setConversationPersistence(IMConversationPersistence conversationPersistence)
-    {
-        mConversationPersistence = conversationPersistence;
     }
 }

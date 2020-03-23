@@ -11,6 +11,8 @@ public class IMConversation
     String peer;
     IMConversationType type;
 
+    IMMessage lastMessage;
+
     public String getPeer()
     {
         return peer;
@@ -19,6 +21,14 @@ public class IMConversation
     public IMConversationType getType()
     {
         return type;
+    }
+
+    /**
+     * 刷新会话
+     */
+    public void load()
+    {
+        lastMessage = getLastMessage();
     }
 
     /**
@@ -42,12 +52,11 @@ public class IMConversation
         message.item = item;
         item.message = message;
 
-        holder.getConversationPersistence().saveConversation(peer, type, message);
+        holder.getConversationHandler().saveConversation(peer, type, message);
         holder.getMessagePersistence().saveMessage(message, type);
 
         final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
         holder.getMessageSender().sendMessage(request, callback);
-
 
 
         return message;

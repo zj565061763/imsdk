@@ -8,6 +8,9 @@ import com.sd.lib.imsdk.callback.IncomingMessageCallback;
 import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +154,30 @@ public class IMManager
     }
 
     /**
+     * 返回所有会话
+     *
+     * @return
+     */
+    public synchronized List<IMConversation> getAllConversation()
+    {
+        final List<IMConversation> list = new ArrayList<>(mMapConversation.values());
+        for (IMConversation item : list)
+        {
+            item.load();
+        }
+
+        Collections.sort(list, new Comparator<IMConversation>()
+        {
+            @Override
+            public int compare(IMConversation o1, IMConversation o2)
+            {
+                return 0;
+            }
+        });
+        return list;
+    }
+
+    /**
      * 处理消息接收
      */
     public synchronized boolean handleReceiveMessage(String type, String messageId, long timestamp,
@@ -183,7 +210,7 @@ public class IMManager
         message.isSelf = false;
         message.item = item;
 
-        getHandlerHolder().getConversationPersistence().saveConversation(user.getId(), conversationType, message);
+        getHandlerHolder().getConversationHandler().saveConversation(user.getId(), conversationType, message);
         getHandlerHolder().getMessagePersistence().saveMessage(message, conversationType);
 
         final IMConversation conversation = getConversation(user.getId(), conversationType);
