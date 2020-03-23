@@ -1,15 +1,13 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.handler.IMFactoryHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
-import com.sd.lib.imsdk.handler.IMMessagePersistence;
+import com.sd.lib.imsdk.handler.IMMessageHandler;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 import com.sd.lib.imsdk.handler.IMUserProvider;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
-import com.sd.lib.imsdk.handler.impl.IMFactoryHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
-import com.sd.lib.imsdk.handler.impl.IMMessagePersistenceEmpty;
+import com.sd.lib.imsdk.handler.impl.IMMessageHandlerEmpty;
 import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
 import com.sd.lib.imsdk.handler.impl.IMUserProviderEmpty;
 
@@ -17,11 +15,9 @@ public class IMHandlerHolder
 {
     private IMMessageItemSerializer mMessageItemSerializer;
     private IMMessageSender mMessageSender;
-    private IMMessagePersistence mMessagePersistence;
+    private IMMessageHandler mMessageHandler;
     private IMConversationHandler mConversationHandler;
     private IMUserProvider mUserProvider;
-
-    private IMFactoryHandler mFactoryHandler;
 
     public IMMessageItemSerializer getMessageItemSerializer()
     {
@@ -47,16 +43,16 @@ public class IMHandlerHolder
         mMessageSender = messageSender;
     }
 
-    public IMMessagePersistence getMessagePersistence()
+    public IMMessageHandler getMessageHandler()
     {
-        if (mMessagePersistence == null)
-            mMessagePersistence = new IMMessagePersistenceEmpty();
-        return mMessagePersistence;
+        if (mMessageHandler == null)
+            mMessageHandler = new IMMessageHandlerEmpty();
+        return mMessageHandler;
     }
 
-    public void setMessagePersistence(IMMessagePersistence persistence)
+    public void setMessageHandler(IMMessageHandler persistence)
     {
-        mMessagePersistence = persistence;
+        mMessageHandler = persistence;
     }
 
     public IMConversationHandler getConversationHandler()
@@ -81,17 +77,5 @@ public class IMHandlerHolder
     public void setUserProvider(IMUserProvider provider)
     {
         mUserProvider = provider;
-    }
-
-    public IMFactoryHandler getFactoryHandler()
-    {
-        if (mFactoryHandler == null)
-            mFactoryHandler = new IMFactoryHandlerEmpty();
-        return mFactoryHandler;
-    }
-
-    public void setFactoryHandler(IMFactoryHandler factoryHandler)
-    {
-        mFactoryHandler = factoryHandler;
     }
 }

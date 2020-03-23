@@ -4,8 +4,10 @@ import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMMessage;
 import com.sd.lib.imsdk.IMMessageState;
 
-public interface IMMessagePersistence
+public interface IMMessageHandler
 {
+    void interceptNewMessageSend(IMMessage.InterceptAccessor accessor);
+
     void saveMessage(IMMessage message, IMConversationType conversationType);
 
     void updateMessageState(String id, IMMessageState state, IMConversationType conversationType);

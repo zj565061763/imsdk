@@ -1,6 +1,6 @@
 package com.sd.lib.imsdk;
 
-import com.sd.lib.imsdk.handler.IMFactoryHandler;
+import com.sd.lib.imsdk.handler.IMMessageHandler;
 
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ class IMFactory
         message.timestamp = System.currentTimeMillis();
         message.sender = IMManager.getInstance().getLoginUser();
 
-        final IMFactoryHandler factoryHandler = IMManager.getInstance().getHandlerHolder().getFactoryHandler();
-        factoryHandler.interceptNewMessageSend(message.interceptAccessor());
+        final IMMessageHandler handler = IMManager.getInstance().getHandlerHolder().getMessageHandler();
+        handler.interceptNewMessageSend(message.interceptAccessor());
         return message;
     }
 

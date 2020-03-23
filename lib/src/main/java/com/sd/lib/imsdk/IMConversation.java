@@ -53,7 +53,7 @@ public class IMConversation
         item.message = message;
 
         holder.getConversationHandler().saveConversation(peer, type, message);
-        holder.getMessagePersistence().saveMessage(message, type);
+        holder.getMessageHandler().saveMessage(message, type);
 
         final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
         holder.getMessageSender().sendMessage(request, callback);
