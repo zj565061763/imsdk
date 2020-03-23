@@ -8,10 +8,17 @@ import java.util.List;
 
 public class IMConversation
 {
-    String peer;
-    IMConversationType type;
+    private final String peer;
+    private final IMConversationType type;
 
     IMMessage lastMessage;
+    int unreadCount;
+
+    IMConversation(String peer, IMConversationType type)
+    {
+        this.peer = peer;
+        this.type = type;
+    }
 
     public String getPeer()
     {
@@ -23,12 +30,26 @@ public class IMConversation
         return type;
     }
 
+    public IMMessage getLastMessage()
+    {
+        return lastMessage;
+    }
+
+    public int getUnreadCount()
+    {
+        return unreadCount;
+    }
+
     /**
      * 刷新会话
+     *
+     * @return
      */
-    public void load()
+    public IMConversation load()
     {
-        lastMessage = getLastMessage();
+        final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        handler.load(new PersistenceAccessor());
+        return this;
     }
 
     /**
@@ -62,40 +83,29 @@ public class IMConversation
         return message;
     }
 
-    //---------- IMConversationHandler start ----------
-
-    /**
-     * 未读数量
-     *
-     * @return
-     */
-    public int getUnreadCount()
-    {
-        final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.getUnreadCount(this);
-    }
-
     /**
      * 获取会话消息
      *
      * @param count
-     * @param lastMsg
+     * @param lastMessage
      * @param callback
      */
-    public void getMessage(int count, IMMessage lastMsg, IMCallback<List<IMMessage>> callback)
+    public void loadMessage(int count, IMMessage lastMessage, IMCallback<List<IMMessage>> callback)
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.getMessage(this, count, lastMsg, callback);
+        handler.loadMessage(this, count, lastMessage, callback);
     }
 
-    /**
-     * 获取最后一条消息
-     */
-    public IMMessage getLastMessage()
+    public final class PersistenceAccessor
     {
-        final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.getLastMessage(this);
-    }
+        public void setLastMessage(IMMessage message)
+        {
+            IMConversation.this.lastMessage = message;
+        }
 
-    //---------- IMConversationHandler end ----------
+        public void setUnreadCount(int count)
+        {
+            IMConversation.this.unreadCount = count;
+        }
+    }
 }

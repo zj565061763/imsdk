@@ -13,9 +13,7 @@ public interface IMConversationHandler
 
     void removeConversation(String peer, IMConversationType conversationType);
 
-    int getUnreadCount(IMConversation conversation);
+    void load(IMConversation.PersistenceAccessor accessor);
 
-    void getMessage(IMConversation conversation, int count, IMMessage lastMsg, IMCallback<List<IMMessage>> callback);
-
-    IMMessage getLastMessage(IMConversation conversation);
+    void loadMessage(IMConversation conversation, int count, IMMessage lastMessage, IMCallback<List<IMMessage>> callback);
 }

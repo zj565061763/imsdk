@@ -24,20 +24,14 @@ public class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
-    public int getUnreadCount(IMConversation conversation)
+    public void load(IMConversation.PersistenceAccessor accessor)
     {
-        return 0;
+
     }
 
     @Override
-    public void getMessage(IMConversation conversation, int count, IMMessage lastMsg, IMCallback<List<IMMessage>> callback)
+    public void loadMessage(IMConversation conversation, int count, IMMessage lastMessage, IMCallback<List<IMMessage>> callback)
     {
         callback.onError(-1, "empty implementation");
-    }
-
-    @Override
-    public IMMessage getLastMessage(IMConversation conversation)
-    {
-        return null;
     }
 }
