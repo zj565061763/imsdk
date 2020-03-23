@@ -5,7 +5,7 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 20200322
+        versionCode 20200323
         versionName "1.0.0-beta1"
     }
 
