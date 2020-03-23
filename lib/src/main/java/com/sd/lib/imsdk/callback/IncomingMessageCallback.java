@@ -5,5 +5,5 @@ import com.sd.lib.imsdk.IMMessage;
 
 public interface IncomingMessageCallback
 {
-    void onReceiveMessage(IMMessage message, IMConversation conversation);
+    void onReceiveMessage(IMMessage message);
 }

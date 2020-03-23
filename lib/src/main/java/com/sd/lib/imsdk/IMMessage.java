@@ -6,10 +6,12 @@ public class IMMessage
 {
     String id;
     long timestamp;
-    IMMessageState state;
     IMUser sender;
-    boolean isSelf;
+
     String peer;
+    IMConversationType conversationType;
+    boolean isSelf;
+    IMMessageState state;
 
     IMMessageItem item;
 
@@ -45,6 +47,11 @@ public class IMMessage
     public String getPeer()
     {
         return peer;
+    }
+
+    public IMConversationType getConversationType()
+    {
+        return conversationType;
     }
 
     public IMMessageItem getItem()

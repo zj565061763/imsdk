@@ -1,6 +1,7 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
+import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 
@@ -59,7 +60,7 @@ public class IMConversation
      * @param callback
      * @return
      */
-    public IMMessage send(IMMessageItem item, IMCallback<IMMessage> callback)
+    public IMMessage send(IMMessageItem item, final IMCallback<IMMessage> callback)
     {
         if (item == null)
             throw new NullPointerException("item is null");
@@ -67,18 +68,69 @@ public class IMConversation
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
         final IMMessage message = IMFactory.newMessageSend();
-        message.state = IMMessageState.None;
-        message.isSelf = true;
         message.peer = peer;
+        message.conversationType = type;
+        message.isSelf = true;
+        message.state = IMMessageState.None;
         message.item = item;
         item.message = message;
 
         holder.getConversationHandler().saveConversation(peer, type, message);
         holder.getMessageHandler().saveMessage(message, type);
 
-        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
-        holder.getMessageSender().sendMessage(request, callback);
+        final List<OutgoingMessageCallback> listCallback = IMManager.getInstance().getListOutgoingMessageCallback();
 
+        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
+        holder.getMessageSender().sendMessage(request, new IMCallback<IMMessage>()
+        {
+            @Override
+            public void onSuccess(final IMMessage value)
+            {
+                if (callback != null)
+                    callback.onSuccess(value);
+                IMUtils.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        for (OutgoingMessageCallback item : listCallback)
+                        {
+                            item.onSuccess(value);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(int code, String desc)
+            {
+                if (callback != null)
+                    callback.onError(code, desc);
+                IMUtils.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        for (OutgoingMessageCallback item : listCallback)
+                        {
+                            item.onError(message);
+                        }
+                    }
+                });
+            }
+        });
+
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (OutgoingMessageCallback item : listCallback)
+                {
+                    item.onSend(message);
+                }
+            }
+        });
 
         return message;
     }

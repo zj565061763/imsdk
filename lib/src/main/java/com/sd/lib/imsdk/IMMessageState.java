@@ -16,6 +16,10 @@ public enum IMMessageState
      */
     SendSuccess,
     /**
+     * 接收的消息
+     */
+    Receive,
+    /**
      * 标记为已删除
      */
     Deleted;

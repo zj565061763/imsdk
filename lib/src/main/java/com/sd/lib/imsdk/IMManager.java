@@ -131,6 +131,11 @@ public class IMManager
         mListOutgoingMessageCallback.remove(callback);
     }
 
+    List<OutgoingMessageCallback> getListOutgoingMessageCallback()
+    {
+        return mListOutgoingMessageCallback;
+    }
+
     /**
      * 返回某个会话
      *
@@ -204,16 +209,16 @@ public class IMManager
         final IMMessage message = IMFactory.newMessageReceive();
         message.id = messageId;
         message.timestamp = timestamp;
-        message.state = IMMessageState.SendSuccess;
         message.sender = user;
         message.peer = user.getId();
+        message.conversationType = conversationType;
         message.isSelf = false;
+        message.state = IMMessageState.Receive;
         message.item = item;
 
         getHandlerHolder().getConversationHandler().saveConversation(user.getId(), conversationType, message);
         getHandlerHolder().getMessageHandler().saveMessage(message, conversationType);
 
-        final IMConversation conversation = getConversation(user.getId(), conversationType);
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
@@ -221,7 +226,7 @@ public class IMManager
             {
                 for (IncomingMessageCallback callback : mListIncomingMessageCallback)
                 {
-                    callback.onReceiveMessage(message, conversation);
+                    callback.onReceiveMessage(message);
                 }
             }
         });

@@ -5,9 +5,9 @@ import com.sd.lib.imsdk.IMMessage;
 
 public interface OutgoingMessageCallback
 {
-    void onSend(IMMessage message, IMConversation conversation);
+    void onSend(IMMessage message);
 
-    void onSuccess(IMMessage message, IMConversation conversation);
+    void onSuccess(IMMessage message);
 
-    void onError(IMMessage message, IMConversation conversation);
+    void onError(IMMessage message);
 }
