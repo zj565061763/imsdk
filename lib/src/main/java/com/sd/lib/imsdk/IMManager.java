@@ -156,6 +156,16 @@ public class IMManager
     public synchronized boolean handleReceiveMessage(String type, String messageId, long timestamp,
                                                      IMConversationType conversationType, IMUser user, String content)
     {
+        if (TextUtils.isEmpty(type)
+                || TextUtils.isEmpty(messageId)
+                || timestamp <= 0
+                || conversationType == null
+                || user == null
+                || TextUtils.isEmpty(user.getId()))
+        {
+            return false;
+        }
+
         final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(type);
         if (clazz == null)
             return false;
@@ -169,9 +179,11 @@ public class IMManager
         message.timestamp = timestamp;
         message.state = IMMessageState.SendSuccess;
         message.sender = user;
+        message.peer = user.getId();
         message.isSelf = false;
         message.item = item;
 
+        getHandlerHolder().getConversationPersistence().saveConversation(user.getId(), conversationType, message);
         getHandlerHolder().getMessagePersistence().saveMessage(message, conversationType);
 
         final IMConversation conversation = getConversation(user.getId(), conversationType);

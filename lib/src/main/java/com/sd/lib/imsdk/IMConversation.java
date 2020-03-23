@@ -34,10 +34,22 @@ public class IMConversation
             throw new NullPointerException("item is null");
 
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
-        final IMMessage message = IMFactory.newMessageSend(item);
 
-        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(peer, type, message, message.persistenceAccessor());
+        final IMMessage message = IMFactory.newMessageSend();
+        message.state = IMMessageState.None;
+        message.isSelf = true;
+        message.peer = peer;
+        message.item = item;
+        item.message = message;
+
+        holder.getConversationPersistence().saveConversation(peer, type, message);
+        holder.getMessagePersistence().saveMessage(message, type);
+
+        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
         holder.getMessageSender().sendMessage(request, callback);
+
+
+
         return message;
     }
 

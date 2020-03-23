@@ -6,16 +6,12 @@ import java.util.UUID;
 
 class IMFactory
 {
-    public static IMMessage newMessageSend(IMMessageItem item)
+    public static IMMessage newMessageSend()
     {
         final IMMessage message = new IMMessage();
         message.id = UUID.randomUUID().toString();
         message.timestamp = System.currentTimeMillis();
-        message.state = IMMessageState.None;
         message.sender = IMManager.getInstance().getLoginUser();
-        message.isSelf = true;
-        message.item = item;
-        item.message = message;
 
         final IMFactoryHandler factoryHandler = IMManager.getInstance().getHandlerHolder().getFactoryHandler();
         factoryHandler.interceptNewMessageSend(message.interceptAccessor());

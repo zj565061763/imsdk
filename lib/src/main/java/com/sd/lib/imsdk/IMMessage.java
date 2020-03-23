@@ -9,6 +9,7 @@ public class IMMessage
     IMMessageState state;
     IMUser sender;
     boolean isSelf;
+    String peer;
 
     IMMessageItem item;
 
@@ -39,6 +40,11 @@ public class IMMessage
     public boolean isSelf()
     {
         return isSelf;
+    }
+
+    public String getPeer()
+    {
+        return peer;
     }
 
     public IMMessageItem getItem()
