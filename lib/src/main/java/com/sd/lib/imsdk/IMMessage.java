@@ -76,15 +76,51 @@ public class IMMessage
         }
     }
 
+
     public final class PersistenceAccessor
     {
         private PersistenceAccessor()
         {
         }
 
+        public void setId(String id)
+        {
+            IMMessage.this.id = id;
+        }
+
+        public void setTimestamp(long timestamp)
+        {
+            IMMessage.this.timestamp = timestamp;
+        }
+
+        public void setSender(IMUser sender)
+        {
+            IMMessage.this.sender = sender;
+        }
+
+        public void setPeer(String peer)
+        {
+            IMMessage.this.peer = peer;
+        }
+
+        public void setConversationType(IMConversationType conversationType)
+        {
+            IMMessage.this.conversationType = conversationType;
+        }
+
+        public void setSelf(boolean self)
+        {
+            IMMessage.this.isSelf = self;
+        }
+
         public void setState(IMMessageState state)
         {
             IMMessage.this.state = state;
+        }
+
+        public void setItem(IMMessageItem item)
+        {
+            IMMessage.this.item = item;
         }
     }
 }
