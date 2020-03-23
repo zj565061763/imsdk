@@ -38,14 +38,15 @@ public class IMManager
         return sInstance;
     }
 
-    private IMUser mLoginUser;
-
     private final IMHandlerHolder mHandlerHolder = new IMHandlerHolder();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
     private final List<IncomingMessageCallback> mListIncomingMessageCallback = new CopyOnWriteArrayList<>();
     private final List<OutgoingMessageCallback> mListOutgoingMessageCallback = new CopyOnWriteArrayList<>();
+
+    private IMUser mLoginUser;
+    private IMConversation mChattingConversation;
 
     public IMHandlerHolder getHandlerHolder()
     {
@@ -101,6 +102,26 @@ public class IMManager
     public void setLoginUser(IMUser user)
     {
         mLoginUser = user;
+    }
+
+    /**
+     * 返回当前正在聊天的会话
+     *
+     * @return
+     */
+    public IMConversation getChattingConversation()
+    {
+        return mChattingConversation;
+    }
+
+    /**
+     * 设置当前正在聊天的会话
+     *
+     * @param conversation
+     */
+    public void setChattingConversation(IMConversation conversation)
+    {
+        mChattingConversation = conversation;
     }
 
     /**
