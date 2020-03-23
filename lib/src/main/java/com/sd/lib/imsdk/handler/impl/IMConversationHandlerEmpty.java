@@ -23,7 +23,7 @@ public class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
-    public void load(String peer, IMConversationType conversationType, IMConversation.PersistenceAccessor accessor)
+    public void loadConversation(String peer, IMConversationType conversationType, IMConversation.PersistenceAccessor accessor)
     {
 
     }

@@ -49,7 +49,7 @@ public class IMConversation
     public IMConversation load()
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.load(peer, type, new PersistenceAccessor());
+        handler.loadConversation(peer, type, new PersistenceAccessor());
         return this;
     }
 
