@@ -1,5 +1,6 @@
 package com.sd.lib.imsdk;
 
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
@@ -174,10 +175,29 @@ public class IMManager
         getHandlerHolder().getMessagePersistence().saveMessage(message, conversationType);
 
         final IMConversation conversation = getConversation(user.getId(), conversationType);
-        for (IncomingMessageCallback callback : mListIncomingMessageCallback)
+        IMUtils.runOnUiThread(new Runnable()
         {
-            callback.onReceiveMessage(message, conversation);
-        }
+            @Override
+            public void run()
+            {
+                for (IncomingMessageCallback callback : mListIncomingMessageCallback)
+                {
+                    callback.onReceiveMessage(message, conversation);
+                }
+            }
+        });
+
         return true;
+    }
+
+    private static void runOnUiThread(Runnable runnable)
+    {
+        if (Looper.myLooper() == Looper.getMainLooper())
+        {
+            runnable.run();
+        } else
+        {
+
+        }
     }
 }
