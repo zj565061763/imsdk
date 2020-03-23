@@ -56,9 +56,8 @@ public class IMManager
      * 注册{@link IMMessageItem}
      *
      * @param clazz
-     * @param <T>
      */
-    public synchronized <T extends IMMessageItem> void registerMessageItem(Class<T> clazz)
+    public synchronized void registerMessageItem(Class<? extends IMMessageItem> clazz)
     {
         if (clazz == null)
             return;
@@ -69,6 +68,19 @@ public class IMManager
 
         final String type = annotation.type();
         mMapMessageItemClass.put(type, clazz);
+    }
+
+    /**
+     * 返回type对应的{@link IMMessageItem}
+     *
+     * @param type
+     * @return
+     */
+    public synchronized Class<? extends IMMessageItem> getMessageItem(String type)
+    {
+        if (TextUtils.isEmpty(type))
+            return null;
+        return mMapMessageItemClass.get(type);
     }
 
     /**
@@ -198,11 +210,7 @@ public class IMManager
             return false;
         }
 
-        final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(itemType);
-        if (clazz == null)
-            return false;
-
-        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, itemType, clazz);
+        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, itemType);
         if (item == null)
             return false;
 
