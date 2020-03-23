@@ -15,7 +15,7 @@ public class IMMessageItemSerializerGson implements IMMessageItemSerializer
     }
 
     @Override
-    public IMMessageItem deserialize(String content, Class<? extends IMMessageItem> clazz)
+    public IMMessageItem deserialize(String content, String itemType, Class<? extends IMMessageItem> clazz)
     {
         return mGson.fromJson(content, clazz);
     }

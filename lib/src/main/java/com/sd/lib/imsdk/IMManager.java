@@ -185,10 +185,10 @@ public class IMManager
     /**
      * 处理消息接收
      */
-    public synchronized boolean handleReceiveMessage(String type, String messageId, long timestamp,
+    public synchronized boolean handleReceiveMessage(String itemType, String messageId, long timestamp,
                                                      IMConversationType conversationType, IMUser user, String content)
     {
-        if (TextUtils.isEmpty(type)
+        if (TextUtils.isEmpty(itemType)
                 || TextUtils.isEmpty(messageId)
                 || timestamp <= 0
                 || conversationType == null
@@ -198,11 +198,11 @@ public class IMManager
             return false;
         }
 
-        final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(type);
+        final Class<? extends IMMessageItem> clazz = mMapMessageItemClass.get(itemType);
         if (clazz == null)
             return false;
 
-        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, clazz);
+        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, itemType, clazz);
         if (item == null)
             return false;
 
