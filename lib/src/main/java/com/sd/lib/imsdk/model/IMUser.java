@@ -3,7 +3,7 @@ package com.sd.lib.imsdk.model;
 public class IMUser
 {
     private String id;
-    private String username;
+    private String name;
     private String avatar;
     private String extra;
 
@@ -17,14 +17,14 @@ public class IMUser
         this.id = id;
     }
 
-    public String getUsername()
+    public String getName()
     {
-        return username;
+        return name;
     }
 
-    public void setUsername(String username)
+    public void setName(String name)
     {
-        this.username = username;
+        this.name = name;
     }
 
     public String getAvatar()
