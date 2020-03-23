@@ -10,8 +10,9 @@ public class IMMessage
 
     String peer;
     IMConversationType conversationType;
-    boolean isSelf;
     IMMessageState state;
+    boolean isSelf;
+    boolean isRead;
 
     IMMessageItem item;
 
@@ -29,19 +30,9 @@ public class IMMessage
         return timestamp;
     }
 
-    public IMMessageState getState()
-    {
-        return state;
-    }
-
     public IMUser getSender()
     {
         return sender;
-    }
-
-    public boolean isSelf()
-    {
-        return isSelf;
     }
 
     public String getPeer()
@@ -52,6 +43,21 @@ public class IMMessage
     public IMConversationType getConversationType()
     {
         return conversationType;
+    }
+
+    public IMMessageState getState()
+    {
+        return state;
+    }
+
+    public boolean isSelf()
+    {
+        return isSelf;
+    }
+
+    public boolean isRead()
+    {
+        return isRead;
     }
 
     public IMMessageItem getItem()
@@ -75,7 +81,6 @@ public class IMMessage
         {
         }
     }
-
 
     public final class PersistenceAccessor
     {
@@ -108,14 +113,19 @@ public class IMMessage
             IMMessage.this.conversationType = conversationType;
         }
 
+        public void setState(IMMessageState state)
+        {
+            IMMessage.this.state = state;
+        }
+
         public void setSelf(boolean self)
         {
             IMMessage.this.isSelf = self;
         }
 
-        public void setState(IMMessageState state)
+        public void setRead(boolean read)
         {
-            IMMessage.this.state = state;
+            IMMessage.this.isRead = read;
         }
 
         public void setItem(IMMessageItem item)

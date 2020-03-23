@@ -70,15 +70,16 @@ public class IMConversation
         final IMMessage message = IMFactory.newMessageSend();
         message.peer = peer;
         message.conversationType = type;
-        message.isSelf = true;
         message.state = IMMessageState.None;
+        message.isSelf = true;
+        message.isRead = true;
         message.item = item;
         item.message = message;
 
         final String itemContent = holder.getMessageItemSerializer().serialize(item);
 
-        holder.getConversationHandler().saveConversation(message);
         holder.getMessageHandler().saveMessage(message, itemContent);
+        holder.getConversationHandler().saveConversation(message);
 
         final List<OutgoingMessageCallback> listCallback = IMManager.getInstance().getListOutgoingMessageCallback();
 

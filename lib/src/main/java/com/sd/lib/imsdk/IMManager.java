@@ -119,7 +119,7 @@ public class IMManager
      *
      * @param conversation
      */
-    public void setChattingConversation(IMConversation conversation)
+    public synchronized void setChattingConversation(IMConversation conversation)
     {
         mChattingConversation = conversation;
     }
@@ -241,12 +241,17 @@ public class IMManager
         message.sender = user;
         message.peer = user.getId();
         message.conversationType = conversationType;
-        message.isSelf = false;
         message.state = IMMessageState.Receive;
+        message.isSelf = false;
         message.item = item;
 
-        getHandlerHolder().getConversationHandler().saveConversation(message);
+        if (mChattingConversation != null)
+            message.isRead = message.peer.equals(mChattingConversation.getPeer());
+        else
+            message.isRead = false;
+
         getHandlerHolder().getMessageHandler().saveMessage(message, content);
+        getHandlerHolder().getConversationHandler().saveConversation(message);
 
         IMUtils.runOnUiThread(new Runnable()
         {
