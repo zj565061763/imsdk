@@ -1,8 +1,8 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
+import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
-import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 
@@ -86,7 +86,7 @@ public class IMConversation
         holder.getMessageHandler().saveMessage(message, itemContent);
         holder.getConversationHandler().saveConversation(message);
 
-        final List<OutgoingMessageCallback> listCallback = IMManager.getInstance().getListOutgoingMessageCallback();
+        final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
 
         final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
         holder.getMessageSender().sendMessage(request, new IMCallback<IMMessage>()
@@ -103,7 +103,7 @@ public class IMConversation
                         if (callback != null)
                             callback.onSuccess(value);
 
-                        for (OutgoingMessageCallback item : listCallback)
+                        for (IMOutgoingCallback item : listCallback)
                         {
                             item.onSuccess(value);
                         }
@@ -123,9 +123,9 @@ public class IMConversation
                         if (callback != null)
                             callback.onError(message, code, desc);
 
-                        for (OutgoingMessageCallback item : listCallback)
+                        for (IMOutgoingCallback item : listCallback)
                         {
-                            item.onError(message);
+                            item.onError(message, code, desc);
                         }
                     }
                 });
@@ -138,7 +138,7 @@ public class IMConversation
             @Override
             public void run()
             {
-                for (OutgoingMessageCallback item : listCallback)
+                for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSend(message);
                 }

@@ -4,8 +4,8 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
-import com.sd.lib.imsdk.callback.IncomingMessageCallback;
-import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
+import com.sd.lib.imsdk.callback.IMIncomingCallback;
+import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ public class IMManager
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
-    private final List<IncomingMessageCallback> mListIncomingMessageCallback = new CopyOnWriteArrayList<>();
-    private final List<OutgoingMessageCallback> mListOutgoingMessageCallback = new CopyOnWriteArrayList<>();
+    private final List<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArrayList<>();
+    private final List<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArrayList<>();
 
     private IMUser mLoginUser;
     private IMConversation mChattingConversation;
@@ -129,9 +129,9 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void addIncomingMessageCallback(IncomingMessageCallback callback)
+    public synchronized void addIMIncomingCallback(IMIncomingCallback callback)
     {
-        mListIncomingMessageCallback.add(callback);
+        mListIMIncomingCallback.add(callback);
     }
 
     /**
@@ -139,9 +139,9 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void removeIncomingMessageCallback(IncomingMessageCallback callback)
+    public synchronized void removeIMIncomingCallback(IMIncomingCallback callback)
     {
-        mListIncomingMessageCallback.remove(callback);
+        mListIMIncomingCallback.remove(callback);
     }
 
     /**
@@ -149,9 +149,9 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void addOutgoingMessageCallback(OutgoingMessageCallback callback)
+    public synchronized void addIMOutgoingCallback(IMOutgoingCallback callback)
     {
-        mListOutgoingMessageCallback.add(callback);
+        mListIMOutgoingCallback.add(callback);
     }
 
     /**
@@ -159,14 +159,14 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void removeOutgoingMessageCallback(OutgoingMessageCallback callback)
+    public synchronized void removeIMOutgoingCallback(IMOutgoingCallback callback)
     {
-        mListOutgoingMessageCallback.remove(callback);
+        mListIMOutgoingCallback.remove(callback);
     }
 
-    List<OutgoingMessageCallback> getListOutgoingMessageCallback()
+    List<IMOutgoingCallback> getListIMOutgoingCallback()
     {
-        return mListOutgoingMessageCallback;
+        return mListIMOutgoingCallback;
     }
 
     /**
@@ -258,7 +258,7 @@ public class IMManager
             @Override
             public void run()
             {
-                for (IncomingMessageCallback callback : mListIncomingMessageCallback)
+                for (IMIncomingCallback callback : mListIMIncomingCallback)
                 {
                     callback.onReceiveMessage(message);
                 }
