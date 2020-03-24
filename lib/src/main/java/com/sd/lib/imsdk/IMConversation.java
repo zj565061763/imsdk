@@ -1,6 +1,7 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
+import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMMessageSender;
@@ -60,7 +61,7 @@ public class IMConversation
      * @param callback
      * @return
      */
-    public IMMessage send(IMMessageItem item, final IMCallback<IMMessage> callback)
+    public IMMessage send(IMMessageItem item, final IMSendCallback callback)
     {
         if (item == null)
             throw new NullPointerException("item is null");
@@ -77,7 +78,7 @@ public class IMConversation
         return send(message, callback);
     }
 
-    IMMessage send(final IMMessage message, final IMCallback<IMMessage> callback)
+    IMMessage send(final IMMessage message, final IMSendCallback callback)
     {
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
         final String itemContent = holder.getMessageItemSerializer().serialize(message.getItem());
@@ -94,14 +95,14 @@ public class IMConversation
             public void onSuccess(final IMMessage value)
             {
                 holder.getMessageHandler().updateMessageState(message, IMMessageState.SendSuccess);
-
-                if (callback != null)
-                    callback.onSuccess(value);
                 IMUtils.runOnUiThread(new Runnable()
                 {
                     @Override
                     public void run()
                     {
+                        if (callback != null)
+                            callback.onSuccess(value);
+
                         for (OutgoingMessageCallback item : listCallback)
                         {
                             item.onSuccess(value);
@@ -111,17 +112,17 @@ public class IMConversation
             }
 
             @Override
-            public void onError(int code, String desc)
+            public void onError(final int code, final String desc)
             {
                 holder.getMessageHandler().updateMessageState(message, IMMessageState.SendFail);
-
-                if (callback != null)
-                    callback.onError(code, desc);
                 IMUtils.runOnUiThread(new Runnable()
                 {
                     @Override
                     public void run()
                     {
+                        if (callback != null)
+                            callback.onError(message, code, desc);
+
                         for (OutgoingMessageCallback item : listCallback)
                         {
                             item.onError(message);
@@ -131,12 +132,12 @@ public class IMConversation
             }
         });
 
+        holder.getMessageHandler().updateMessageState(message, IMMessageState.Sending);
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
-                holder.getMessageHandler().updateMessageState(message, IMMessageState.Sending);
                 for (OutgoingMessageCallback item : listCallback)
                 {
                     item.onSend(message);

@@ -1,6 +1,7 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
+import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
@@ -27,7 +28,7 @@ public class IMMessage
      * @param callback
      * @return
      */
-    public boolean send(IMCallback<IMMessage> callback)
+    public boolean send(IMSendCallback callback)
     {
         if (isSelf && state == IMMessageState.SendFail)
         {
