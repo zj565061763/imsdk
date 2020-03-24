@@ -1,5 +1,6 @@
 package com.sd.lib.imsdk;
 
+import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
@@ -18,6 +19,22 @@ public class IMMessage
 
     IMMessage()
     {
+    }
+
+    /**
+     * 重新发送失败的消息
+     *
+     * @param callback
+     * @return
+     */
+    public boolean send(IMCallback<IMMessage> callback)
+    {
+        if (isSelf && state == IMMessageState.SendFail)
+        {
+            IMManager.getInstance().getConversation(peer, conversationType).send(this, callback);
+            return true;
+        }
+        return false;
     }
 
     public String getId()

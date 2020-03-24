@@ -65,8 +65,6 @@ public class IMConversation
         if (item == null)
             throw new NullPointerException("item is null");
 
-        final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
-
         final IMMessage message = IMFactory.newMessageSend();
         message.peer = peer;
         message.conversationType = type;
@@ -76,7 +74,13 @@ public class IMConversation
         message.item = item;
         item.message = message;
 
-        final String itemContent = holder.getMessageItemSerializer().serialize(item);
+        return send(message, callback);
+    }
+
+    IMMessage send(final IMMessage message, final IMCallback<IMMessage> callback)
+    {
+        final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
+        final String itemContent = holder.getMessageItemSerializer().serialize(message.getItem());
 
         holder.getMessageHandler().saveMessage(message, itemContent);
         holder.getConversationHandler().saveConversation(message);
