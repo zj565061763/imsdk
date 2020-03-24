@@ -265,7 +265,7 @@ public class IMManager
         else
             message.isRead = false;
 
-        getHandlerHolder().getMessageHandler().saveMessage(message, content);
+        getHandlerHolder().getMessageHandler().saveMessage(message);
         getHandlerHolder().getConversationHandler().saveConversation(message);
 
         IMUtils.runOnUiThread(new Runnable()

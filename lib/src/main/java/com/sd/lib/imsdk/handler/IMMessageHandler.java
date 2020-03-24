@@ -7,7 +7,7 @@ public interface IMMessageHandler
 {
     void interceptNewMessageSend(IMMessage.InterceptAccessor accessor);
 
-    void saveMessage(IMMessage message, String itemContent);
+    void saveMessage(IMMessage message);
 
     void removeMessage(IMMessage message);
 }

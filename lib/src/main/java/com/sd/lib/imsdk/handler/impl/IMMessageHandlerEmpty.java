@@ -12,7 +12,7 @@ public class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
-    public void saveMessage(IMMessage message, String itemContent)
+    public void saveMessage(IMMessage message)
     {
 
     }

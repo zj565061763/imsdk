@@ -43,7 +43,7 @@ public class IMMessage
      */
     void save()
     {
-        IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this, null);
+        IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
     }
 
     public String getId()
