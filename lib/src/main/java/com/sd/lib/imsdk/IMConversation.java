@@ -1,9 +1,11 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMCallback;
-import com.sd.lib.imsdk.callback.OutgoingMessageCallback;
+import com.sd.lib.imsdk.callback.IMOutgoingCallback;
+import com.sd.lib.imsdk.callback.IMSendCallback;
+import com.sd.lib.imsdk.callback.IMValueCallback;
+import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.handler.IMMessageSender;
 
 import java.util.List;
 
@@ -60,12 +62,10 @@ public class IMConversation
      * @param callback
      * @return
      */
-    public IMMessage send(IMMessageItem item, final IMCallback<IMMessage> callback)
+    public IMMessage send(IMMessageItem item, final IMSendCallback callback)
     {
         if (item == null)
             throw new NullPointerException("item is null");
-
-        final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
         final IMMessage message = IMFactory.newMessageSend();
         message.peer = peer;
@@ -76,69 +76,90 @@ public class IMConversation
         message.item = item;
         item.message = message;
 
-        final String itemContent = holder.getMessageItemSerializer().serialize(item);
+        return send(message, callback);
+    }
+
+    IMMessage send(final IMMessage message, final IMSendCallback callback)
+    {
+        final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
+
+        final IMMessageItem messageItem = message.getItem();
+        final String itemContent = holder.getMessageItemSerializer().serialize(messageItem);
 
         holder.getMessageHandler().saveMessage(message, itemContent);
         holder.getConversationHandler().saveConversation(message);
 
-        final List<OutgoingMessageCallback> listCallback = IMManager.getInstance().getListOutgoingMessageCallback();
-
-        final IMMessageSender.SendMessageRequest request = new IMMessageSender.SendMessageRequest(type, message, message.persistenceAccessor());
-        holder.getMessageSender().sendMessage(request, new IMCallback<IMMessage>()
-        {
-            @Override
-            public void onSuccess(final IMMessage value)
-            {
-                holder.getMessageHandler().updateMessageState(message, IMMessageState.SendSuccess);
-
-                if (callback != null)
-                    callback.onSuccess(value);
-                IMUtils.runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        for (OutgoingMessageCallback item : listCallback)
-                        {
-                            item.onSuccess(value);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onError(int code, String desc)
-            {
-                holder.getMessageHandler().updateMessageState(message, IMMessageState.SendFail);
-
-                if (callback != null)
-                    callback.onError(code, desc);
-                IMUtils.runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        for (OutgoingMessageCallback item : listCallback)
-                        {
-                            item.onError(message);
-                        }
-                    }
-                });
-            }
-        });
-
+        // 发送中
+        message.state = IMMessageState.Sending;
+        holder.getMessageHandler().updateMessageState(message, IMMessageState.Sending);
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
-                holder.getMessageHandler().updateMessageState(message, IMMessageState.Sending);
-                for (OutgoingMessageCallback item : listCallback)
+                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSend(message);
                 }
             }
         });
+
+        final Runnable sendRunnable = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                holder.getMessageSender().sendMessage(message, new IMCallback()
+                {
+                    @Override
+                    public void onSuccess()
+                    {
+                        message.state = IMMessageState.SendSuccess;
+                        holder.getMessageHandler().updateMessageState(message, IMMessageState.SendSuccess);
+                        notifyCallbackSuccess(message, callback);
+                    }
+
+                    @Override
+                    public void onError(int code, String desc)
+                    {
+                        message.state = IMMessageState.SendFail;
+                        holder.getMessageHandler().updateMessageState(message, IMMessageState.SendFail);
+                        notifyCallbackError(message, code, desc, callback);
+                    }
+                });
+            }
+        };
+
+        if (messageItem.isNeedUpload())
+        {
+            messageItem.upload(new IMMessageItem.UploadCallback()
+            {
+                @Override
+                public void onProgress(int progress)
+                {
+                    notifyCallbackProgress(message, messageItem, progress, callback);
+                }
+
+                @Override
+                public void onSuccess()
+                {
+                    message.save();
+                    sendRunnable.run();
+                }
+
+                @Override
+                public void onError(String desc)
+                {
+                    message.state = IMMessageState.SendFail;
+                    holder.getMessageHandler().updateMessageState(message, IMMessageState.SendFail);
+                    notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
+                }
+            });
+        } else
+        {
+            sendRunnable.run();
+        }
 
         return message;
     }
@@ -150,7 +171,7 @@ public class IMConversation
      * @param lastMessage
      * @param callback
      */
-    public void loadMessage(int count, IMMessage lastMessage, IMCallback<List<IMMessage>> callback)
+    public void loadMessage(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.loadMessage(this, count, lastMessage, callback);
@@ -171,5 +192,62 @@ public class IMConversation
         {
             IMConversation.this.unreadCount = count;
         }
+    }
+
+    private static void notifyCallbackProgress(final IMMessage message, final IMMessageItem messageItem, final int progress, final IMSendCallback callback)
+    {
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (callback != null)
+                    callback.onProgress(message, messageItem, progress);
+
+                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                for (IMOutgoingCallback item : listCallback)
+                {
+                    item.onProgress(message, messageItem, progress);
+                }
+            }
+        });
+    }
+
+    private static void notifyCallbackError(final IMMessage message, final int code, final String desc, final IMSendCallback callback)
+    {
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (callback != null)
+                    callback.onError(message, code, desc);
+
+                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                for (IMOutgoingCallback item : listCallback)
+                {
+                    item.onError(message, code, desc);
+                }
+            }
+        });
+    }
+
+    private static void notifyCallbackSuccess(final IMMessage message, final IMSendCallback callback)
+    {
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (callback != null)
+                    callback.onSuccess(message);
+
+                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                for (IMOutgoingCallback item : listCallback)
+                {
+                    item.onSuccess(message);
+                }
+            }
+        });
     }
 }

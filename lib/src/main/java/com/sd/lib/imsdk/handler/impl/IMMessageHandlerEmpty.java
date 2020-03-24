@@ -19,6 +19,12 @@ public class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
+    public void removeMessage(IMMessage message)
+    {
+
+    }
+
+    @Override
     public void updateMessageState(IMMessage message, IMMessageState state)
     {
 
