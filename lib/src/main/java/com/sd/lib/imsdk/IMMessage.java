@@ -27,10 +27,11 @@ public class IMMessage
      * @param callback
      * @return
      */
-    public boolean send(IMSendCallback callback)
+    public boolean resend(IMSendCallback callback)
     {
         if (isSelf && state == IMMessageState.SendFail)
         {
+            timestamp = System.currentTimeMillis();
             IMManager.getInstance().getConversation(peer, conversationType).send(this, callback);
             return true;
         }
