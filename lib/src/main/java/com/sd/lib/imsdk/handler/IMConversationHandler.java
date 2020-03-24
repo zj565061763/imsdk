@@ -15,5 +15,5 @@ public interface IMConversationHandler
 
     void loadConversation(String peer, IMConversationType conversationType, IMConversation.PersistenceAccessor accessor);
 
-    void loadMessage(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback);
+    void loadMessageBefore(String peer, IMConversationType conversationType, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback);
 }

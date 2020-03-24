@@ -162,16 +162,16 @@ public class IMConversation
     }
 
     /**
-     * 获取会话消息
+     * 获取当前会话中指定消息之前的消息
      *
      * @param count
      * @param lastMessage
      * @param callback
      */
-    public void loadMessage(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
+    public void loadMessageBefore(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadMessage(this, count, lastMessage, callback);
+        handler.loadMessageBefore(peer, type, count, lastMessage, callback);
     }
 
     public final class PersistenceAccessor
