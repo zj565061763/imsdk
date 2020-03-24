@@ -27,6 +27,11 @@ public abstract class IMMessageItem
         return message;
     }
 
+    public final int getProgress()
+    {
+        return progress;
+    }
+
     /**
      * 上传
      *
