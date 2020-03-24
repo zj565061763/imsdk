@@ -10,6 +10,4 @@ public interface IMMessageHandler
     void saveMessage(IMMessage message, String itemContent);
 
     void removeMessage(IMMessage message);
-
-    void updateMessageState(IMMessage message, IMMessageState state);
 }

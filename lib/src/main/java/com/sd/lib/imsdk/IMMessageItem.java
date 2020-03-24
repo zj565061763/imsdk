@@ -6,7 +6,7 @@ public abstract class IMMessageItem
 {
     private final String type;
     transient IMMessage message;
-    transient int progress;
+    transient int uploadProgress;
 
     public IMMessageItem()
     {
@@ -27,9 +27,15 @@ public abstract class IMMessageItem
         return message;
     }
 
-    public final int getProgress()
+    public final int getUploadProgress()
     {
-        return progress;
+        return uploadProgress;
+    }
+
+    public String serialize()
+    {
+        final String content = IMManager.getInstance().getHandlerHolder().getMessageItemSerializer().serialize(this);
+        return content;
     }
 
     /**
@@ -44,7 +50,7 @@ public abstract class IMMessageItem
             @Override
             public void onProgress(final int progress)
             {
-                IMMessageItem.this.progress = progress;
+                IMMessageItem.this.uploadProgress = progress;
                 if (callback != null)
                     callback.onProgress(progress);
             }
