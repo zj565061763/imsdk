@@ -1,8 +1,8 @@
 package com.sd.lib.imsdk.callback;
 
-public interface IMCallback
+public interface IMValueCallback<T>
 {
-    void onSuccess();
+    void onSuccess(T value);
 
     void onError(int code, String desc);
 }

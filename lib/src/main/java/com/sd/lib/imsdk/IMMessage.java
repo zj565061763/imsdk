@@ -1,6 +1,5 @@
 package com.sd.lib.imsdk;
 
-import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
@@ -36,6 +35,14 @@ public class IMMessage
             return true;
         }
         return false;
+    }
+
+    /**
+     * 保存当前消息
+     */
+    void save()
+    {
+        IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this, null);
     }
 
     public String getId()

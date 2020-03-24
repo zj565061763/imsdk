@@ -7,7 +7,7 @@ import com.sd.lib.imsdk.handler.IMMessageSender;
 public class IMMessageSenderEmpty implements IMMessageSender
 {
     @Override
-    public void sendMessage(SendMessageRequest request, IMCallback<IMMessage> callback)
+    public void sendMessage(IMMessage message, IMCallback callback)
     {
         callback.onError(-1, "empty implementation");
     }

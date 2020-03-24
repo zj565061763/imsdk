@@ -5,7 +5,8 @@ import com.sd.lib.imsdk.annotation.AIMMessageItem;
 public abstract class IMMessageItem
 {
     private final String type;
-    IMMessage message;
+    transient IMMessage message;
+    transient int progress;
 
     public IMMessageItem()
     {
@@ -27,18 +28,52 @@ public abstract class IMMessageItem
     }
 
     /**
-     * 序列化
+     * 上传
      *
-     * @param callback null-同步返回，不为null-异步返回
-     * @return 序列化的字符串
+     * @param callback
      */
-    public abstract String serialize(SerializeCallback callback);
+    void upload(final UploadCallback callback)
+    {
+        uploadImpl(new UploadCallback()
+        {
+            @Override
+            public void onProgress(final int progress)
+            {
+                IMMessageItem.this.progress = progress;
+                if (callback != null)
+                    callback.onProgress(progress);
+            }
 
-    public interface SerializeCallback
+            @Override
+            public void onSuccess()
+            {
+                if (callback != null)
+                    callback.onSuccess();
+            }
+
+            @Override
+            public void onError(final String desc)
+            {
+                if (callback != null)
+                    callback.onError(desc);
+            }
+        });
+    }
+
+    protected void uploadImpl(UploadCallback callback)
+    {
+    }
+
+    protected boolean isNeedUpload()
+    {
+        return false;
+    }
+
+    public interface UploadCallback
     {
         void onProgress(int progress);
 
-        void onSuccess(String serializeContent);
+        void onSuccess();
 
         void onError(String desc);
     }

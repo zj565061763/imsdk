@@ -1,13 +1,13 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
+import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 import com.sd.lib.imsdk.handler.IMUserProvider;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
-import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageHandlerEmpty;
+import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
 import com.sd.lib.imsdk.handler.impl.IMUserProviderEmpty;
 
