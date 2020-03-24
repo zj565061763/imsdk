@@ -231,6 +231,22 @@ public class IMManager
     }
 
     /**
+     * 移除会话
+     *
+     * @param peer
+     * @param type
+     */
+    public synchronized void removeConversation(String peer, IMConversationType type)
+    {
+        if (TextUtils.isEmpty(peer) || type == null)
+            return;
+
+        final String key = peer + "#" + type;
+        mMapConversation.remove(key);
+        mHandlerHolder.getConversationHandler().removeConversation(peer, type);
+    }
+
+    /**
      * 处理消息接收
      */
     public synchronized boolean handleReceiveMessage(String itemType, String messageId, long timestamp,
