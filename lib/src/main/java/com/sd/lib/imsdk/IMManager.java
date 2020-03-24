@@ -1,6 +1,5 @@
 package com.sd.lib.imsdk;
 
-import android.os.Looper;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
@@ -121,7 +120,23 @@ public class IMManager
      */
     public synchronized void setChattingConversation(IMConversation conversation)
     {
+        if (conversation == null)
+            throw new NullPointerException("conversation is null");
         mChattingConversation = conversation;
+    }
+
+    /**
+     * 移除当前正在聊天的会话标识
+     *
+     * @param conversation
+     */
+    public synchronized void removeChattingConversation(IMConversation conversation)
+    {
+        if (conversation == null)
+            return;
+
+        if (conversation.equals(mChattingConversation))
+            mChattingConversation = null;
     }
 
     /**
@@ -266,16 +281,5 @@ public class IMManager
         });
 
         return true;
-    }
-
-    private static void runOnUiThread(Runnable runnable)
-    {
-        if (Looper.myLooper() == Looper.getMainLooper())
-        {
-            runnable.run();
-        } else
-        {
-
-        }
     }
 }
