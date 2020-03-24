@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 20200324
-        versionName "1.0.0-beta6"
+        versionName "1.0.0-beta7"
     }
 
     buildTypes {
