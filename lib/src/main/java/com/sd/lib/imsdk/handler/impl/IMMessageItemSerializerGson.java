@@ -16,12 +16,12 @@ public class IMMessageItemSerializerGson implements IMMessageItemSerializer
     }
 
     @Override
-    public IMMessageItem deserialize(String content, String itemType)
+    public IMMessageItem deserialize(String itemContent, String itemType)
     {
         final Class<? extends IMMessageItem> clazz = IMManager.getInstance().getMessageItem(itemType);
         if (clazz == null)
             return null;
 
-        return mGson.fromJson(content, clazz);
+        return mGson.fromJson(itemContent, clazz);
     }
 }

@@ -248,29 +248,38 @@ public class IMManager
 
     /**
      * 处理消息接收
+     *
+     * @param messageId        消息ID
+     * @param timestamp        消息时间戳
+     * @param itemType         消息类型
+     * @param itemContent      消息内容
+     * @param conversationType 会话类型
+     * @param sender           消息发送者
+     * @return
      */
-    public synchronized boolean handleReceiveMessage(String itemType, String messageId, long timestamp,
-                                                     IMConversationType conversationType, IMUser user, String content)
+    public synchronized boolean handleReceiveMessage(String messageId, long timestamp,
+                                                     String itemType, String itemContent,
+                                                     IMConversationType conversationType, IMUser sender)
     {
         if (TextUtils.isEmpty(itemType)
                 || TextUtils.isEmpty(messageId)
                 || timestamp <= 0
                 || conversationType == null
-                || user == null
-                || TextUtils.isEmpty(user.getId()))
+                || sender == null
+                || TextUtils.isEmpty(sender.getId()))
         {
             return false;
         }
 
-        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, itemType);
+        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(itemContent, itemType);
         if (item == null)
             return false;
 
         final IMMessage message = IMFactory.newMessageReceive();
         message.id = messageId;
         message.timestamp = timestamp;
-        message.sender = user;
-        message.peer = user.getId();
+        message.sender = sender;
+        message.peer = sender.getId();
         message.conversationType = conversationType;
         message.state = IMMessageState.Receive;
         message.isSelf = false;
