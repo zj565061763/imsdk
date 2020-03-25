@@ -258,8 +258,7 @@ public class IMConversation
     public static Query newQuery()
     {
         final IMConversation conversation = new IMConversation();
-        final PersistenceAccessor accessor = conversation.persistenceAccessor();
-        return new Query(conversation, accessor);
+        return new Query(conversation, conversation.persistenceAccessor());
     }
 
     public static final class Query
