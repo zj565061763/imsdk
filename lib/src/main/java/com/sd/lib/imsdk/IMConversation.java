@@ -6,6 +6,7 @@ import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
+import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.List;
 
@@ -75,8 +76,10 @@ public class IMConversation
         if (item == null)
             throw new NullPointerException("item is null");
 
+        final IMUser loginUser = IMManager.getInstance().getLoginUser();
+
         final IMMessage message = IMFactory.newMessageSend();
-        message.sender = IMManager.getInstance().getLoginUser();
+        message.sender = loginUser;
         message.peer = peer;
         message.conversationType = type;
         message.state = IMMessageState.None;
