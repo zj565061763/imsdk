@@ -13,7 +13,7 @@ public class IMConversation
 {
     private final String peer;
     private final IMConversationType type;
-    long timestamp;
+    long lastTimestamp;
 
     IMMessage lastMessage;
     int unreadCount;
@@ -34,9 +34,9 @@ public class IMConversation
         return type;
     }
 
-    public long getTimestamp()
+    public long getLastTimestamp()
     {
-        return timestamp;
+        return lastTimestamp;
     }
 
     public IMMessage getLastMessage()
@@ -57,7 +57,7 @@ public class IMConversation
     public boolean load()
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.loadConversation(peer, type, new PersistenceAccessor());
+        return handler.loadConversation(this, new PersistenceAccessor());
     }
 
     /**
@@ -92,8 +92,8 @@ public class IMConversation
         message.state = IMMessageState.Sending;
         message.save();
 
-        this.timestamp = message.getTimestamp();
-        holder.getConversationHandler().saveConversation(peer, type, message);
+        this.lastTimestamp = System.currentTimeMillis();
+        holder.getConversationHandler().saveConversation(this, message);
 
         IMUtils.runOnUiThread(new Runnable()
         {
@@ -194,7 +194,7 @@ public class IMConversation
     public void loadMessageBefore(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadMessageBefore(peer, type, count, lastMessage, callback);
+        handler.loadMessageBefore(this, count, lastMessage, callback);
     }
 
     public final class PersistenceAccessor
@@ -203,9 +203,9 @@ public class IMConversation
         {
         }
 
-        public void setTimestamp(long timestamp)
+        public void setLastTimestamp(long timestamp)
         {
-            IMConversation.this.timestamp = timestamp;
+            IMConversation.this.lastTimestamp = timestamp;
         }
 
         public void setLastMessage(IMMessage message)

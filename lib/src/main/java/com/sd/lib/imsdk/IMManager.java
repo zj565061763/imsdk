@@ -226,7 +226,7 @@ public class IMManager
             @Override
             public int compare(IMConversation o1, IMConversation o2)
             {
-                final long delta = o1.timestamp - o2.timestamp;
+                final long delta = o1.lastTimestamp - o2.lastTimestamp;
                 if (delta > 0)
                 {
                     return -1;
@@ -254,8 +254,11 @@ public class IMManager
             return;
 
         final String key = peer + "#" + type;
-        mMapConversation.remove(key);
-        mHandlerHolder.getConversationHandler().removeConversation(peer, type);
+        final IMConversation conversation = mMapConversation.remove(key);
+        if (conversation == null)
+            return;
+
+        mHandlerHolder.getConversationHandler().removeConversation(conversation);
     }
 
     /**
@@ -303,7 +306,10 @@ public class IMManager
             message.isRead = false;
 
         getHandlerHolder().getMessageHandler().saveMessage(message);
-        getHandlerHolder().getConversationHandler().saveConversation(message.getPeer(), message.getConversationType(), message);
+
+        final IMConversation conversation = getConversation(message.getPeer(), message.getConversationType());
+        conversation.lastTimestamp = System.currentTimeMillis();
+        getHandlerHolder().getConversationHandler().saveConversation(conversation, message);
 
         IMUtils.runOnUiThread(new Runnable()
         {
