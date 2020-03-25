@@ -255,6 +255,25 @@ public class IMConversation
         }
     }
 
+    public static Query newQuery()
+    {
+        final IMConversation conversation = new IMConversation();
+        final PersistenceAccessor accessor = conversation.persistenceAccessor();
+        return new Query(conversation, accessor);
+    }
+
+    public static class Query
+    {
+        public final IMConversation conversation;
+        public final IMConversation.PersistenceAccessor accessor;
+
+        private Query(IMConversation conversation, PersistenceAccessor accessor)
+        {
+            this.conversation = conversation;
+            this.accessor = accessor;
+        }
+    }
+
     private static void notifyCallbackProgress(final IMMessage message, final IMMessageItem messageItem, final int progress, final IMSendCallback callback)
     {
         IMUtils.runOnUiThread(new Runnable()
