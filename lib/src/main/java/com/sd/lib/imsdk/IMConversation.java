@@ -22,7 +22,6 @@ public class IMConversation
     {
         this.peer = peer;
         this.type = type;
-        this.timestamp = System.currentTimeMillis();
     }
 
     public String getPeer()
@@ -33,6 +32,11 @@ public class IMConversation
     public IMConversationType getType()
     {
         return type;
+    }
+
+    public long getTimestamp()
+    {
+        return timestamp;
     }
 
     public IMMessage getLastMessage()
@@ -87,7 +91,9 @@ public class IMConversation
         // 发送中
         message.state = IMMessageState.Sending;
         message.save();
-        holder.getConversationHandler().saveConversation(peer, type, message.getId());
+
+        this.timestamp = message.getTimestamp();
+        holder.getConversationHandler().saveConversation(peer, type, message);
 
         IMUtils.runOnUiThread(new Runnable()
         {

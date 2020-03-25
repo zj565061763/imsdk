@@ -302,7 +302,7 @@ public class IMManager
             message.isRead = false;
 
         getHandlerHolder().getMessageHandler().saveMessage(message);
-        getHandlerHolder().getConversationHandler().saveConversation(message.getPeer(), message.getConversationType(), message.getId());
+        getHandlerHolder().getConversationHandler().saveConversation(message.getPeer(), message.getConversationType(), message);
 
         IMUtils.runOnUiThread(new Runnable()
         {

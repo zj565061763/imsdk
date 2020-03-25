@@ -12,7 +12,7 @@ import java.util.List;
 public class IMConversationHandlerEmpty implements IMConversationHandler
 {
     @Override
-    public void saveConversation(String peer, IMConversationType conversationType, String lastMessageId)
+    public void saveConversation(String peer, IMConversationType conversationType, IMMessage message)
     {
 
     }
