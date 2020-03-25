@@ -42,7 +42,9 @@ public class IMFactory
      */
     static IMConversation newConversation(String peer, IMConversationType type)
     {
-        final IMConversation conversation = new IMConversation(peer, type);
+        final IMConversation conversation = new IMConversation();
+        conversation.peer = peer;
+        conversation.type = type;
         return conversation;
     }
 

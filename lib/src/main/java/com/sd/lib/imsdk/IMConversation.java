@@ -13,18 +13,12 @@ import java.util.List;
 
 public class IMConversation
 {
-    private final String peer;
-    private final IMConversationType type;
+    String peer;
+    IMConversationType type;
     long lastTimestamp;
 
     IMMessage lastMessage;
     int unreadCount;
-
-    IMConversation(String peer, IMConversationType type)
-    {
-        this.peer = peer;
-        this.type = type;
-    }
 
     public String getPeer()
     {
@@ -62,7 +56,7 @@ public class IMConversation
             return false;
 
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.loadConversation(this, new PersistenceAccessor());
+        return handler.loadConversation(this, persistenceAccessor());
     }
 
     /**
@@ -224,10 +218,25 @@ public class IMConversation
         handler.loadMessageBefore(this, count, lastMessage, callback);
     }
 
+    PersistenceAccessor persistenceAccessor()
+    {
+        return new PersistenceAccessor();
+    }
+
     public final class PersistenceAccessor
     {
         private PersistenceAccessor()
         {
+        }
+
+        public void setPeer(String peer)
+        {
+            IMConversation.this.peer = peer;
+        }
+
+        public void setType(IMConversationType type)
+        {
+            IMConversation.this.type = type;
         }
 
         public void setLastTimestamp(long timestamp)
