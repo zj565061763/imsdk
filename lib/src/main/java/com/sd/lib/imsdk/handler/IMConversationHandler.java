@@ -14,5 +14,7 @@ public interface IMConversationHandler
 
     boolean loadConversation(IMConversation conversation, IMConversation.PersistenceAccessor accessor);
 
+    List<IMConversation> getAllConversation();
+
     void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback);
 }

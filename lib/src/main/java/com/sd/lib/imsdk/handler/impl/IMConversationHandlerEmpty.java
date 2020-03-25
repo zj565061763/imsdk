@@ -29,6 +29,12 @@ public class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
+    public List<IMConversation> getAllConversation()
+    {
+        return null;
+    }
+
+    @Override
     public void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
         callback.onError(IMCode.ERROR_OTHER, "empty implementation");
