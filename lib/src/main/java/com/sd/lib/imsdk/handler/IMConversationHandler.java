@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IMConversationHandler
 {
-    void saveConversation(IMConversation conversation, IMMessage message);
+    void saveConversation(IMConversation conversation);
 
     void removeConversation(IMConversation conversation);
 

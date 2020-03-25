@@ -94,7 +94,7 @@ public class IMConversation
 
         this.lastTimestamp = System.currentTimeMillis();
         this.lastMessage = message;
-        holder.getConversationHandler().saveConversation(this, message);
+        holder.getConversationHandler().saveConversation(this);
 
         IMUtils.runOnUiThread(new Runnable()
         {

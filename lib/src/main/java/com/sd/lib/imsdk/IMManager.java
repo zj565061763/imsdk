@@ -310,7 +310,7 @@ public class IMManager
         final IMConversation conversation = getConversation(message.getPeer(), message.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = message;
-        getHandlerHolder().getConversationHandler().saveConversation(conversation, message);
+        getHandlerHolder().getConversationHandler().saveConversation(conversation);
 
         IMUtils.runOnUiThread(new Runnable()
         {

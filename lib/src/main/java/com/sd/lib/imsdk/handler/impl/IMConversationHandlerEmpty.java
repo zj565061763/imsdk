@@ -11,7 +11,7 @@ import java.util.List;
 public class IMConversationHandlerEmpty implements IMConversationHandler
 {
     @Override
-    public void saveConversation(IMConversation conversation, IMMessage message)
+    public void saveConversation(IMConversation conversation)
     {
 
     }
