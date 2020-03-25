@@ -44,8 +44,8 @@ public class IMManager
     private final List<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArrayList<>();
     private final List<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArrayList<>();
 
-    private IMUser mLoginUser;
-    private IMConversation mChattingConversation;
+    private volatile IMUser mLoginUser;
+    private volatile IMConversation mChattingConversation;
 
     public IMHandlerHolder getHandlerHolder()
     {
