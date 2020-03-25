@@ -130,29 +130,45 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
-            messageItem.upload(new IMMessageItem.UploadCallback()
+            final boolean[] arrTag = new boolean[]{false};
+            final boolean uploadSubmitted = messageItem.upload(new IMMessageItem.UploadCallback()
             {
                 @Override
                 public void onProgress(int progress)
                 {
-                    notifyCallbackProgress(message, messageItem, progress, callback);
+                    if (arrTag[0])
+                        notifyCallbackProgress(message, messageItem, progress, callback);
                 }
 
                 @Override
                 public void onSuccess()
                 {
-                    message.save();
-                    sendRunnable.run();
+                    if (arrTag[0])
+                    {
+                        message.save();
+                        sendRunnable.run();
+                    }
                 }
 
                 @Override
                 public void onError(String desc)
                 {
-                    message.state = IMMessageState.SendFail;
-                    message.save();
-                    notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
+                    if (arrTag[0])
+                    {
+                        message.state = IMMessageState.SendFail;
+                        message.save();
+                        notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
+                    }
                 }
             });
+
+            arrTag[0] = uploadSubmitted;
+            if (!uploadSubmitted)
+            {
+                message.state = IMMessageState.SendFail;
+                message.save();
+                notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, "upload return false", callback);
+            }
         } else
         {
             sendRunnable.run();
