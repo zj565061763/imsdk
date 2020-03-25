@@ -213,10 +213,11 @@ public class IMManager
      */
     public synchronized List<IMConversation> getAllConversation()
     {
-        final List<IMConversation> list = new ArrayList<>(mMapConversation.values());
-        for (IMConversation item : list)
+        final List<IMConversation> list = new ArrayList<>(mMapConversation.size());
+        for (IMConversation item : mMapConversation.values())
         {
-            item.load();
+            if (item.load())
+                list.add(item);
         }
 
         Collections.sort(list, new Comparator<IMConversation>()
@@ -224,7 +225,17 @@ public class IMManager
             @Override
             public int compare(IMConversation o1, IMConversation o2)
             {
-                return 0;
+                final long delta = o1.timestamp - o2.timestamp;
+                if (delta > 0)
+                {
+                    return -1;
+                } else if (delta < 0)
+                {
+                    return 1;
+                } else
+                {
+                    return 0;
+                }
             }
         });
         return list;

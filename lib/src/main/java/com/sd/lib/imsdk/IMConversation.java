@@ -13,6 +13,7 @@ public class IMConversation
 {
     private final String peer;
     private final IMConversationType type;
+    long timestamp;
 
     IMMessage lastMessage;
     int unreadCount;
@@ -21,6 +22,7 @@ public class IMConversation
     {
         this.peer = peer;
         this.type = type;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public String getPeer()
@@ -44,15 +46,14 @@ public class IMConversation
     }
 
     /**
-     * 刷新会话
+     * 加载会话
      *
-     * @return
+     * @return true-加载成功；false-加载失败
      */
-    public IMConversation load()
+    public boolean load()
     {
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadConversation(peer, type, new PersistenceAccessor());
-        return this;
+        return handler.loadConversation(peer, type, new PersistenceAccessor());
     }
 
     /**
@@ -194,6 +195,11 @@ public class IMConversation
     {
         private PersistenceAccessor()
         {
+        }
+
+        public void setTimestamp(long timestamp)
+        {
+            IMConversation.this.timestamp = timestamp;
         }
 
         public void setLastMessage(IMMessage message)
