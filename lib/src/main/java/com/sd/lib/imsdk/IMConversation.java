@@ -8,6 +8,7 @@ import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.model.IMUser;
 
+import java.util.Collection;
 import java.util.List;
 
 public class IMConversation
@@ -115,7 +116,7 @@ public class IMConversation
             @Override
             public void run()
             {
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSend(message);
@@ -251,7 +252,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onProgress(message, messageItem, progress);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onProgress(message, messageItem, progress);
@@ -270,7 +271,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onError(message, code, desc);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onError(message, code, desc);
@@ -289,7 +290,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onSuccess(message);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSuccess(message);

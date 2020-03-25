@@ -8,13 +8,14 @@ import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class IMManager
 {
@@ -41,8 +42,8 @@ public class IMManager
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
-    private final List<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArrayList<>();
-    private final List<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArrayList<>();
+    private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
@@ -201,7 +202,7 @@ public class IMManager
         mListIMOutgoingCallback.remove(callback);
     }
 
-    List<IMOutgoingCallback> getListIMOutgoingCallback()
+    Collection<IMOutgoingCallback> getListIMOutgoingCallback()
     {
         return mListIMOutgoingCallback;
     }
