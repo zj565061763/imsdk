@@ -22,4 +22,10 @@ public class IMMessageHandlerEmpty implements IMMessageHandler
     {
 
     }
+
+    @Override
+    public void checkInterruptedMessage()
+    {
+
+    }
 }

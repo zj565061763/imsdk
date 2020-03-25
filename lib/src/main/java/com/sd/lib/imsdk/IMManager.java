@@ -133,6 +133,7 @@ public class IMManager
 
         if (user != null)
         {
+            checkInterruptedMessage();
             for (IMLoginStateCallback item : mListIMLoginStateCallback)
             {
                 item.onLogin(user.getId());
@@ -319,6 +320,14 @@ public class IMManager
             return;
 
         mHandlerHolder.getConversationHandler().removeConversation(conversation);
+    }
+
+    /**
+     * 检查是否有在发送中被中断的消息
+     */
+    private void checkInterruptedMessage()
+    {
+        mHandlerHolder.getMessageHandler().checkInterruptedMessage();
     }
 
     /**
