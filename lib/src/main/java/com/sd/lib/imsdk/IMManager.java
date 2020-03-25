@@ -298,6 +298,9 @@ public class IMManager
                                                      String itemType, String itemContent,
                                                      IMConversationType conversationType, IMUser sender)
     {
+        if (!isLogin())
+            return false;
+
         if (TextUtils.isEmpty(itemType)
                 || TextUtils.isEmpty(messageId)
                 || timestamp <= 0
