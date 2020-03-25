@@ -262,7 +262,7 @@ public class IMConversation
         return new Query(conversation, accessor);
     }
 
-    public static class Query
+    public static final class Query
     {
         public final IMConversation conversation;
         public final IMConversation.PersistenceAccessor accessor;
