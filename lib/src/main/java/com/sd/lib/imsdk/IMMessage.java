@@ -166,4 +166,22 @@ public class IMMessage
             IMMessage.this.item = item;
         }
     }
+
+    public static Query newQuery()
+    {
+        final IMMessage message = new IMMessage();
+        return new Query(message, message.persistenceAccessor());
+    }
+
+    public static final class Query
+    {
+        public final IMMessage message;
+        public final PersistenceAccessor accessor;
+
+        private Query(IMMessage message, PersistenceAccessor accessor)
+        {
+            this.message = message;
+            this.accessor = accessor;
+        }
+    }
 }
