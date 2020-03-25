@@ -83,7 +83,6 @@ public class IMConversation
         message.sender = loginUser;
         message.peer = peer;
         message.conversationType = type;
-        message.state = IMMessageState.None;
         message.isSelf = true;
         message.isRead = true;
         message.item = item;
@@ -103,8 +102,7 @@ public class IMConversation
 
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
-        // 发送中
-        message.state = IMMessageState.Sending;
+        message.state = IMMessageState.SendPrepare;
         message.save();
 
         this.lastTimestamp = System.currentTimeMillis();
@@ -129,6 +127,9 @@ public class IMConversation
             @Override
             public void run()
             {
+                message.state = IMMessageState.Sending;
+                message.save();
+
                 holder.getMessageSender().sendMessage(message, new IMCallback()
                 {
                     @Override
@@ -168,7 +169,6 @@ public class IMConversation
                 {
                     if (arrTag[0])
                     {
-                        message.save();
                         sendRunnable.run();
                     }
                 }
@@ -186,7 +186,11 @@ public class IMConversation
             });
 
             arrTag[0] = uploadSubmitted;
-            if (!uploadSubmitted)
+            if (uploadSubmitted)
+            {
+                message.state = IMMessageState.UploadItem;
+                message.save();
+            } else
             {
                 message.state = IMMessageState.SendFail;
                 message.save();
