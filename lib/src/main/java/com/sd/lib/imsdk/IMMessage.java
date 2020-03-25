@@ -11,7 +11,7 @@ public class IMMessage
 
     String peer;
     IMConversationType conversationType;
-    IMMessageState state;
+    IMMessageState state = IMMessageState.None;
     boolean isSelf;
     boolean isRead;
 

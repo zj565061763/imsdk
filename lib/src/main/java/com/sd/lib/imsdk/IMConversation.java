@@ -70,7 +70,6 @@ public class IMConversation
         final IMMessage message = IMFactory.newMessageSend();
         message.peer = peer;
         message.conversationType = type;
-        message.state = IMMessageState.None;
         message.isSelf = true;
         message.isRead = true;
         message.item = item;
@@ -83,8 +82,8 @@ public class IMConversation
     {
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
-        // 发送中
-        message.state = IMMessageState.Sending;
+        // 发送准备
+        message.state = IMMessageState.SendPrepare;
         message.save();
         holder.getConversationHandler().saveConversation(message);
 
@@ -106,6 +105,9 @@ public class IMConversation
             @Override
             public void run()
             {
+                // 发送中
+                message.state = IMMessageState.Sending;
+                message.save();
                 holder.getMessageSender().sendMessage(message, new IMCallback()
                 {
                     @Override
@@ -130,6 +132,9 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
+            // 上传Item
+            message.state = IMMessageState.UploadItem;
+            message.save();
             messageItem.upload(new IMMessageItem.UploadCallback()
             {
                 @Override
@@ -141,7 +146,7 @@ public class IMConversation
                 @Override
                 public void onSuccess()
                 {
-                    message.save();
+                    // sendRunnable中会保存一次，所以这里不保存消息
                     sendRunnable.run();
                 }
 
