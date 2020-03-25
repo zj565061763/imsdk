@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
+import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
@@ -44,6 +45,7 @@ public class IMManager
 
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMLoginStateCallback> mListIMLoginStateCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
@@ -109,20 +111,32 @@ public class IMManager
      *
      * @param user
      */
-    public void setLoginUser(IMUser user)
+    public synchronized void setLoginUser(IMUser user)
     {
+        final IMUser old = mLoginUser;
+        if (old == null && user == null)
+            return;
+
+        if (mLoginUser != null && mLoginUser.equals(old))
+            return;
+
         mLoginUser = user;
+        mMapConversation.clear();
+
+        if (old != null)
+        {
+            for (IMLoginStateCallback item : mListIMLoginStateCallback)
+            {
+                item.onLogout(old.getId());
+            }
+        }
 
         if (user != null)
         {
-            if (TextUtils.isEmpty(user.getId()))
+            for (IMLoginStateCallback item : mListIMLoginStateCallback)
             {
-                mLoginUser = null;
-                throw new IllegalArgumentException("user id is empty");
+                item.onLogin(user.getId());
             }
-        } else
-        {
-            mMapConversation.clear();
         }
     }
 
@@ -205,6 +219,26 @@ public class IMManager
     Collection<IMOutgoingCallback> getListIMOutgoingCallback()
     {
         return mListIMOutgoingCallback;
+    }
+
+    /**
+     * 添加IM登陆状态回调
+     *
+     * @param callback
+     */
+    public synchronized void addIMLoginStateCallback(IMLoginStateCallback callback)
+    {
+        mListIMLoginStateCallback.add(callback);
+    }
+
+    /**
+     * 移除IM登陆状态回调
+     *
+     * @param callback
+     */
+    public synchronized void removeIMLoginStateCallback(IMLoginStateCallback callback)
+    {
+        mListIMLoginStateCallback.remove(callback);
     }
 
     /**
