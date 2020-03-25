@@ -1,11 +1,14 @@
 package com.sd.lib.imsdk;
 
+import android.text.TextUtils;
+
 import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
+import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.List;
 
@@ -73,6 +76,14 @@ public class IMConversation
             throw new NullPointerException("item is null");
 
         final IMMessage message = IMFactory.newMessageSend();
+        final IMUser user = message.getSender();
+        if (user == null || TextUtils.isEmpty(user.getId()))
+        {
+            if (callback != null)
+                callback.onError(message, IMCode.ERROR_NOT_LOGIN, "login user is null");
+            return message;
+        }
+
         message.peer = peer;
         message.conversationType = type;
         message.state = IMMessageState.None;

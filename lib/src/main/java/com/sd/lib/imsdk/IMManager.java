@@ -101,6 +101,12 @@ public class IMManager
     public void setLoginUser(IMUser user)
     {
         mLoginUser = user;
+
+        if (user != null)
+        {
+            if (TextUtils.isEmpty(user.getId()))
+                throw new IllegalArgumentException("user id is empty");
+        }
     }
 
     /**
