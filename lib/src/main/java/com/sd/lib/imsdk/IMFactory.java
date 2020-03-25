@@ -4,7 +4,7 @@ import com.sd.lib.imsdk.handler.IMMessageHandler;
 
 import java.util.UUID;
 
-public class IMFactory
+class IMFactory
 {
     /**
      * 创建发送消息
@@ -46,24 +46,5 @@ public class IMFactory
         conversation.peer = peer;
         conversation.type = type;
         return conversation;
-    }
-
-    public static IMMessageQuery newMessageQuery()
-    {
-        final IMMessage message = new IMMessage();
-        final IMMessageQuery messageQuery = new IMMessageQuery(message, message.persistenceAccessor());
-        return messageQuery;
-    }
-
-    public static class IMMessageQuery
-    {
-        public final IMMessage message;
-        public final IMMessage.PersistenceAccessor accessor;
-
-        private IMMessageQuery(IMMessage message, IMMessage.PersistenceAccessor accessor)
-        {
-            this.message = message;
-            this.accessor = accessor;
-        }
     }
 }
