@@ -8,6 +8,7 @@ public class IMMessage
     String id;
     long timestamp;
     IMUser sender;
+    private final IMUser owner;
 
     String peer;
     IMConversationType conversationType;
@@ -19,6 +20,7 @@ public class IMMessage
 
     IMMessage()
     {
+        owner = IMManager.getInstance().getLoginUser();
     }
 
     /**
@@ -59,6 +61,11 @@ public class IMMessage
     public IMUser getSender()
     {
         return sender;
+    }
+
+    public IMUser getOwner()
+    {
+        return owner;
     }
 
     public String getPeer()

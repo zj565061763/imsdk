@@ -4,17 +4,19 @@ import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
+import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class IMManager
 {
@@ -41,11 +43,12 @@ public class IMManager
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
-    private final List<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArrayList<>();
-    private final List<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArrayList<>();
+    private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMLoginStateCallback> mListIMLoginStateCallback = new CopyOnWriteArraySet<>();
 
-    private IMUser mLoginUser;
-    private IMConversation mChattingConversation;
+    private volatile IMUser mLoginUser;
+    private volatile IMConversation mChattingConversation;
 
     public IMHandlerHolder getHandlerHolder()
     {
@@ -84,6 +87,16 @@ public class IMManager
     }
 
     /**
+     * 是否已登录
+     *
+     * @return
+     */
+    public boolean isLogin()
+    {
+        return mLoginUser != null;
+    }
+
+    /**
      * 返回登录的用户
      *
      * @return
@@ -98,9 +111,33 @@ public class IMManager
      *
      * @param user
      */
-    public void setLoginUser(IMUser user)
+    public synchronized void setLoginUser(IMUser user)
     {
+        final IMUser old = mLoginUser;
+        if (old == null && user == null)
+            return;
+
+        if (mLoginUser != null && mLoginUser.equals(old))
+            return;
+
         mLoginUser = user;
+        mMapConversation.clear();
+
+        if (old != null)
+        {
+            for (IMLoginStateCallback item : mListIMLoginStateCallback)
+            {
+                item.onLogout(old.getId());
+            }
+        }
+
+        if (user != null)
+        {
+            for (IMLoginStateCallback item : mListIMLoginStateCallback)
+            {
+                item.onLogin(user.getId());
+            }
+        }
     }
 
     /**
@@ -146,7 +183,8 @@ public class IMManager
      */
     public synchronized void addIMIncomingCallback(IMIncomingCallback callback)
     {
-        mListIMIncomingCallback.add(callback);
+        if (callback != null)
+            mListIMIncomingCallback.add(callback);
     }
 
     /**
@@ -166,7 +204,8 @@ public class IMManager
      */
     public synchronized void addIMOutgoingCallback(IMOutgoingCallback callback)
     {
-        mListIMOutgoingCallback.add(callback);
+        if (callback != null)
+            mListIMOutgoingCallback.add(callback);
     }
 
     /**
@@ -179,9 +218,30 @@ public class IMManager
         mListIMOutgoingCallback.remove(callback);
     }
 
-    List<IMOutgoingCallback> getListIMOutgoingCallback()
+    Collection<IMOutgoingCallback> getListIMOutgoingCallback()
     {
         return mListIMOutgoingCallback;
+    }
+
+    /**
+     * 添加IM登陆状态回调
+     *
+     * @param callback
+     */
+    public synchronized void addIMLoginStateCallback(IMLoginStateCallback callback)
+    {
+        if (callback != null)
+            mListIMLoginStateCallback.add(callback);
+    }
+
+    /**
+     * 移除IM登陆状态回调
+     *
+     * @param callback
+     */
+    public synchronized void removeIMLoginStateCallback(IMLoginStateCallback callback)
+    {
+        mListIMLoginStateCallback.remove(callback);
     }
 
     /**
@@ -202,6 +262,7 @@ public class IMManager
         {
             conversation = IMFactory.newConversation(peer, type);
             mMapConversation.put(key, conversation);
+            conversation.load();
         }
         return conversation;
     }
@@ -213,10 +274,11 @@ public class IMManager
      */
     public synchronized List<IMConversation> getAllConversation()
     {
-        final List<IMConversation> list = new ArrayList<>(mMapConversation.values());
-        for (IMConversation item : list)
+        final List<IMConversation> list = new ArrayList<>(mMapConversation.size());
+        for (IMConversation item : mMapConversation.values())
         {
-            item.load();
+            if (item.load())
+                list.add(item);
         }
 
         Collections.sort(list, new Comparator<IMConversation>()
@@ -224,7 +286,17 @@ public class IMManager
             @Override
             public int compare(IMConversation o1, IMConversation o2)
             {
-                return 0;
+                final long delta = o1.lastTimestamp - o2.lastTimestamp;
+                if (delta > 0)
+                {
+                    return -1;
+                } else if (delta < 0)
+                {
+                    return 1;
+                } else
+                {
+                    return 0;
+                }
             }
         });
         return list;
@@ -242,35 +314,50 @@ public class IMManager
             return;
 
         final String key = peer + "#" + type;
-        mMapConversation.remove(key);
-        mHandlerHolder.getConversationHandler().removeConversation(peer, type);
+        final IMConversation conversation = mMapConversation.remove(key);
+        if (conversation == null)
+            return;
+
+        mHandlerHolder.getConversationHandler().removeConversation(conversation);
     }
 
     /**
      * 处理消息接收
+     *
+     * @param messageId        消息ID
+     * @param timestamp        消息时间戳
+     * @param itemType         消息类型
+     * @param itemContent      消息内容
+     * @param conversationType 会话类型
+     * @param sender           消息发送者
+     * @return
      */
-    public synchronized boolean handleReceiveMessage(String itemType, String messageId, long timestamp,
-                                                     IMConversationType conversationType, IMUser user, String content)
+    public synchronized boolean handleReceiveMessage(String messageId, long timestamp,
+                                                     String itemType, String itemContent,
+                                                     IMConversationType conversationType, IMUser sender)
     {
+        if (!isLogin())
+            return false;
+
         if (TextUtils.isEmpty(itemType)
                 || TextUtils.isEmpty(messageId)
                 || timestamp <= 0
                 || conversationType == null
-                || user == null
-                || TextUtils.isEmpty(user.getId()))
+                || sender == null
+                || TextUtils.isEmpty(sender.getId()))
         {
             return false;
         }
 
-        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(content, itemType);
+        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(itemContent, itemType);
         if (item == null)
             return false;
 
         final IMMessage message = IMFactory.newMessageReceive();
         message.id = messageId;
         message.timestamp = timestamp;
-        message.sender = user;
-        message.peer = user.getId();
+        message.sender = sender;
+        message.peer = sender.getId();
         message.conversationType = conversationType;
         message.state = IMMessageState.Receive;
         message.isSelf = false;
@@ -282,7 +369,11 @@ public class IMManager
             message.isRead = false;
 
         getHandlerHolder().getMessageHandler().saveMessage(message);
-        getHandlerHolder().getConversationHandler().saveConversation(message);
+
+        final IMConversation conversation = getConversation(message.getPeer(), message.getConversationType());
+        conversation.lastTimestamp = System.currentTimeMillis();
+        conversation.lastMessage = message;
+        getHandlerHolder().getConversationHandler().saveConversation(conversation);
 
         IMUtils.runOnUiThread(new Runnable()
         {

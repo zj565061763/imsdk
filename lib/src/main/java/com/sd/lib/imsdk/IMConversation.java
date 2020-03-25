@@ -6,13 +6,16 @@ import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
+import com.sd.lib.imsdk.model.IMUser;
 
+import java.util.Collection;
 import java.util.List;
 
 public class IMConversation
 {
     private final String peer;
     private final IMConversationType type;
+    long lastTimestamp;
 
     IMMessage lastMessage;
     int unreadCount;
@@ -33,6 +36,11 @@ public class IMConversation
         return type;
     }
 
+    public long getLastTimestamp()
+    {
+        return lastTimestamp;
+    }
+
     public IMMessage getLastMessage()
     {
         return lastMessage;
@@ -44,15 +52,17 @@ public class IMConversation
     }
 
     /**
-     * 刷新会话
+     * 加载会话
      *
-     * @return
+     * @return true-加载成功；false-加载失败
      */
-    public IMConversation load()
+    public boolean load()
     {
+        if (!IMManager.getInstance().isLogin())
+            return false;
+
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadConversation(peer, type, new PersistenceAccessor());
-        return this;
+        return handler.loadConversation(this, new PersistenceAccessor());
     }
 
     /**
@@ -67,9 +77,13 @@ public class IMConversation
         if (item == null)
             throw new NullPointerException("item is null");
 
+        final IMUser loginUser = IMManager.getInstance().getLoginUser();
+
         final IMMessage message = IMFactory.newMessageSend();
+        message.sender = loginUser;
         message.peer = peer;
         message.conversationType = type;
+        message.state = IMMessageState.None;
         message.isSelf = true;
         message.isRead = true;
         message.item = item;
@@ -80,19 +94,29 @@ public class IMConversation
 
     IMMessage send(final IMMessage message, final IMSendCallback callback)
     {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(message, IMCode.ERROR_NOT_LOGIN, "not login");
+            return message;
+        }
+
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
-        // 发送准备
-        message.state = IMMessageState.SendPrepare;
+        // 发送中
+        message.state = IMMessageState.Sending;
         message.save();
-        holder.getConversationHandler().saveConversation(message);
+
+        this.lastTimestamp = System.currentTimeMillis();
+        this.lastMessage = message;
+        holder.getConversationHandler().saveConversation(this);
 
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSend(message);
@@ -105,9 +129,6 @@ public class IMConversation
             @Override
             public void run()
             {
-                // 发送中
-                message.state = IMMessageState.Sending;
-                message.save();
                 holder.getMessageSender().sendMessage(message, new IMCallback()
                 {
                     @Override
@@ -132,32 +153,45 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
-            // 上传Item
-            message.state = IMMessageState.UploadItem;
-            message.save();
-            messageItem.upload(new IMMessageItem.UploadCallback()
+            final boolean[] arrTag = new boolean[]{false};
+            final boolean uploadSubmitted = messageItem.upload(new IMMessageItem.UploadCallback()
             {
                 @Override
                 public void onProgress(int progress)
                 {
-                    notifyCallbackProgress(message, messageItem, progress, callback);
+                    if (arrTag[0])
+                        notifyCallbackProgress(message, messageItem, progress, callback);
                 }
 
                 @Override
                 public void onSuccess()
                 {
-                    // sendRunnable中会保存一次，所以这里不保存消息
-                    sendRunnable.run();
+                    if (arrTag[0])
+                    {
+                        message.save();
+                        sendRunnable.run();
+                    }
                 }
 
                 @Override
                 public void onError(String desc)
                 {
-                    message.state = IMMessageState.SendFail;
-                    message.save();
-                    notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
+                    if (arrTag[0])
+                    {
+                        message.state = IMMessageState.SendFail;
+                        message.save();
+                        notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
+                    }
                 }
             });
+
+            arrTag[0] = uploadSubmitted;
+            if (!uploadSubmitted)
+            {
+                message.state = IMMessageState.SendFail;
+                message.save();
+                notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, "upload return false", callback);
+            }
         } else
         {
             sendRunnable.run();
@@ -175,14 +209,26 @@ public class IMConversation
      */
     public void loadMessageBefore(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(IMCode.ERROR_NOT_LOGIN, "not login");
+            return;
+        }
+
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadMessageBefore(peer, type, count, lastMessage, callback);
+        handler.loadMessageBefore(this, count, lastMessage, callback);
     }
 
     public final class PersistenceAccessor
     {
         private PersistenceAccessor()
         {
+        }
+
+        public void setLastTimestamp(long timestamp)
+        {
+            IMConversation.this.lastTimestamp = timestamp;
         }
 
         public void setLastMessage(IMMessage message)
@@ -206,7 +252,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onProgress(message, messageItem, progress);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onProgress(message, messageItem, progress);
@@ -225,7 +271,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onError(message, code, desc);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onError(message, code, desc);
@@ -244,7 +290,7 @@ public class IMConversation
                 if (callback != null)
                     callback.onSuccess(message);
 
-                final List<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
+                final Collection<IMOutgoingCallback> listCallback = IMManager.getInstance().getListIMOutgoingCallback();
                 for (IMOutgoingCallback item : listCallback)
                 {
                     item.onSuccess(message);
