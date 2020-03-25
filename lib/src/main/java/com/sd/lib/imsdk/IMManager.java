@@ -84,6 +84,16 @@ public class IMManager
     }
 
     /**
+     * 是否已登录
+     *
+     * @return
+     */
+    public boolean isLogin()
+    {
+        return mLoginUser != null;
+    }
+
+    /**
      * 返回登录的用户
      *
      * @return
@@ -109,6 +119,9 @@ public class IMManager
                 mLoginUser = null;
                 throw new IllegalArgumentException("user id is empty");
             }
+        } else
+        {
+            mMapConversation.clear();
         }
     }
 

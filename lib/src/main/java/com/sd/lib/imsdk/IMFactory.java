@@ -16,7 +16,6 @@ public class IMFactory
         final IMMessage message = new IMMessage();
         message.id = UUID.randomUUID().toString();
         message.timestamp = System.currentTimeMillis();
-        message.sender = IMManager.getInstance().getLoginUser();
 
         final IMMessageHandler handler = IMManager.getInstance().getHandlerHolder().getMessageHandler();
         handler.interceptNewMessageSend(message.interceptAccessor());

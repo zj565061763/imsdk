@@ -1,14 +1,11 @@
 package com.sd.lib.imsdk;
 
-import android.text.TextUtils;
-
 import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
-import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.List;
 
@@ -59,6 +56,9 @@ public class IMConversation
      */
     public boolean load()
     {
+        if (!IMManager.getInstance().isLogin())
+            return false;
+
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         return handler.loadConversation(this, new PersistenceAccessor());
     }
@@ -76,14 +76,7 @@ public class IMConversation
             throw new NullPointerException("item is null");
 
         final IMMessage message = IMFactory.newMessageSend();
-        final IMUser user = message.getSender();
-        if (user == null || TextUtils.isEmpty(user.getId()))
-        {
-            if (callback != null)
-                callback.onError(message, IMCode.ERROR_NOT_LOGIN, "login user is null");
-            return message;
-        }
-
+        message.sender = IMManager.getInstance().getLoginUser();
         message.peer = peer;
         message.conversationType = type;
         message.state = IMMessageState.None;
@@ -97,6 +90,13 @@ public class IMConversation
 
     IMMessage send(final IMMessage message, final IMSendCallback callback)
     {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(message, IMCode.ERROR_NOT_LOGIN, "not login");
+            return message;
+        }
+
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
         // 发送中
@@ -205,6 +205,13 @@ public class IMConversation
      */
     public void loadMessageBefore(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
     {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(IMCode.ERROR_NOT_LOGIN, "not login");
+            return;
+        }
+
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.loadMessageBefore(this, count, lastMessage, callback);
     }
