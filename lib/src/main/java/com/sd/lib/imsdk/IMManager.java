@@ -183,7 +183,8 @@ public class IMManager
      */
     public synchronized void addIMIncomingCallback(IMIncomingCallback callback)
     {
-        mListIMIncomingCallback.add(callback);
+        if (callback != null)
+            mListIMIncomingCallback.add(callback);
     }
 
     /**
@@ -203,7 +204,8 @@ public class IMManager
      */
     public synchronized void addIMOutgoingCallback(IMOutgoingCallback callback)
     {
-        mListIMOutgoingCallback.add(callback);
+        if (callback != null)
+            mListIMOutgoingCallback.add(callback);
     }
 
     /**
@@ -228,7 +230,8 @@ public class IMManager
      */
     public synchronized void addIMLoginStateCallback(IMLoginStateCallback callback)
     {
-        mListIMLoginStateCallback.add(callback);
+        if (callback != null)
+            mListIMLoginStateCallback.add(callback);
     }
 
     /**
