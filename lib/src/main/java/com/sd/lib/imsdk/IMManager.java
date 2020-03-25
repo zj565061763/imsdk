@@ -202,6 +202,7 @@ public class IMManager
         {
             conversation = IMFactory.newConversation(peer, type);
             mMapConversation.put(key, conversation);
+            conversation.load();
         }
         return conversation;
     }
