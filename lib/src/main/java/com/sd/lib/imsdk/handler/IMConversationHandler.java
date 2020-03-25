@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IMConversationHandler
 {
-    void saveConversation(IMMessage message);
+    void saveConversation(String peer, IMConversationType conversationType, String lastMessageId);
 
     void removeConversation(String peer, IMConversationType conversationType);
 

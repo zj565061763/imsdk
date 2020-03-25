@@ -291,7 +291,7 @@ public class IMManager
             message.isRead = false;
 
         getHandlerHolder().getMessageHandler().saveMessage(message);
-        getHandlerHolder().getConversationHandler().saveConversation(message);
+        getHandlerHolder().getConversationHandler().saveConversation(message.getPeer(), message.getConversationType(), message.getId());
 
         IMUtils.runOnUiThread(new Runnable()
         {

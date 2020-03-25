@@ -86,7 +86,7 @@ public class IMConversation
         // 发送中
         message.state = IMMessageState.Sending;
         message.save();
-        holder.getConversationHandler().saveConversation(message);
+        holder.getConversationHandler().saveConversation(peer, type, message.getId());
 
         IMUtils.runOnUiThread(new Runnable()
         {
