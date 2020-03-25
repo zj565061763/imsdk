@@ -325,10 +325,9 @@ public class IMManager
 
         final String key = peer + "#" + type;
         final IMConversation conversation = mMapConversation.remove(key);
-        if (conversation == null)
-            return;
 
-        mHandlerHolder.getConversationHandler().removeConversation(conversation);
+        if (conversation != null)
+            mHandlerHolder.getConversationHandler().removeConversation(conversation);
     }
 
     /**
