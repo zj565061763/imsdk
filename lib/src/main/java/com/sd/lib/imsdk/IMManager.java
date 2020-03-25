@@ -105,7 +105,10 @@ public class IMManager
         if (user != null)
         {
             if (TextUtils.isEmpty(user.getId()))
+            {
+                mLoginUser = null;
                 throw new IllegalArgumentException("user id is empty");
+            }
         }
     }
 
