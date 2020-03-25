@@ -116,7 +116,7 @@ public class IMManager
         if (old == null && user == null)
             return;
 
-        if (mLoginUser != null && mLoginUser.equals(old))
+        if (user != null && user.equals(old))
             return;
 
         mLoginUser = user;
