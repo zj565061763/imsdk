@@ -15,10 +15,10 @@ public class IMConversation
 {
     String peer;
     IMConversationType type;
-    long lastTimestamp;
 
     IMMessage lastMessage;
     int unreadCount;
+    long lastTimestamp;
 
     public String getPeer()
     {
@@ -28,11 +28,6 @@ public class IMConversation
     public IMConversationType getType()
     {
         return type;
-    }
-
-    public long getLastTimestamp()
-    {
-        return lastTimestamp;
     }
 
     public IMMessage getLastMessage()
@@ -45,8 +40,22 @@ public class IMConversation
         return unreadCount;
     }
 
+    public long getLastTimestamp()
+    {
+        return lastTimestamp;
+    }
+
     void read(IMConversation conversation)
     {
+        if (!peer.equals(conversation.peer))
+            throw new IllegalArgumentException("read conversation error peer");
+
+        if (!type.equals(conversation.type))
+            throw new IllegalArgumentException("read conversation error type");
+
+        this.lastMessage = conversation.getLastMessage();
+        this.unreadCount = conversation.getUnreadCount();
+        this.lastTimestamp = conversation.getLastTimestamp();
     }
 
     /**
@@ -243,11 +252,6 @@ public class IMConversation
             IMConversation.this.type = type;
         }
 
-        public void setLastTimestamp(long timestamp)
-        {
-            IMConversation.this.lastTimestamp = timestamp;
-        }
-
         public void setLastMessage(IMMessage message)
         {
             IMConversation.this.lastMessage = message;
@@ -256,6 +260,11 @@ public class IMConversation
         public void setUnreadCount(int count)
         {
             IMConversation.this.unreadCount = count;
+        }
+
+        public void setLastTimestamp(long timestamp)
+        {
+            IMConversation.this.lastTimestamp = timestamp;
         }
     }
 
