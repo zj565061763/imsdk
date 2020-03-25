@@ -8,7 +8,6 @@ import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.model.IMUser;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -262,8 +261,8 @@ public class IMManager
         if (conversation == null)
         {
             conversation = IMFactory.newConversation(peer, type);
-            mMapConversation.put(key, conversation);
             conversation.load();
+            mMapConversation.put(key, conversation);
         }
         return conversation;
     }
@@ -275,11 +274,21 @@ public class IMManager
      */
     public synchronized List<IMConversation> getAllConversation()
     {
-        final List<IMConversation> list = new ArrayList<>(mMapConversation.size());
-        for (IMConversation item : mMapConversation.values())
+        final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
+        if (list == null || list.isEmpty())
+            return null;
+
+        for (IMConversation item : list)
         {
-            if (item.load())
-                list.add(item);
+            final String key = item.getPeer() + "#" + item.getType();
+            final IMConversation cache = mMapConversation.get(key);
+            if (cache != null)
+            {
+                cache.read(item);
+            } else
+            {
+                mMapConversation.put(key, item);
+            }
         }
 
         Collections.sort(list, new Comparator<IMConversation>()

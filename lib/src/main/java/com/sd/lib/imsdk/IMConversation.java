@@ -45,6 +45,10 @@ public class IMConversation
         return unreadCount;
     }
 
+    void read(IMConversation conversation)
+    {
+    }
+
     /**
      * 加载会话
      *
