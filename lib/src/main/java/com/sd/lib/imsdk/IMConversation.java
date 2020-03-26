@@ -219,6 +219,22 @@ public class IMConversation
         handler.loadMessageBefore(this, count, lastMessage, callback);
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+            return true;
+
+        if (obj == null)
+            return false;
+
+        if (getClass() != obj.getClass())
+            return false;
+
+        final IMConversation other = (IMConversation) obj;
+        return IMUtils.equals(peer, other.getPeer()) && IMUtils.equals(type, other.getType());
+    }
+
     Accessor accessor()
     {
         return new Accessor();
