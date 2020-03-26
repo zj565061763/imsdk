@@ -8,7 +8,6 @@ public class IMMessage
     String id;
     long timestamp;
     IMUser sender;
-    private final IMUser owner;
 
     String peer;
     IMConversationType conversationType;
@@ -20,18 +19,6 @@ public class IMMessage
 
     IMMessage()
     {
-        owner = IMManager.getInstance().getLoginUser();
-    }
-
-    /**
-     * 是否当前登陆用户的消息
-     *
-     * @return
-     */
-    public boolean isLoginUserMessage()
-    {
-        final IMUser loginUser = IMManager.getInstance().getLoginUser();
-        return loginUser != null && loginUser.equals(owner);
     }
 
     /**
@@ -72,11 +59,6 @@ public class IMMessage
     public IMUser getSender()
     {
         return sender;
-    }
-
-    public IMUser getOwner()
-    {
-        return owner;
     }
 
     public String getPeer()
