@@ -161,29 +161,29 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
-            final boolean[] arrTag = new boolean[]{false};
-            final boolean uploadSubmitted = messageItem.upload(new IMMessageItem.UploadCallback()
+            message.state = IMMessageState.UploadItem;
+            message.save();
+
+            messageItem.upload(new IMMessageItem.UploadCallback()
             {
                 @Override
                 public void onProgress(int progress)
                 {
-                    if (arrTag[0])
+                    if (message.state == IMMessageState.UploadItem)
                         notifyCallbackProgress(message, messageItem, progress, callback);
                 }
 
                 @Override
                 public void onSuccess()
                 {
-                    if (arrTag[0])
-                    {
+                    if (message.state == IMMessageState.UploadItem)
                         sendRunnable.run();
-                    }
                 }
 
                 @Override
                 public void onError(String desc)
                 {
-                    if (arrTag[0])
+                    if (message.state == IMMessageState.UploadItem)
                     {
                         message.state = IMMessageState.SendFail;
                         message.save();
@@ -191,18 +191,6 @@ public class IMConversation
                     }
                 }
             });
-
-            arrTag[0] = uploadSubmitted;
-            if (uploadSubmitted)
-            {
-                message.state = IMMessageState.UploadItem;
-                message.save();
-            } else
-            {
-                message.state = IMMessageState.SendFail;
-                message.save();
-                notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, "upload return false", callback);
-            }
         } else
         {
             sendRunnable.run();

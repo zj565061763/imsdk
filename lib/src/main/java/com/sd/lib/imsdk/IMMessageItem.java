@@ -42,11 +42,10 @@ public abstract class IMMessageItem
      * 上传
      *
      * @param callback
-     * @return
      */
-    boolean upload(final UploadCallback callback)
+    void upload(final UploadCallback callback)
     {
-        return uploadImpl(new UploadCallback()
+        uploadImpl(new UploadCallback()
         {
             @Override
             public void onProgress(final int progress)
@@ -72,9 +71,8 @@ public abstract class IMMessageItem
         });
     }
 
-    protected boolean uploadImpl(UploadCallback callback)
+    protected void uploadImpl(UploadCallback callback)
     {
-        return false;
     }
 
     protected boolean isNeedUpload()
