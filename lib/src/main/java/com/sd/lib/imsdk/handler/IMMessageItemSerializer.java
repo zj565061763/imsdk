@@ -4,7 +4,7 @@ import com.sd.lib.imsdk.IMMessageItem;
 
 public interface IMMessageItemSerializer
 {
-    String serialize(IMMessageItem item);
+    String serialize(Object object);
 
     IMMessageItem deserialize(String itemContent, String itemType);
 }

@@ -10,9 +10,9 @@ public class IMMessageItemSerializerGson implements IMMessageItemSerializer
     private final Gson mGson = new Gson();
 
     @Override
-    public String serialize(IMMessageItem item)
+    public String serialize(Object object)
     {
-        return mGson.toJson(item);
+        return mGson.toJson(object);
     }
 
     @Override

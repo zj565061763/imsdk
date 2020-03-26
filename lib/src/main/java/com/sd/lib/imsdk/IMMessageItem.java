@@ -2,11 +2,14 @@ package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class IMMessageItem
 {
-    private final String type;
+    private transient final String type;
     transient IMMessage message;
-    transient int uploadProgress;
+    private transient int uploadProgress;
 
     public IMMessageItem()
     {
@@ -32,11 +35,26 @@ public abstract class IMMessageItem
         return uploadProgress;
     }
 
-    public String serialize()
+    /**
+     * 序列化
+     *
+     * @return
+     */
+    public final String serialize()
     {
-        final String content = IMManager.getInstance().getHandlerHolder().getMessageItemSerializer().serialize(this);
+        final Map<String, Object> map = new HashMap<>();
+        serializeItem(map);
+
+        final String content = IMManager.getInstance().getHandlerHolder().getMessageItemSerializer().serialize(map);
         return content;
     }
+
+    /**
+     * 序列化Item，保存信息到map中
+     *
+     * @param map
+     */
+    protected abstract void serializeItem(Map<String, Object> map);
 
     /**
      * 上传
