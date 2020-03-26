@@ -130,7 +130,7 @@ public class IMMessage
         return new Accessor();
     }
 
-    public Accessor newAccessor()
+    public static Accessor newAccessor()
     {
         final IMMessage message = new IMMessage();
         return message.accessor();
