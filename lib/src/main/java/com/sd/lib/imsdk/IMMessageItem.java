@@ -51,22 +51,19 @@ public abstract class IMMessageItem
             public void onProgress(final int progress)
             {
                 IMMessageItem.this.uploadProgress = progress;
-                if (callback != null)
-                    callback.onProgress(progress);
+                callback.onProgress(progress);
             }
 
             @Override
             public void onSuccess()
             {
-                if (callback != null)
-                    callback.onSuccess();
+                callback.onSuccess();
             }
 
             @Override
             public void onError(final String desc)
             {
-                if (callback != null)
-                    callback.onError(desc);
+                callback.onError(desc);
             }
         });
     }
