@@ -8,6 +8,10 @@ public interface IMMessageHandler
 
     void saveMessage(IMMessage message);
 
+    void updateMessageState(IMMessage message);
+
+    void updateMessageItem(IMMessage message);
+
     void removeMessage(IMMessage message);
 
     void checkInterruptedMessage();

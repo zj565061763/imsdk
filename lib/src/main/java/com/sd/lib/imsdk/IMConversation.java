@@ -135,7 +135,7 @@ public class IMConversation
             public void run()
             {
                 message.state = IMMessageState.Sending;
-                message.save();
+                holder.getMessageHandler().updateMessageState(message);
 
                 holder.getMessageSender().sendMessage(message, new IMCallback()
                 {
@@ -143,7 +143,7 @@ public class IMConversation
                     public void onSuccess()
                     {
                         message.state = IMMessageState.SendSuccess;
-                        message.save();
+                        holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackSuccess(message, callback);
                     }
 
@@ -151,7 +151,7 @@ public class IMConversation
                     public void onError(int code, String desc)
                     {
                         message.state = IMMessageState.SendFail;
-                        message.save();
+                        holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, code, desc, callback);
                     }
                 });
@@ -162,7 +162,7 @@ public class IMConversation
         if (messageItem.isNeedUpload())
         {
             message.state = IMMessageState.UploadItem;
-            message.save();
+            holder.getMessageHandler().updateMessageState(message);
 
             messageItem.upload(new IMMessageItem.UploadCallback()
             {
@@ -177,7 +177,10 @@ public class IMConversation
                 public void onSuccess()
                 {
                     if (message.state == IMMessageState.UploadItem)
+                    {
+                        holder.getMessageHandler().updateMessageItem(message);
                         sendRunnable.run();
+                    }
                 }
 
                 @Override
@@ -186,7 +189,7 @@ public class IMConversation
                     if (message.state == IMMessageState.UploadItem)
                     {
                         message.state = IMMessageState.SendFail;
-                        message.save();
+                        holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
                     }
                 }
