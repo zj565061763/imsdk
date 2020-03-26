@@ -206,7 +206,7 @@ public class IMConversation
      * @param lastMessage
      * @param callback
      */
-    public void loadMessageBefore(int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback)
+    public void loadMessageBefore(int count, IMMessage lastMessage, final IMValueCallback<List<IMMessage>> callback)
     {
         if (!IMManager.getInstance().isLogin())
         {
@@ -216,7 +216,22 @@ public class IMConversation
         }
 
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        handler.loadMessageBefore(this, count, lastMessage, callback);
+        handler.loadMessageBefore(this, count, lastMessage, new IMValueCallback<List<IMMessage>>()
+        {
+            @Override
+            public void onSuccess(List<IMMessage> list)
+            {
+                if (callback != null)
+                    callback.onSuccess(list);
+            }
+
+            @Override
+            public void onError(int code, String desc)
+            {
+                if (callback != null)
+                    callback.onError(code, desc);
+            }
+        });
     }
 
     @Override
