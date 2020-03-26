@@ -40,7 +40,7 @@ public abstract class IMMessageItem
      *
      * @return
      */
-    protected CharSequence getConversationDescription()
+    public CharSequence getConversationDescription()
     {
         return "";
     }
