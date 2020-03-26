@@ -6,7 +6,7 @@ import com.sd.lib.imsdk.handler.IMMessageHandler;
 public class IMMessageHandlerEmpty implements IMMessageHandler
 {
     @Override
-    public void interceptNewMessageSend(IMMessage.InterceptAccessor accessor)
+    public void interceptNewMessageSend(IMMessage.Accessor accessor)
     {
 
     }

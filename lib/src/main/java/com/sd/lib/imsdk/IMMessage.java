@@ -98,27 +98,26 @@ public class IMMessage
         return item;
     }
 
-    PersistenceAccessor persistenceAccessor()
+    Accessor accessor()
     {
-        return new PersistenceAccessor();
+        return new Accessor();
     }
 
-    InterceptAccessor interceptAccessor()
+    public Accessor newAccessor()
     {
-        return new InterceptAccessor();
+        final IMMessage message = new IMMessage();
+        return message.accessor();
     }
 
-    public final class InterceptAccessor
+    public final class Accessor
     {
-        private InterceptAccessor()
+        private Accessor()
         {
         }
-    }
 
-    public final class PersistenceAccessor
-    {
-        private PersistenceAccessor()
+        public IMMessage getMessage()
         {
+            return IMMessage.this;
         }
 
         public void setId(String id)
@@ -164,24 +163,6 @@ public class IMMessage
         public void setItem(IMMessageItem item)
         {
             IMMessage.this.item = item;
-        }
-    }
-
-    public static Query newQuery()
-    {
-        final IMMessage message = new IMMessage();
-        return new Query(message, message.persistenceAccessor());
-    }
-
-    public static final class Query
-    {
-        public final IMMessage message;
-        public final PersistenceAccessor accessor;
-
-        private Query(IMMessage message, PersistenceAccessor accessor)
-        {
-            this.message = message;
-            this.accessor = accessor;
         }
     }
 }

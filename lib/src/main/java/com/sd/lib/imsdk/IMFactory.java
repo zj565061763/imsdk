@@ -18,7 +18,7 @@ class IMFactory
         message.timestamp = System.currentTimeMillis();
 
         final IMMessageHandler handler = IMManager.getInstance().getHandlerHolder().getMessageHandler();
-        handler.interceptNewMessageSend(message.interceptAccessor());
+        handler.interceptNewMessageSend(message.accessor());
         return message;
     }
 
