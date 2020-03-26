@@ -60,7 +60,7 @@ public class IMUser
         if (obj == null)
             return false;
 
-        if (getClass() != obj.getClass())
+        if (obj.getClass() != getClass())
             return false;
 
         final IMUser other = (IMUser) obj;
