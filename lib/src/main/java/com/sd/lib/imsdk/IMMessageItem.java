@@ -38,12 +38,16 @@ public abstract class IMMessageItem
     /**
      * 序列化
      *
+     * @param type {@link SerializeType}
      * @return
      */
-    public final String serialize()
+    public final String serialize(SerializeType type)
     {
+        if (type == null)
+            throw new NullPointerException("type is null");
+
         final Map<String, Object> map = new HashMap<>();
-        serializeItem(map);
+        serializeItem(map, type);
 
         final String content = IMManager.getInstance().getHandlerHolder().getMessageItemSerializer().serialize(map);
         return content;
@@ -53,8 +57,9 @@ public abstract class IMMessageItem
      * 序列化Item，保存信息到map中
      *
      * @param map
+     * @param type {@link SerializeType}
      */
-    protected abstract void serializeItem(Map<String, Object> map);
+    protected abstract void serializeItem(Map<String, Object> map, SerializeType type);
 
     /**
      * 上传
@@ -102,5 +107,17 @@ public abstract class IMMessageItem
         void onSuccess();
 
         void onError(String desc);
+    }
+
+    public enum SerializeType
+    {
+        /**
+         * 持久化到本地
+         */
+        Persistence,
+        /**
+         * 发送消息
+         */
+        Send
     }
 }
