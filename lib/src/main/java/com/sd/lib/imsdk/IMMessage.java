@@ -98,6 +98,22 @@ public class IMMessage
         return item;
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+            return true;
+
+        if (obj == null)
+            return false;
+
+        if (obj.getClass() != getClass())
+            return false;
+
+        final IMMessage other = (IMMessage) obj;
+        return IMUtils.equals(id, other.getId());
+    }
+
     Accessor accessor()
     {
         return new Accessor();

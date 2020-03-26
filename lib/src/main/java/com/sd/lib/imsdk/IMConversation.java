@@ -228,7 +228,7 @@ public class IMConversation
         if (obj == null)
             return false;
 
-        if (getClass() != obj.getClass())
+        if (obj.getClass() != getClass())
             return false;
 
         final IMConversation other = (IMConversation) obj;
