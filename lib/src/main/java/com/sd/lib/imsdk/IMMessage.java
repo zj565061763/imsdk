@@ -179,6 +179,7 @@ public class IMMessage
         public void setItem(IMMessageItem item)
         {
             IMMessage.this.item = item;
+            item.message = IMMessage.this;
         }
     }
 }
