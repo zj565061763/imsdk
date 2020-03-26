@@ -88,6 +88,11 @@ public class IMMessage
 
     public IMMessageItem getItem()
     {
+        if (item == null)
+        {
+            item = new IMMessageItemEmpty();
+            item.message = this;
+        }
         return item;
     }
 

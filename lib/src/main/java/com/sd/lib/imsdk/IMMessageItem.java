@@ -35,6 +35,11 @@ public abstract class IMMessageItem
         return uploadProgress;
     }
 
+    public boolean isEmpty()
+    {
+        return getClass() == IMMessageItemEmpty.class;
+    }
+
     /**
      * 返回用于会话列表展示的描述
      *
