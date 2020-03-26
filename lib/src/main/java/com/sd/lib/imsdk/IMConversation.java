@@ -107,6 +107,13 @@ public class IMConversation
             return message;
         }
 
+        if (message.getItem().isEmpty())
+        {
+            if (callback != null)
+                callback.onError(message, IMCode.ERROR_EMPTY_ITEM, "empty message item");
+            return message;
+        }
+
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
         message.state = IMMessageState.SendPrepare;
