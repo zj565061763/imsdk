@@ -23,7 +23,7 @@ public class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
-    public boolean loadConversation(IMConversation conversation, IMConversation.PersistenceAccessor accessor)
+    public boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor)
     {
         return false;
     }

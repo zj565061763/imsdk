@@ -69,7 +69,7 @@ public class IMConversation
             return false;
 
         final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.loadConversation(this, persistenceAccessor());
+        return handler.loadConversation(this, accessor());
     }
 
     /**
@@ -219,15 +219,26 @@ public class IMConversation
         handler.loadMessageBefore(this, count, lastMessage, callback);
     }
 
-    PersistenceAccessor persistenceAccessor()
+    Accessor accessor()
     {
-        return new PersistenceAccessor();
+        return new Accessor();
     }
 
-    public final class PersistenceAccessor
+    public static Accessor newAccessor()
     {
-        private PersistenceAccessor()
+        final IMConversation conversation = new IMConversation();
+        return conversation.accessor();
+    }
+
+    public final class Accessor
+    {
+        private Accessor()
         {
+        }
+
+        public IMConversation getConversation()
+        {
+            return IMConversation.this;
         }
 
         public void setPeer(String peer)
@@ -253,24 +264,6 @@ public class IMConversation
         public void setLastTimestamp(long timestamp)
         {
             IMConversation.this.lastTimestamp = timestamp;
-        }
-    }
-
-    public static Query newQuery()
-    {
-        final IMConversation conversation = new IMConversation();
-        return new Query(conversation, conversation.persistenceAccessor());
-    }
-
-    public static final class Query
-    {
-        public final IMConversation conversation;
-        public final IMConversation.PersistenceAccessor accessor;
-
-        private Query(IMConversation conversation, PersistenceAccessor accessor)
-        {
-            this.conversation = conversation;
-            this.accessor = accessor;
         }
     }
 

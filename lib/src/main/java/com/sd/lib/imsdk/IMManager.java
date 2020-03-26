@@ -379,6 +379,7 @@ public class IMManager
         message.state = IMMessageState.Receive;
         message.isSelf = false;
         message.item = item;
+        item.message = message;
 
         if (mChattingConversation != null)
             message.isRead = message.peer.equals(mChattingConversation.getPeer());
