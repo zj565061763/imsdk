@@ -36,6 +36,16 @@ public abstract class IMMessageItem
     }
 
     /**
+     * 返回用于会话列表展示的描述
+     *
+     * @return
+     */
+    protected CharSequence getConversationDescription()
+    {
+        return "";
+    }
+
+    /**
      * 序列化
      *
      * @param type {@link SerializeType}
