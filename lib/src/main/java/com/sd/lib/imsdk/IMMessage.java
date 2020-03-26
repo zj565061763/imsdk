@@ -24,6 +24,17 @@ public class IMMessage
     }
 
     /**
+     * 是否当前登陆用户的消息
+     *
+     * @return
+     */
+    public boolean isLoginUserMessage()
+    {
+        final IMUser loginUser = IMManager.getInstance().getLoginUser();
+        return loginUser != null && loginUser.equals(owner);
+    }
+
+    /**
      * 重新发送失败的消息
      *
      * @param callback
