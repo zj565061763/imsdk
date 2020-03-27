@@ -540,6 +540,7 @@ public class IMManager
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = imMessage;
+        conversation.setExt(receiveMessage.conversationExt);
         saveConversationLocal(conversation);
 
         return imMessage;
