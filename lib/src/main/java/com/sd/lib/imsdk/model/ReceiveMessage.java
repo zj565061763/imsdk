@@ -11,10 +11,10 @@ public class ReceiveMessage
     public final long timestamp;
     public final String itemType;
     public final String itemContent;
+    public final String senderId;
     public final String peer;
     public final IMConversationType conversationType;
-    public final IMUser sender;
-    public final IMConversationExt conversationExt;
+    public final String extra;
 
     private ReceiveMessage(Builder builder)
     {
@@ -22,10 +22,10 @@ public class ReceiveMessage
         this.timestamp = builder.timestamp;
         this.itemType = builder.itemType;
         this.itemContent = builder.itemContent;
+        this.senderId = builder.senderId;
         this.peer = builder.peer;
         this.conversationType = builder.conversationType;
-        this.sender = builder.sender == null ? null : builder.sender.copy();
-        this.conversationExt = builder.conversationExt == null ? null : builder.conversationExt.copy();
+        this.extra = builder.extra;
     }
 
     public void check() throws IMSDKException
@@ -42,14 +42,14 @@ public class ReceiveMessage
         if (TextUtils.isEmpty(itemContent))
             throw new IMSDKException.IllegalReceiveMessageException("error itemContent is empty");
 
+        if (TextUtils.isEmpty(senderId))
+            throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
+
         if (TextUtils.isEmpty(peer))
             throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
 
         if (conversationType == null)
             throw new IMSDKException.IllegalReceiveMessageException("error conversationType is null");
-
-        if (sender == null)
-            throw new IMSDKException.IllegalReceiveMessageException("error sender is null");
     }
 
     public static class Builder
@@ -58,10 +58,10 @@ public class ReceiveMessage
         private long timestamp;
         private String itemType;
         private String itemContent;
+        private String senderId;
         private String peer;
         private IMConversationType conversationType;
-        private IMUser sender;
-        private IMConversationExt conversationExt;
+        private String extra;
 
         public Builder setId(String id)
         {
@@ -87,6 +87,12 @@ public class ReceiveMessage
             return this;
         }
 
+        public Builder setSenderId(String senderId)
+        {
+            this.senderId = senderId;
+            return this;
+        }
+
         public Builder setPeer(String peer)
         {
             this.peer = peer;
@@ -99,15 +105,9 @@ public class ReceiveMessage
             return this;
         }
 
-        public Builder setSender(IMUser sender)
+        public Builder setExtra(String extra)
         {
-            this.sender = sender;
-            return this;
-        }
-
-        public Builder setConversationExt(IMConversationExt conversationExt)
-        {
-            this.conversationExt = conversationExt;
+            this.extra = extra;
             return this;
         }
 

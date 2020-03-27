@@ -522,11 +522,12 @@ public class IMManager
         final IMMessage imMessage = IMFactory.newMessageReceive();
         imMessage.id = receiveMessage.id;
         imMessage.timestamp = receiveMessage.timestamp;
-        imMessage.sender = receiveMessage.sender;
+        imMessage.senderId = receiveMessage.senderId;
         imMessage.peer = receiveMessage.peer;
         imMessage.conversationType = receiveMessage.conversationType;
         imMessage.state = IMMessageState.Receive;
         imMessage.isSelf = false;
+        imMessage.extra = receiveMessage.extra;
         imMessage.item = item;
         item.message = imMessage;
 
@@ -540,7 +541,6 @@ public class IMManager
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = imMessage;
-        conversation.setExt(receiveMessage.conversationExt);
         saveConversationLocal(conversation);
 
         return imMessage;

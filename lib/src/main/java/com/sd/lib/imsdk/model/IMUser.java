@@ -5,29 +5,17 @@ import android.text.TextUtils;
 public class IMUser
 {
     private final String id;
-    private final String extId;
+    private String extId;
     private String extName;
     private String extAvatar;
     private String extra;
 
-    public IMUser(String id, String extId)
+    public IMUser(String id)
     {
         if (TextUtils.isEmpty(id))
             throw new IllegalArgumentException("id is empty");
 
-        if (TextUtils.isEmpty(extId))
-            throw new IllegalArgumentException("extId is empty");
         this.id = id;
-        this.extId = extId;
-    }
-
-    public IMUser copy()
-    {
-        final IMUser copy = new IMUser(this.id, this.extId);
-        copy.extName = this.extName;
-        copy.extAvatar = this.extAvatar;
-        copy.extra = this.extra;
-        return copy;
     }
 
     public String getId()

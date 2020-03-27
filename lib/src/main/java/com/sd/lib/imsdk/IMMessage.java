@@ -7,13 +7,14 @@ public class IMMessage
 {
     String id;
     long timestamp;
-    IMUser sender;
+    String senderId;
 
     String peer;
     IMConversationType conversationType;
     IMMessageState state = IMMessageState.None;
     boolean isSelf;
     boolean isRead;
+    String extra;
 
     IMMessageItem item;
 
@@ -56,9 +57,9 @@ public class IMMessage
         return timestamp;
     }
 
-    public IMUser getSender()
+    public String getSenderId()
     {
-        return sender;
+        return senderId;
     }
 
     public String getPeer()
@@ -84,6 +85,11 @@ public class IMMessage
     public boolean isRead()
     {
         return isRead;
+    }
+
+    public String getExtra()
+    {
+        return extra;
     }
 
     public IMMessageItem getItem()
@@ -144,9 +150,9 @@ public class IMMessage
             IMMessage.this.timestamp = timestamp;
         }
 
-        public void setSender(IMUser sender)
+        public void setSenderId(String senderId)
         {
-            IMMessage.this.sender = sender;
+            IMMessage.this.senderId = senderId;
         }
 
         public void setPeer(String peer)
@@ -172,6 +178,11 @@ public class IMMessage
         public void setRead(boolean read)
         {
             IMMessage.this.isRead = read;
+        }
+
+        public void setExtra(String extra)
+        {
+            IMMessage.this.extra = extra;
         }
 
         public void setItem(IMMessageItem item)
