@@ -5,8 +5,9 @@ import android.text.TextUtils;
 public class IMUser
 {
     private final String id;
-    private String name;
-    private String avatar;
+    private String bsId;
+    private String bsName;
+    private String bsAvatar;
     private String extra;
 
     public IMUser(String id)
@@ -21,24 +22,34 @@ public class IMUser
         return id;
     }
 
-    public String getName()
+    public String getBsId()
     {
-        return name;
+        return bsId;
     }
 
-    public void setName(String name)
+    public void setBsId(String bsId)
     {
-        this.name = name;
+        this.bsId = bsId;
     }
 
-    public String getAvatar()
+    public String getBsName()
     {
-        return avatar;
+        return bsName;
     }
 
-    public void setAvatar(String avatar)
+    public void setBsName(String bsName)
     {
-        this.avatar = avatar;
+        this.bsName = bsName;
+    }
+
+    public String getBsAvatar()
+    {
+        return bsAvatar;
+    }
+
+    public void setBsAvatar(String bsAvatar)
+    {
+        this.bsAvatar = bsAvatar;
     }
 
     public String getExtra()
