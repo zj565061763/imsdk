@@ -1,6 +1,6 @@
 package com.sd.lib.imsdk;
 
-import com.sd.lib.imsdk.handler.IMMessageHandler;
+import com.sd.lib.imsdk.handler.impl.IMMessageHandlerWrapper;
 
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ class IMFactory
         message.id = UUID.randomUUID().toString();
         message.timestamp = System.currentTimeMillis();
 
-        final IMMessageHandler handler = IMManager.getInstance().getHandlerHolder().getMessageHandler();
+        final IMMessageHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getMessageHandler();
         handler.interceptNewMessageSend(message.accessor());
         return message;
     }

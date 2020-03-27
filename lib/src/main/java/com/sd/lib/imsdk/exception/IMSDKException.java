@@ -63,4 +63,12 @@ public class IMSDKException extends Exception
             super(message, cause);
         }
     }
+
+    public static class OtherException extends IMSDKException
+    {
+        public OtherException(String message, Throwable cause)
+        {
+            super(message, cause);
+        }
+    }
 }

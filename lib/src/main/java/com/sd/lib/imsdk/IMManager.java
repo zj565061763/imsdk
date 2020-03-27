@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
+import com.sd.lib.imsdk.callback.IMOtherExceptionCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.exception.IMSDKException;
 import com.sd.lib.imsdk.model.IMUser;
@@ -13,7 +14,6 @@ import com.sd.lib.imsdk.model.ReceiveMessage;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,13 +40,13 @@ public class IMManager
         return sInstance;
     }
 
-    private final IMHandlerHolder mHandlerHolder = new IMHandlerHolder();
+    private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new ConcurrentHashMap<>();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
-    private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new HashMap<>();
 
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMLoginStateCallback> mListIMLoginStateCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMOtherExceptionCallback> mListIMOtherExceptionCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
@@ -56,12 +56,25 @@ public class IMManager
         return mHandlerHolder;
     }
 
+    private final IMHandlerHolder mHandlerHolder = new IMHandlerHolder(new IMHandlerHolder.CallbackHandler()
+    {
+        @Override
+        public void notifyOtherException(String message, Exception e)
+        {
+            final IMSDKException.OtherException exception = new IMSDKException.OtherException(message, e);
+            for (IMOtherExceptionCallback item : mListIMOtherExceptionCallback)
+            {
+                item.handleOtherException(exception);
+            }
+        }
+    });
+
     /**
      * 注册{@link IMMessageItem}
      *
      * @param clazz
      */
-    public synchronized void registerMessageItem(Class<? extends IMMessageItem> clazz)
+    public void registerMessageItem(Class<? extends IMMessageItem> clazz)
     {
         if (clazz == null)
             return;
@@ -80,10 +93,8 @@ public class IMManager
      * @param type
      * @return
      */
-    public synchronized Class<? extends IMMessageItem> getMessageItem(String type)
+    public Class<? extends IMMessageItem> getMessageItem(String type)
     {
-        if (TextUtils.isEmpty(type))
-            return null;
         return mMapMessageItemClass.get(type);
     }
 
@@ -183,7 +194,7 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void addIMIncomingCallback(IMIncomingCallback callback)
+    public void addIMIncomingCallback(IMIncomingCallback callback)
     {
         if (callback != null)
             mListIMIncomingCallback.add(callback);
@@ -194,7 +205,7 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void removeIMIncomingCallback(IMIncomingCallback callback)
+    public void removeIMIncomingCallback(IMIncomingCallback callback)
     {
         mListIMIncomingCallback.remove(callback);
     }
@@ -204,7 +215,7 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void addIMOutgoingCallback(IMOutgoingCallback callback)
+    public void addIMOutgoingCallback(IMOutgoingCallback callback)
     {
         if (callback != null)
             mListIMOutgoingCallback.add(callback);
@@ -215,7 +226,7 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void removeIMOutgoingCallback(IMOutgoingCallback callback)
+    public void removeIMOutgoingCallback(IMOutgoingCallback callback)
     {
         mListIMOutgoingCallback.remove(callback);
     }
@@ -230,7 +241,7 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void addIMLoginStateCallback(IMLoginStateCallback callback)
+    public void addIMLoginStateCallback(IMLoginStateCallback callback)
     {
         if (callback != null)
             mListIMLoginStateCallback.add(callback);
@@ -241,9 +252,30 @@ public class IMManager
      *
      * @param callback
      */
-    public synchronized void removeIMLoginStateCallback(IMLoginStateCallback callback)
+    public void removeIMLoginStateCallback(IMLoginStateCallback callback)
     {
         mListIMLoginStateCallback.remove(callback);
+    }
+
+    /**
+     * 添加其他异常回调
+     *
+     * @param callback
+     */
+    public void addIMOtherExceptionCallback(IMOtherExceptionCallback callback)
+    {
+        if (callback != null)
+            mListIMOtherExceptionCallback.add(callback);
+    }
+
+    /**
+     * 移除其他异常回调
+     *
+     * @param callback
+     */
+    public void removeIMOtherExceptionCallback(IMOtherExceptionCallback callback)
+    {
+        mListIMOtherExceptionCallback.remove(callback);
     }
 
     /**
@@ -344,9 +376,8 @@ public class IMManager
      * 处理消息接收
      *
      * @param receiveMessage {@link ReceiveMessage}
-     * @return
      */
-    public synchronized boolean handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
+    public synchronized void handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
     {
         if (!isLogin())
             throw new IMSDKException.UnLoginException("imsdk unlogin");
@@ -403,7 +434,5 @@ public class IMManager
                 }
             }
         });
-
-        return true;
     }
 }

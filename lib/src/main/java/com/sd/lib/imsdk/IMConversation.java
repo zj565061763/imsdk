@@ -5,7 +5,8 @@ import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
-import com.sd.lib.imsdk.handler.IMConversationHandler;
+import com.sd.lib.imsdk.exception.IMSDKException;
+import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.Collection;
@@ -68,7 +69,7 @@ public class IMConversation
         if (!IMManager.getInstance().isLogin())
             return false;
 
-        final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         return handler.loadConversation(this, accessor());
     }
 
@@ -99,6 +100,20 @@ public class IMConversation
     }
 
     IMMessage send(final IMMessage message, final IMSendCallback callback)
+    {
+        try
+        {
+            return sendInternal(message, callback);
+        } catch (IMSDKException e)
+        {
+            e.printStackTrace();
+            if (callback != null)
+                callback.onError(message, IMCode.ERROR_OTHER, e.toString());
+            return message;
+        }
+    }
+
+    private IMMessage sendInternal(final IMMessage message, final IMSendCallback callback) throws IMSDKException
     {
         if (!IMManager.getInstance().isLogin())
         {
@@ -225,7 +240,7 @@ public class IMConversation
             return;
         }
 
-        final IMConversationHandler handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.loadMessageBefore(this, count, lastMessage, new IMValueCallback<List<IMMessage>>()
         {
             @Override

@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface IMConversationHandler
 {
-    void saveConversation(IMConversation conversation);
+    void saveConversation(IMConversation conversation) throws Exception;
 
-    void removeConversation(IMConversation conversation);
+    void removeConversation(IMConversation conversation) throws Exception;
 
-    boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor);
+    boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception;
 
-    List<IMConversation> getAllConversation();
+    List<IMConversation> getAllConversation() throws Exception;
 
-    void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback);
+    void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback) throws Exception;
 }

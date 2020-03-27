@@ -4,20 +4,26 @@ import com.sd.lib.imsdk.handler.IMConversationHandler;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessageSender;
-import com.sd.lib.imsdk.handler.IMUserProvider;
-import com.sd.lib.imsdk.handler.impl.IMConversationHandlerEmpty;
-import com.sd.lib.imsdk.handler.impl.IMMessageHandlerEmpty;
+import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
+import com.sd.lib.imsdk.handler.impl.IMMessageHandlerWrapper;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
-import com.sd.lib.imsdk.handler.impl.IMUserProviderEmpty;
 
 public class IMHandlerHolder
 {
+    private final CallbackHandler mCallbackHandler;
+
     private IMMessageItemSerializer mMessageItemSerializer;
     private IMMessageSender mMessageSender;
-    private IMMessageHandler mMessageHandler;
-    private IMConversationHandler mConversationHandler;
-    private IMUserProvider mUserProvider;
+    private IMMessageHandlerWrapper mMessageHandler;
+    private IMConversationHandlerWrapper mConversationHandler;
+
+    public IMHandlerHolder(CallbackHandler callbackHandler)
+    {
+        if (callbackHandler == null)
+            throw new NullPointerException("callbackHandler is null");
+        mCallbackHandler = callbackHandler;
+    }
 
     public IMMessageItemSerializer getMessageItemSerializer()
     {
@@ -26,9 +32,9 @@ public class IMHandlerHolder
         return mMessageItemSerializer;
     }
 
-    public void setMessageItemSerializer(IMMessageItemSerializer messageItemSerializer)
+    public void setMessageItemSerializer(IMMessageItemSerializer serializer)
     {
-        mMessageItemSerializer = messageItemSerializer;
+        mMessageItemSerializer = serializer;
     }
 
     public IMMessageSender getMessageSender()
@@ -38,44 +44,37 @@ public class IMHandlerHolder
         return mMessageSender;
     }
 
-    public void setMessageSender(IMMessageSender messageSender)
+    public void setMessageSender(IMMessageSender sender)
     {
-        mMessageSender = messageSender;
+        mMessageSender = sender;
     }
 
-    public IMMessageHandler getMessageHandler()
+    public IMMessageHandlerWrapper getMessageHandler()
     {
         if (mMessageHandler == null)
-            mMessageHandler = new IMMessageHandlerEmpty();
+            mMessageHandler = new IMMessageHandlerWrapper(null, mCallbackHandler);
         return mMessageHandler;
     }
 
-    public void setMessageHandler(IMMessageHandler persistence)
+    public void setMessageHandler(IMMessageHandler handler)
     {
-        mMessageHandler = persistence;
+        mMessageHandler = new IMMessageHandlerWrapper(handler, mCallbackHandler);
     }
 
-    public IMConversationHandler getConversationHandler()
+    public IMConversationHandlerWrapper getConversationHandler()
     {
         if (mConversationHandler == null)
-            mConversationHandler = new IMConversationHandlerEmpty();
+            mConversationHandler = new IMConversationHandlerWrapper(null, mCallbackHandler);
         return mConversationHandler;
     }
 
     public void setConversationHandler(IMConversationHandler conversationHandler)
     {
-        mConversationHandler = conversationHandler;
+        mConversationHandler = new IMConversationHandlerWrapper(conversationHandler, mCallbackHandler);
     }
 
-    public IMUserProvider getUserProvider()
+    public interface CallbackHandler
     {
-        if (mUserProvider == null)
-            mUserProvider = new IMUserProviderEmpty();
-        return mUserProvider;
-    }
-
-    public void setUserProvider(IMUserProvider provider)
-    {
-        mUserProvider = provider;
+        void notifyOtherException(String message, Exception e);
     }
 }
