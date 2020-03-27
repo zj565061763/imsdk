@@ -523,7 +523,7 @@ public class IMManager
         imMessage.id = receiveMessage.id;
         imMessage.timestamp = receiveMessage.timestamp;
         imMessage.sender = receiveMessage.sender;
-        imMessage.peer = receiveMessage.sender.getId();
+        imMessage.peer = receiveMessage.peer;
         imMessage.conversationType = receiveMessage.conversationType;
         imMessage.state = IMMessageState.Receive;
         imMessage.isSelf = false;
