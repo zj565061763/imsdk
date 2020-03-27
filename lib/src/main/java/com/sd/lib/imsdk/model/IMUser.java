@@ -13,7 +13,7 @@ public class IMUser
     public IMUser(String id)
     {
         if (TextUtils.isEmpty(id))
-            throw new IllegalArgumentException("im user id is null");
+            throw new IllegalArgumentException("id is empty");
         this.id = id;
     }
 
