@@ -66,10 +66,17 @@ public class IMManager
         public void notifyOtherException(String message, Exception e)
         {
             final IMSDKException.OtherException exception = new IMSDKException.OtherException(message, e);
-            for (IMOtherExceptionCallback item : mListIMOtherExceptionCallback)
+            IMUtils.runOnUiThread(new Runnable()
             {
-                item.handleOtherException(exception);
-            }
+                @Override
+                public void run()
+                {
+                    for (IMOtherExceptionCallback item : mListIMOtherExceptionCallback)
+                    {
+                        item.handleOtherException(exception);
+                    }
+                }
+            });
         }
     });
 
@@ -127,7 +134,7 @@ public class IMManager
      *
      * @param user
      */
-    public synchronized void setLoginUser(IMUser user)
+    public synchronized void setLoginUser(final IMUser user)
     {
         final IMUser old = mLoginUser;
         if (old == null && user == null)
@@ -141,19 +148,34 @@ public class IMManager
 
         if (old != null)
         {
-            for (IMLoginStateCallback item : mListIMLoginStateCallback)
+            IMUtils.runOnUiThread(new Runnable()
             {
-                item.onLogout(old.getId());
-            }
+                @Override
+                public void run()
+                {
+                    for (IMLoginStateCallback item : mListIMLoginStateCallback)
+                    {
+                        item.onLogout(old.getId());
+                    }
+                }
+            });
         }
 
         if (user != null)
         {
             checkInterruptedMessage();
-            for (IMLoginStateCallback item : mListIMLoginStateCallback)
+
+            IMUtils.runOnUiThread(new Runnable()
             {
-                item.onLogin(user.getId());
-            }
+                @Override
+                public void run()
+                {
+                    for (IMLoginStateCallback item : mListIMLoginStateCallback)
+                    {
+                        item.onLogin(user.getId());
+                    }
+                }
+            });
         }
     }
 
@@ -351,10 +373,17 @@ public class IMManager
             }
         }
 
-        for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+        IMUtils.runOnUiThread(new Runnable()
         {
-            item.onConversationLoad(list);
-        }
+            @Override
+            public void run()
+            {
+                for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+                {
+                    item.onConversationLoad(list);
+                }
+            }
+        });
 
         return list;
     }
@@ -377,7 +406,7 @@ public class IMManager
             removeConversationLocal(conversation);
     }
 
-    synchronized void saveConversationLocal(IMConversation conversation)
+    synchronized void saveConversationLocal(final IMConversation conversation)
     {
         getHandlerHolder().getConversationHandler().saveConversation(conversation);
         final int oldSize = mMapConversationLocal.size();
@@ -390,14 +419,21 @@ public class IMManager
         {
             // 通知会话新增
             final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
-            for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+            IMUtils.runOnUiThread(new Runnable()
             {
-                item.onConversationAdd(list, conversation);
-            }
+                @Override
+                public void run()
+                {
+                    for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+                    {
+                        item.onConversationAdd(list, conversation);
+                    }
+                }
+            });
         }
     }
 
-    synchronized void removeConversationLocal(IMConversation conversation)
+    synchronized void removeConversationLocal(final IMConversation conversation)
     {
         getHandlerHolder().getConversationHandler().removeConversation(conversation);
         final int oldSize = mMapConversationLocal.size();
@@ -410,10 +446,17 @@ public class IMManager
         {
             // 通知会话移除
             final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
-            for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+            IMUtils.runOnUiThread(new Runnable()
             {
-                item.onConversationRemove(list, conversation);
-            }
+                @Override
+                public void run()
+                {
+                    for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+                    {
+                        item.onConversationRemove(list, conversation);
+                    }
+                }
+            });
         }
     }
 
