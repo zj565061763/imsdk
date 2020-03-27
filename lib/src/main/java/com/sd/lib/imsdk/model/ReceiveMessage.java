@@ -14,6 +14,7 @@ public class ReceiveMessage
     public final String peer;
     public final IMConversationType conversationType;
     public final IMUser sender;
+    public final IMConversationExt conversationExt;
 
     private ReceiveMessage(Builder builder)
     {
@@ -23,13 +24,8 @@ public class ReceiveMessage
         this.itemContent = builder.itemContent;
         this.peer = builder.peer;
         this.conversationType = builder.conversationType;
-
-        final IMUser sender = builder.sender;
-        final IMUser imUser = new IMUser(sender.getId(), sender.getExtId());
-        imUser.setExtAvatar(sender.getExtAvatar());
-        imUser.setExtName(sender.getExtName());
-        imUser.setExtra(sender.getExtra());
-        this.sender = imUser;
+        this.sender = builder.sender == null ? null : builder.sender.copy();
+        this.conversationExt = builder.conversationExt == null ? null : builder.conversationExt.copy();
     }
 
     public void check() throws IMSDKException
@@ -65,6 +61,7 @@ public class ReceiveMessage
         private String peer;
         private IMConversationType conversationType;
         private IMUser sender;
+        private IMConversationExt conversationExt;
 
         public Builder setId(String id)
         {
@@ -105,6 +102,12 @@ public class ReceiveMessage
         public Builder setSender(IMUser sender)
         {
             this.sender = sender;
+            return this;
+        }
+
+        public Builder setConversationExt(IMConversationExt conversationExt)
+        {
+            this.conversationExt = conversationExt;
             return this;
         }
 

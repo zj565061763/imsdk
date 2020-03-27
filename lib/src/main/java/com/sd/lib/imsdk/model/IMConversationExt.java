@@ -16,6 +16,15 @@ public class IMConversationExt
         this.id = id;
     }
 
+    public IMConversationExt copy()
+    {
+        final IMConversationExt copy = new IMConversationExt(this.id);
+        copy.avatar = this.avatar;
+        copy.name = this.name;
+        copy.extra = this.extra;
+        return copy;
+    }
+
     public String getId()
     {
         return id;
@@ -49,5 +58,21 @@ public class IMConversationExt
     public void setExtra(String extra)
     {
         this.extra = extra;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+            return true;
+
+        if (obj == null)
+            return false;
+
+        if (obj.getClass() != getClass())
+            return false;
+
+        final IMConversationExt other = (IMConversationExt) obj;
+        return id.equals(other.getId());
     }
 }
