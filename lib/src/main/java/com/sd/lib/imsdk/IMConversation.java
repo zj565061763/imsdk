@@ -55,12 +55,9 @@ public class IMConversation
         return ext;
     }
 
-    public void setExt(IMConversationExt ext, boolean save)
+    public void setExt(IMConversationExt ext)
     {
         this.ext = ext;
-
-        if (save)
-            IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversationExt(this);
     }
 
     void read(IMConversation conversation)

@@ -35,18 +35,6 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
     }
 
     @Override
-    public void saveConversationExt(IMConversation conversation)
-    {
-        try
-        {
-            mOriginal.saveConversationExt(conversation);
-        } catch (Exception e)
-        {
-            mCallbackHandler.notifyOtherException("error saveConversationExt peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
-        }
-    }
-
-    @Override
     public void removeConversation(IMConversation conversation)
     {
         try

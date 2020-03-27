@@ -17,12 +17,6 @@ class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
-    public void saveConversationExt(IMConversation conversation) throws Exception
-    {
-
-    }
-
-    @Override
     public void removeConversation(IMConversation conversation) throws Exception
     {
 
