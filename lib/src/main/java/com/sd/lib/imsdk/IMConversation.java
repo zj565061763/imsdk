@@ -324,6 +324,11 @@ public class IMConversation
         {
             IMConversation.this.lastTimestamp = timestamp;
         }
+
+        public void setExt(IMConversationExt ext)
+        {
+            IMConversation.this.ext = ext;
+        }
     }
 
     public static void sort(List<IMConversation> list)
