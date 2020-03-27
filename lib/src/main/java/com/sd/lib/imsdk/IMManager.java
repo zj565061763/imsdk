@@ -14,6 +14,7 @@ import com.sd.lib.imsdk.model.ReceiveMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +44,7 @@ public class IMManager
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new ConcurrentHashMap<>();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
 
-    private final Map<String, IMConversation> mMapConversationLocal = new ConcurrentHashMap<>();
+    private final Map<String, IMConversation> mMapConversationLocal = new LinkedHashMap<>();
 
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
