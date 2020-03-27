@@ -5,7 +5,6 @@ import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
-import com.sd.lib.imsdk.exception.IMSDKException;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.model.IMUser;
 
@@ -96,24 +95,10 @@ public class IMConversation
         message.item = item;
         item.message = message;
 
-        return send(message, callback);
+        return sendInternal(message, callback);
     }
 
-    IMMessage send(final IMMessage message, final IMSendCallback callback)
-    {
-        try
-        {
-            return sendInternal(message, callback);
-        } catch (IMSDKException e)
-        {
-            e.printStackTrace();
-            if (callback != null)
-                callback.onError(message, IMCode.ERROR_OTHER, e.toString());
-            return message;
-        }
-    }
-
-    private IMMessage sendInternal(final IMMessage message, final IMSendCallback callback) throws IMSDKException
+    private IMMessage sendInternal(final IMMessage message, final IMSendCallback callback)
     {
         if (!IMManager.getInstance().isLogin())
         {

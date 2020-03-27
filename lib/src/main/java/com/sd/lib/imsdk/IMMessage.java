@@ -31,8 +31,8 @@ public class IMMessage
     {
         if (isSelf && state == IMMessageState.SendFail)
         {
-            timestamp = System.currentTimeMillis();
-            IMManager.getInstance().getConversation(peer, conversationType).send(this, callback);
+            IMManager.getInstance().getHandlerHolder().getMessageHandler().removeMessage(this);
+            IMManager.getInstance().getConversation(peer, conversationType).send(getItem(), callback);
             return true;
         }
         return false;
