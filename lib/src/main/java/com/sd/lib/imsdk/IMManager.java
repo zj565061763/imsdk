@@ -375,9 +375,32 @@ public class IMManager
     /**
      * 处理消息接收
      *
-     * @param receiveMessage {@link ReceiveMessage}
+     * @param receiveMessage
+     * @throws IMSDKException
      */
-    public synchronized void handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
+    public void handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
+    {
+        final IMMessage imMessage = handleReceiveMessageInternal(receiveMessage);
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (IMIncomingCallback callback : mListIMIncomingCallback)
+                {
+                    callback.onReceiveMessage(imMessage);
+                }
+            }
+        });
+    }
+
+    /**
+     * 处理消息接收
+     *
+     * @param receiveMessage {@link ReceiveMessage}
+     * @return
+     */
+    private synchronized IMMessage handleReceiveMessageInternal(ReceiveMessage receiveMessage) throws IMSDKException
     {
         if (!isLogin())
             throw new IMSDKException.UnLoginException("imsdk unlogin");
@@ -400,39 +423,29 @@ public class IMManager
         if (item == null)
             throw new IMSDKException.DeserializeMessageItemException("deserialize message item return null for type:" + receiveMessage.itemType);
 
-        final IMMessage message = IMFactory.newMessageReceive();
-        message.id = receiveMessage.id;
-        message.timestamp = receiveMessage.timestamp;
-        message.sender = receiveMessage.sender;
-        message.peer = receiveMessage.sender.getId();
-        message.conversationType = receiveMessage.conversationType;
-        message.state = IMMessageState.Receive;
-        message.isSelf = false;
-        message.item = item;
-        item.message = message;
+        final IMMessage imMessage = IMFactory.newMessageReceive();
+        imMessage.id = receiveMessage.id;
+        imMessage.timestamp = receiveMessage.timestamp;
+        imMessage.sender = receiveMessage.sender;
+        imMessage.peer = receiveMessage.sender.getId();
+        imMessage.conversationType = receiveMessage.conversationType;
+        imMessage.state = IMMessageState.Receive;
+        imMessage.isSelf = false;
+        imMessage.item = item;
+        item.message = imMessage;
 
         if (mChattingConversation != null)
-            message.isRead = message.peer.equals(mChattingConversation.getPeer());
+            imMessage.isRead = imMessage.peer.equals(mChattingConversation.getPeer());
         else
-            message.isRead = false;
+            imMessage.isRead = false;
 
-        getHandlerHolder().getMessageHandler().saveMessage(message);
+        getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
-        final IMConversation conversation = getConversation(message.getPeer(), message.getConversationType());
+        final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
-        conversation.lastMessage = message;
+        conversation.lastMessage = imMessage;
         getHandlerHolder().getConversationHandler().saveConversation(conversation);
 
-        IMUtils.runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                for (IMIncomingCallback callback : mListIMIncomingCallback)
-                {
-                    callback.onReceiveMessage(message);
-                }
-            }
-        });
+        return imMessage;
     }
 }
