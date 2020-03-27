@@ -3,6 +3,7 @@ package com.sd.lib.imsdk;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
+import com.sd.lib.imsdk.callback.IMConversationChangeCallback;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOtherExceptionCallback;
@@ -11,9 +12,8 @@ import com.sd.lib.imsdk.exception.IMSDKException;
 import com.sd.lib.imsdk.model.IMUser;
 import com.sd.lib.imsdk.model.ReceiveMessage;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,10 +43,13 @@ public class IMManager
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new ConcurrentHashMap<>();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
 
+    private final Map<String, IMConversation> mMapConversationLocal = new ConcurrentHashMap<>();
+
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMLoginStateCallback> mListIMLoginStateCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOtherExceptionCallback> mListIMOtherExceptionCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMConversationChangeCallback> mListIMConversationChangeCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
@@ -279,6 +282,27 @@ public class IMManager
     }
 
     /**
+     * 添加会话变更回调
+     *
+     * @param callback
+     */
+    public void addIMConversationChangeCallback(IMConversationChangeCallback callback)
+    {
+        if (callback != null)
+            mListIMConversationChangeCallback.add(callback);
+    }
+
+    /**
+     * 移除会话变更回调
+     *
+     * @param callback
+     */
+    public void removeIMConversationChangeCallback(IMConversationChangeCallback callback)
+    {
+        mListIMConversationChangeCallback.remove(callback);
+    }
+
+    /**
      * 返回某个会话
      *
      * @param peer
@@ -295,7 +319,6 @@ public class IMManager
         if (conversation == null)
         {
             conversation = IMFactory.newConversation(peer, type);
-            conversation.load();
             mMapConversation.put(key, conversation);
         }
         return conversation;
@@ -309,40 +332,29 @@ public class IMManager
     public synchronized List<IMConversation> getAllConversation()
     {
         final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
-        if (list == null || list.isEmpty())
-            return null;
-
-        for (IMConversation item : list)
+        if (list != null)
         {
-            final String key = item.getPeer() + "#" + item.getType();
-            final IMConversation cache = mMapConversation.get(key);
-            if (cache != null)
+            for (IMConversation item : list)
             {
-                cache.read(item);
-            } else
-            {
-                mMapConversation.put(key, item);
+                final String key = item.getPeer() + "#" + item.getType();
+                final IMConversation cache = mMapConversation.get(key);
+                if (cache != null)
+                {
+                    cache.read(item);
+                } else
+                {
+                    mMapConversation.put(key, item);
+                }
+
+                mMapConversationLocal.put(key, item);
             }
         }
 
-        Collections.sort(list, new Comparator<IMConversation>()
+        for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
         {
-            @Override
-            public int compare(IMConversation o1, IMConversation o2)
-            {
-                final long delta = o1.lastTimestamp - o2.lastTimestamp;
-                if (delta > 0)
-                {
-                    return -1;
-                } else if (delta < 0)
-                {
-                    return 1;
-                } else
-                {
-                    return 0;
-                }
-            }
-        });
+            item.onConversationLoad(list);
+        }
+
         return list;
     }
 
@@ -361,7 +373,47 @@ public class IMManager
         final IMConversation conversation = mMapConversation.remove(key);
 
         if (conversation != null)
-            mHandlerHolder.getConversationHandler().removeConversation(conversation);
+            removeConversationLocal(conversation);
+    }
+
+    synchronized void saveConversationLocal(IMConversation conversation)
+    {
+        getHandlerHolder().getConversationHandler().saveConversation(conversation);
+        final int oldSize = mMapConversationLocal.size();
+
+        final String key = conversation.getPeer() + "#" + conversation.getType();
+        mMapConversationLocal.put(key, conversation);
+
+        final int newSize = mMapConversationLocal.size();
+        if (newSize != oldSize)
+        {
+            // 通知会话新增
+            final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
+            for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+            {
+                item.onConversationAdd(list, conversation);
+            }
+        }
+    }
+
+    synchronized void removeConversationLocal(IMConversation conversation)
+    {
+        getHandlerHolder().getConversationHandler().removeConversation(conversation);
+        final int oldSize = mMapConversationLocal.size();
+
+        final String key = conversation.getPeer() + "#" + conversation.getType();
+        mMapConversationLocal.remove(key);
+
+        final int newSize = mMapConversationLocal.size();
+        if (newSize != oldSize)
+        {
+            // 通知会话移除
+            final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
+            for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
+            {
+                item.onConversationRemove(list, conversation);
+            }
+        }
     }
 
     /**
@@ -444,7 +496,7 @@ public class IMManager
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = imMessage;
-        getHandlerHolder().getConversationHandler().saveConversation(conversation);
+        saveConversationLocal(conversation);
 
         return imMessage;
     }

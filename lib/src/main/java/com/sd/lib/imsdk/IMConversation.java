@@ -9,6 +9,8 @@ import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class IMConversation
@@ -121,7 +123,7 @@ public class IMConversation
 
         this.lastTimestamp = System.currentTimeMillis();
         this.lastMessage = message;
-        holder.getConversationHandler().saveConversation(this);
+        IMManager.getInstance().saveConversationLocal(this);
 
         IMUtils.runOnUiThread(new Runnable()
         {
@@ -306,6 +308,31 @@ public class IMConversation
         {
             IMConversation.this.lastTimestamp = timestamp;
         }
+    }
+
+    public static void sort(List<IMConversation> list)
+    {
+        if (list == null || list.isEmpty())
+            return;
+
+        Collections.sort(list, new Comparator<IMConversation>()
+        {
+            @Override
+            public int compare(IMConversation o1, IMConversation o2)
+            {
+                final long delta = o1.lastTimestamp - o2.lastTimestamp;
+                if (delta > 0)
+                {
+                    return -1;
+                } else if (delta < 0)
+                {
+                    return 1;
+                } else
+                {
+                    return 0;
+                }
+            }
+        });
     }
 
     private static void notifyCallbackProgress(final IMMessage message, final IMMessageItem messageItem, final int progress, final IMSendCallback callback)
