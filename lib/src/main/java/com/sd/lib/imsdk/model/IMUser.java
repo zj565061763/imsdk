@@ -5,16 +5,20 @@ import android.text.TextUtils;
 public class IMUser
 {
     private final String id;
-    private String extId;
+    private final String extId;
     private String extName;
     private String extAvatar;
     private String extra;
 
-    public IMUser(String id)
+    public IMUser(String id, String extId)
     {
         if (TextUtils.isEmpty(id))
             throw new IllegalArgumentException("id is empty");
+
+        if (TextUtils.isEmpty(extId))
+            throw new IllegalArgumentException("extId is empty");
         this.id = id;
+        this.extId = extId;
     }
 
     public String getId()
@@ -25,11 +29,6 @@ public class IMUser
     public String getExtId()
     {
         return extId;
-    }
-
-    public void setExtId(String extId)
-    {
-        this.extId = extId;
     }
 
     public String getExtName()

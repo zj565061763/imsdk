@@ -10,6 +10,8 @@ public interface IMConversationHandler
 {
     void saveConversation(IMConversation conversation) throws Exception;
 
+    void saveConversationExt(IMConversation conversation) throws Exception;
+
     void removeConversation(IMConversation conversation) throws Exception;
 
     boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception;

@@ -25,7 +25,7 @@ public class ReceiveMessage
         this.conversationType = builder.conversationType;
 
         final IMUser sender = builder.sender;
-        final IMUser imUser = new IMUser(sender.getId());
+        final IMUser imUser = new IMUser(sender.getId(), sender.getExtId());
         imUser.setExtAvatar(sender.getExtAvatar());
         imUser.setExtName(sender.getExtName());
         imUser.setExtra(sender.getExtra());

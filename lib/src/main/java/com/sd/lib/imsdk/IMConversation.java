@@ -6,6 +6,7 @@ import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
+import com.sd.lib.imsdk.model.IMConversationExt;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.Collection;
@@ -21,6 +22,8 @@ public class IMConversation
     IMMessage lastMessage;
     int unreadCount;
     long lastTimestamp;
+
+    private IMConversationExt ext;
 
     public String getPeer()
     {
@@ -45,6 +48,17 @@ public class IMConversation
     public long getLastTimestamp()
     {
         return lastTimestamp;
+    }
+
+    public IMConversationExt getExt()
+    {
+        return ext;
+    }
+
+    public void setExt(IMConversationExt ext)
+    {
+        this.ext = ext;
+        IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversationExt(this);
     }
 
     void read(IMConversation conversation)
