@@ -6,7 +6,9 @@ import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
+import com.sd.lib.imsdk.exception.IMSDKException;
 import com.sd.lib.imsdk.model.IMUser;
+import com.sd.lib.imsdk.model.ReceiveMessage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -341,41 +343,38 @@ public class IMManager
     /**
      * 处理消息接收
      *
-     * @param messageId        消息ID
-     * @param timestamp        消息时间戳
-     * @param itemType         消息类型
-     * @param itemContent      消息内容
-     * @param conversationType 会话类型
-     * @param sender           消息发送者
+     * @param receiveMessage {@link ReceiveMessage}
      * @return
      */
-    public synchronized boolean handleReceiveMessage(String messageId, long timestamp,
-                                                     String itemType, String itemContent,
-                                                     IMConversationType conversationType, IMUser sender)
+    public synchronized boolean handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
     {
         if (!isLogin())
-            return false;
+            throw new IMSDKException.UnLoginException("imsdk unlogin");
 
-        if (TextUtils.isEmpty(itemType)
-                || TextUtils.isEmpty(messageId)
-                || timestamp <= 0
-                || conversationType == null
-                || sender == null
-                || TextUtils.isEmpty(sender.getId()))
+        receiveMessage.check();
+
+        final Class<? extends IMMessageItem> clazz = IMManager.getInstance().getMessageItem(receiveMessage.itemType);
+        if (clazz == null)
+            throw new IMSDKException.MessageItemClassNotFoundException("message item class for type:" + receiveMessage.itemType + " was not found");
+
+        IMMessageItem item = null;
+        try
         {
-            return false;
+            item = getHandlerHolder().getMessageItemSerializer().deserialize(receiveMessage.itemType, receiveMessage.itemContent);
+        } catch (Exception e)
+        {
+            throw new IMSDKException.DeserializeMessageItemException("deserialize message item error for type:" + receiveMessage.itemType, e);
         }
 
-        final IMMessageItem item = getHandlerHolder().getMessageItemSerializer().deserialize(itemContent, itemType);
         if (item == null)
-            return false;
+            throw new IMSDKException.DeserializeMessageItemException("deserialize message item return null for type:" + receiveMessage.itemType);
 
         final IMMessage message = IMFactory.newMessageReceive();
-        message.id = messageId;
-        message.timestamp = timestamp;
-        message.sender = sender;
-        message.peer = sender.getId();
-        message.conversationType = conversationType;
+        message.id = receiveMessage.id;
+        message.timestamp = receiveMessage.timestamp;
+        message.sender = receiveMessage.sender;
+        message.peer = receiveMessage.sender.getId();
+        message.conversationType = receiveMessage.conversationType;
         message.state = IMMessageState.Receive;
         message.isSelf = false;
         message.item = item;
