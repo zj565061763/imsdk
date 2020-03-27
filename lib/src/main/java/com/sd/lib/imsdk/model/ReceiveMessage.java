@@ -26,8 +26,8 @@ public class ReceiveMessage
 
         final IMUser sender = builder.sender;
         final IMUser imUser = new IMUser(sender.getId());
-        imUser.setBsAvatar(sender.getBsAvatar());
-        imUser.setBsName(sender.getBsName());
+        imUser.setExtAvatar(sender.getExtAvatar());
+        imUser.setExtName(sender.getExtName());
         imUser.setExtra(sender.getExtra());
         this.sender = imUser;
     }
