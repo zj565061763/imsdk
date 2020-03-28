@@ -74,6 +74,12 @@ public class IMUser
     }
 
     @Override
+    public int hashCode()
+    {
+        return id.hashCode();
+    }
+
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)
