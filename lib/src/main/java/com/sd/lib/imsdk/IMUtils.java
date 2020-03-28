@@ -3,6 +3,8 @@ package com.sd.lib.imsdk;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.Arrays;
+
 class IMUtils
 {
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
@@ -21,5 +23,10 @@ class IMUtils
     public static boolean equals(Object a, Object b)
     {
         return a != null && a.equals(b);
+    }
+
+    public static int hash(Object... values)
+    {
+        return Arrays.hashCode(values);
     }
 }

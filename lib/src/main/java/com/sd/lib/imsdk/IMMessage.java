@@ -104,7 +104,7 @@ public class IMMessage
     @Override
     public int hashCode()
     {
-        return id.hashCode();
+        return IMUtils.hash(id);
     }
 
     @Override

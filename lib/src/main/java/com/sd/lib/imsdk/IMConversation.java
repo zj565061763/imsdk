@@ -9,7 +9,6 @@ import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.model.IMConversationExt;
 import com.sd.lib.imsdk.model.IMUser;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -296,8 +295,7 @@ public class IMConversation
     @Override
     public int hashCode()
     {
-        final Object[] objects = new Object[]{peer, type};
-        return Arrays.hashCode(objects);
+        return IMUtils.hash(peer, type);
     }
 
     @Override
