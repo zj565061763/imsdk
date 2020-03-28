@@ -344,6 +344,7 @@ public class IMManager
         if (conversation == null)
         {
             conversation = IMFactory.newConversation(peer, type);
+            conversation.load();
             mMapConversation.put(key, conversation);
         }
         return conversation;
