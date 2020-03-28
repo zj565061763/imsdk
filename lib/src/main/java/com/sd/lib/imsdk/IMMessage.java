@@ -100,6 +100,8 @@ public class IMMessage
 
     public IMConversationExt getConversationExt()
     {
+        if (conversationExt == null)
+            conversationExt = new IMConversationExt();
         return conversationExt;
     }
 

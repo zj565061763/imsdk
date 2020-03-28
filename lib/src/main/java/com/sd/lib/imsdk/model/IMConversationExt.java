@@ -11,6 +11,11 @@ public class IMConversationExt
     private String avatar;
     private String extra;
 
+    public boolean isEmpty()
+    {
+        return TextUtils.isEmpty(id);
+    }
+
     public String getId()
     {
         return id;
