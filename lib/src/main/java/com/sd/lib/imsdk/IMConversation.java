@@ -87,6 +87,14 @@ public class IMConversation
     }
 
     /**
+     * 保存会话
+     */
+    public void save()
+    {
+        IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversation(this);
+    }
+
+    /**
      * 发送消息
      *
      * @param item

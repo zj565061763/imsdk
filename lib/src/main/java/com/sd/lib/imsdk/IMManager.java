@@ -408,7 +408,7 @@ public class IMManager
 
     synchronized void saveConversationLocal(final IMConversation conversation)
     {
-        mHandlerHolder.getConversationHandler().saveConversation(conversation);
+        conversation.save();
         final int oldSize = mMapConversationLocal.size();
 
         final String key = conversation.getPeer() + "#" + conversation.getType();
