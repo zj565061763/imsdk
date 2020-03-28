@@ -71,7 +71,6 @@ public class IMConversation
 
         setLastMessage(conversation.getLastMessage());
         setUnreadCount(conversation.getUnreadCount());
-        setLastTimestamp(conversation.getLastTimestamp());
         getExt().read(conversation.getExt());
     }
 
@@ -182,7 +181,6 @@ public class IMConversation
         message.setState(IMMessageState.SendPrepare);
         message.save();
 
-        setLastTimestamp(System.currentTimeMillis());
         setLastMessage(message);
         IMManager.getInstance().saveConversationLocal(this);
 
@@ -307,6 +305,13 @@ public class IMConversation
         });
     }
 
+    synchronized void increaseUnreadCount()
+    {
+        this.unreadCount++;
+    }
+
+    //---------- setter ----------
+
     void setPeer(String peer)
     {
         this.peer = peer;
@@ -317,17 +322,26 @@ public class IMConversation
         this.type = type;
     }
 
-    void setLastMessage(IMMessage lastMessage)
+    synchronized void setLastMessage(IMMessage lastMessage)
     {
+        final IMMessage old = this.lastMessage;
+        if (old != null && lastMessage != null)
+        {
+            if (lastMessage.getTimestamp() < old.getTimestamp())
+                return;
+        }
+
         this.lastMessage = lastMessage;
+        if (lastMessage != null)
+            setLastTimestamp(lastMessage.getTimestamp());
     }
 
-    void setUnreadCount(int unreadCount)
+    synchronized void setUnreadCount(int unreadCount)
     {
         this.unreadCount = unreadCount;
     }
 
-    void setLastTimestamp(long lastTimestamp)
+    private void setLastTimestamp(long lastTimestamp)
     {
         this.lastTimestamp = lastTimestamp;
     }

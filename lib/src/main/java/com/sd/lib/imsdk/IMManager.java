@@ -560,7 +560,6 @@ public class IMManager
         getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
-        conversation.setLastTimestamp(System.currentTimeMillis());
         conversation.setLastMessage(imMessage);
 
         final IMConversationExt conversationExt = receiveMessage.conversationExt;
