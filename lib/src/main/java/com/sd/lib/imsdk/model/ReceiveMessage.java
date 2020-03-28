@@ -9,22 +9,26 @@ public class ReceiveMessage
 {
     public final String id;
     public final long timestamp;
+
+    public final String peer;
+    public final IMConversationType conversationType;
+
     public final String itemType;
     public final String itemContent;
     public final IMUser sender;
-    public final String peer;
-    public final IMConversationType conversationType;
     public final IMConversationExt conversationExt;
 
     private ReceiveMessage(Builder builder)
     {
         this.id = builder.id;
         this.timestamp = builder.timestamp;
+
+        this.peer = builder.peer;
+        this.conversationType = builder.conversationType;
+
         this.itemType = builder.itemType;
         this.itemContent = builder.itemContent;
         this.sender = builder.sender;
-        this.peer = builder.peer;
-        this.conversationType = builder.conversationType;
         this.conversationExt = builder.conversationExt;
     }
 
@@ -36,6 +40,12 @@ public class ReceiveMessage
         if (timestamp <= 0)
             throw new IMSDKException.IllegalReceiveMessageException("error timestamp:" + timestamp);
 
+        if (TextUtils.isEmpty(peer))
+            throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
+
+        if (conversationType == null)
+            throw new IMSDKException.IllegalReceiveMessageException("error conversationType is null");
+
         if (TextUtils.isEmpty(itemType))
             throw new IMSDKException.IllegalReceiveMessageException("error itemType is empty");
 
@@ -44,23 +54,19 @@ public class ReceiveMessage
 
         if (sender == null)
             throw new IMSDKException.IllegalReceiveMessageException("error sender is null");
-
-        if (TextUtils.isEmpty(peer))
-            throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
-
-        if (conversationType == null)
-            throw new IMSDKException.IllegalReceiveMessageException("error conversationType is null");
     }
 
     public static class Builder
     {
         private String id;
         private long timestamp;
+
+        private String peer;
+        private IMConversationType conversationType;
+
         private String itemType;
         private String itemContent;
         private IMUser sender;
-        private String peer;
-        private IMConversationType conversationType;
         private IMConversationExt conversationExt;
 
         public Builder setId(String id)
@@ -72,6 +78,18 @@ public class ReceiveMessage
         public Builder setTimestamp(long timestamp)
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder setPeer(String peer)
+        {
+            this.peer = peer;
+            return this;
+        }
+
+        public Builder setConversationType(IMConversationType conversationType)
+        {
+            this.conversationType = conversationType;
             return this;
         }
 
@@ -90,18 +108,6 @@ public class ReceiveMessage
         public Builder setSender(IMUser sender)
         {
             this.sender = sender;
-            return this;
-        }
-
-        public Builder setPeer(String peer)
-        {
-            this.peer = peer;
-            return this;
-        }
-
-        public Builder setConversationType(IMConversationType conversationType)
-        {
-            this.conversationType = conversationType;
             return this;
         }
 
