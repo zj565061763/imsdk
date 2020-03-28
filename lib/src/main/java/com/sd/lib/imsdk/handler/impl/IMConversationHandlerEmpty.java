@@ -35,6 +35,12 @@ class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
+    public void setMessageRead(IMConversation conversation) throws Exception
+    {
+
+    }
+
+    @Override
     public List<IMConversation> getAllConversation() throws Exception
     {
         return null;

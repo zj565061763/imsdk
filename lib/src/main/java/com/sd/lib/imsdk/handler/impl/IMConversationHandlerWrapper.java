@@ -72,6 +72,18 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
     }
 
     @Override
+    public void setMessageRead(IMConversation conversation)
+    {
+        try
+        {
+            mOriginal.setMessageRead(conversation);
+        } catch (Exception e)
+        {
+            mCallbackHandler.notifyOtherException("error setMessageRead peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
+        }
+    }
+
+    @Override
     public List<IMConversation> getAllConversation()
     {
         try

@@ -102,6 +102,18 @@ public class IMConversation
     }
 
     /**
+     * 将会话的所有消息设置为已读
+     */
+    public void setMessageRead()
+    {
+        if (!IMManager.getInstance().isLogin())
+            return;
+
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        handler.setMessageRead(this);
+    }
+
+    /**
      * 保存会话
      */
     public void save()
