@@ -115,6 +115,18 @@ public class IMConversation
     }
 
     /**
+     * 更新本地扩展内容
+     */
+    public void updateExt()
+    {
+        if (!IMManager.getInstance().isLogin())
+            return;
+
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        handler.updateConversationExt(this);
+    }
+
+    /**
      * 保存会话
      */
     public void save()
