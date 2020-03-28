@@ -1,7 +1,6 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMSendCallback;
-import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
 {
@@ -42,7 +41,7 @@ public class IMMessage
     /**
      * 保存当前消息
      */
-    void save()
+    public void save()
     {
         IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
     }
@@ -90,6 +89,20 @@ public class IMMessage
     public String getExtra()
     {
         return extra;
+    }
+
+    public void setExtra(String extra)
+    {
+        this.extra = extra;
+    }
+
+    public <T> T parseExtra(Class<T> clazz)
+    {
+        if (clazz == null)
+            return null;
+
+        final T object = IMManager.getInstance().getHandlerHolder().getExtraSerializer().fromJson(extra, clazz);
+        return object;
     }
 
     public IMMessageItem getItem()
@@ -178,11 +191,6 @@ public class IMMessage
         public void setRead(boolean read)
         {
             IMMessage.this.isRead = read;
-        }
-
-        public void setExtra(String extra)
-        {
-            IMMessage.this.extra = extra;
         }
 
         public void setItem(IMMessageItem item)

@@ -1,10 +1,12 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.handler.IMConversationHandler;
+import com.sd.lib.imsdk.handler.IMExtraSerializer;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessageSender;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
+import com.sd.lib.imsdk.handler.impl.IMExtraSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageHandlerWrapper;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
@@ -17,6 +19,7 @@ public class IMHandlerHolder
     private IMMessageSender mMessageSender;
     private IMMessageHandlerWrapper mMessageHandler;
     private IMConversationHandlerWrapper mConversationHandler;
+    private IMExtraSerializer mExtraSerializer;
 
     public IMHandlerHolder(CallbackHandler callbackHandler)
     {
@@ -71,6 +74,18 @@ public class IMHandlerHolder
     public void setConversationHandler(IMConversationHandler conversationHandler)
     {
         mConversationHandler = new IMConversationHandlerWrapper(conversationHandler, mCallbackHandler);
+    }
+
+    public IMExtraSerializer getExtraSerializer()
+    {
+        if (mExtraSerializer == null)
+            mExtraSerializer = new IMExtraSerializerGson();
+        return mExtraSerializer;
+    }
+
+    public void setExtraSerializer(IMExtraSerializer extraSerializer)
+    {
+        mExtraSerializer = extraSerializer;
     }
 
     public interface CallbackHandler
