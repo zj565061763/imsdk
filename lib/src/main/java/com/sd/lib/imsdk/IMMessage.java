@@ -1,21 +1,23 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMSendCallback;
+import com.sd.lib.imsdk.model.IMConversationExt;
+import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
 {
     String id;
     long timestamp;
-    String senderId;
 
     String peer;
     IMConversationType conversationType;
     IMMessageState state = IMMessageState.None;
     boolean isSelf;
     boolean isRead;
-    String extra;
 
+    IMUser sender;
     IMMessageItem item;
+    IMConversationExt conversationExt;
 
     IMMessage()
     {
@@ -56,11 +58,6 @@ public class IMMessage
         return timestamp;
     }
 
-    public String getSenderId()
-    {
-        return senderId;
-    }
-
     public String getPeer()
     {
         return peer;
@@ -86,23 +83,9 @@ public class IMMessage
         return isRead;
     }
 
-    public String getExtra()
+    public IMUser getSender()
     {
-        return extra;
-    }
-
-    public void setExtra(String extra)
-    {
-        this.extra = extra;
-    }
-
-    public <T> T parseExtra(Class<T> clazz)
-    {
-        if (clazz == null)
-            return null;
-
-        final T object = IMManager.getInstance().getHandlerHolder().getExtraSerializer().fromJson(extra, clazz);
-        return object;
+        return sender;
     }
 
     public IMMessageItem getItem()
@@ -113,6 +96,16 @@ public class IMMessage
             item.message = this;
         }
         return item;
+    }
+
+    public IMConversationExt getConversationExt()
+    {
+        return conversationExt;
+    }
+
+    public void setConversationExt(IMConversationExt conversationExt)
+    {
+        this.conversationExt = conversationExt;
     }
 
     @Override
@@ -142,6 +135,7 @@ public class IMMessage
         return message.accessor();
     }
 
+
     public final class Accessor
     {
         private Accessor()
@@ -163,9 +157,9 @@ public class IMMessage
             IMMessage.this.timestamp = timestamp;
         }
 
-        public void setSenderId(String senderId)
+        public void setSender(IMUser sender)
         {
-            IMMessage.this.senderId = senderId;
+            IMMessage.this.sender = sender;
         }
 
         public void setPeer(String peer)

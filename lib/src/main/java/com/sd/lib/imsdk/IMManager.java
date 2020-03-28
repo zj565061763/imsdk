@@ -522,13 +522,13 @@ public class IMManager
         final IMMessage imMessage = IMFactory.newMessageReceive();
         imMessage.id = receiveMessage.id;
         imMessage.timestamp = receiveMessage.timestamp;
-        imMessage.senderId = receiveMessage.senderId;
         imMessage.peer = receiveMessage.peer;
         imMessage.conversationType = receiveMessage.conversationType;
         imMessage.state = IMMessageState.Receive;
         imMessage.isSelf = false;
-        imMessage.extra = receiveMessage.extra;
         imMessage.item = item;
+        imMessage.sender = receiveMessage.sender;
+        imMessage.conversationExt = receiveMessage.conversationExt;
         item.message = imMessage;
 
         if (mChattingConversation != null)

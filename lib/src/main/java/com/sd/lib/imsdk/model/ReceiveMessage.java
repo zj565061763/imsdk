@@ -11,10 +11,10 @@ public class ReceiveMessage
     public final long timestamp;
     public final String itemType;
     public final String itemContent;
-    public final String senderId;
+    public final IMUser sender;
     public final String peer;
     public final IMConversationType conversationType;
-    public final String extra;
+    public final IMConversationExt conversationExt;
 
     private ReceiveMessage(Builder builder)
     {
@@ -22,10 +22,10 @@ public class ReceiveMessage
         this.timestamp = builder.timestamp;
         this.itemType = builder.itemType;
         this.itemContent = builder.itemContent;
-        this.senderId = builder.senderId;
+        this.sender = builder.sender;
         this.peer = builder.peer;
         this.conversationType = builder.conversationType;
-        this.extra = builder.extra;
+        this.conversationExt = builder.conversationExt;
     }
 
     public void check() throws IMSDKException
@@ -34,7 +34,7 @@ public class ReceiveMessage
             throw new IMSDKException.IllegalReceiveMessageException("error id is empty");
 
         if (timestamp <= 0)
-            throw new IMSDKException.IllegalReceiveMessageException("error id is empty");
+            throw new IMSDKException.IllegalReceiveMessageException("error timestamp:" + timestamp);
 
         if (TextUtils.isEmpty(itemType))
             throw new IMSDKException.IllegalReceiveMessageException("error itemType is empty");
@@ -42,8 +42,8 @@ public class ReceiveMessage
         if (TextUtils.isEmpty(itemContent))
             throw new IMSDKException.IllegalReceiveMessageException("error itemContent is empty");
 
-        if (TextUtils.isEmpty(senderId))
-            throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
+        if (sender == null)
+            throw new IMSDKException.IllegalReceiveMessageException("error sender is null");
 
         if (TextUtils.isEmpty(peer))
             throw new IMSDKException.IllegalReceiveMessageException("error peer is empty");
@@ -58,10 +58,10 @@ public class ReceiveMessage
         private long timestamp;
         private String itemType;
         private String itemContent;
-        private String senderId;
+        private IMUser sender;
         private String peer;
         private IMConversationType conversationType;
-        private String extra;
+        private IMConversationExt conversationExt;
 
         public Builder setId(String id)
         {
@@ -87,9 +87,9 @@ public class ReceiveMessage
             return this;
         }
 
-        public Builder setSenderId(String senderId)
+        public Builder setSender(IMUser sender)
         {
-            this.senderId = senderId;
+            this.sender = sender;
             return this;
         }
 
@@ -105,9 +105,9 @@ public class ReceiveMessage
             return this;
         }
 
-        public Builder setExtra(String extra)
+        public Builder setConversationExt(IMConversationExt conversationExt)
         {
-            this.extra = extra;
+            this.conversationExt = conversationExt;
             return this;
         }
 

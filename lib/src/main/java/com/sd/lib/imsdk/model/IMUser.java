@@ -2,20 +2,17 @@ package com.sd.lib.imsdk.model;
 
 import android.text.TextUtils;
 
-public class IMUser
+public class IMUser extends IMUserExt
 {
-    private final String id;
-    private String extId;
-    private String extName;
-    private String extAvatar;
-    private String extra;
+    private String id;
+
+    public IMUser()
+    {
+    }
 
     public IMUser(String id)
     {
-        if (TextUtils.isEmpty(id))
-            throw new IllegalArgumentException("id is empty");
-
-        this.id = id;
+        setId(id);
     }
 
     public String getId()
@@ -23,39 +20,11 @@ public class IMUser
         return id;
     }
 
-    public String getExtId()
+    public void setId(String id)
     {
-        return extId;
-    }
-
-    public String getExtName()
-    {
-        return extName;
-    }
-
-    public void setExtName(String extName)
-    {
-        this.extName = extName;
-    }
-
-    public String getExtAvatar()
-    {
-        return extAvatar;
-    }
-
-    public void setExtAvatar(String extAvatar)
-    {
-        this.extAvatar = extAvatar;
-    }
-
-    public String getExtra()
-    {
-        return extra;
-    }
-
-    public void setExtra(String extra)
-    {
-        this.extra = extra;
+        if (TextUtils.isEmpty(id))
+            throw new IllegalArgumentException("id is empty");
+        this.id = id;
     }
 
     @Override
@@ -71,6 +40,6 @@ public class IMUser
             return false;
 
         final IMUser other = (IMUser) obj;
-        return id.equals(other.getId());
+        return id != null && id.equals(other.getId());
     }
 }

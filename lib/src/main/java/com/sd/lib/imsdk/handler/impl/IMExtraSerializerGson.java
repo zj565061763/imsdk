@@ -8,7 +8,7 @@ public class IMExtraSerializerGson implements IMExtraSerializer
     private final Gson mGson = new Gson();
 
     @Override
-    public <T> T fromJson(String json, Class<T> classOfT)
+    public <T> T deserialize(String json, Class<T> classOfT)
     {
         return mGson.fromJson(json, classOfT);
     }

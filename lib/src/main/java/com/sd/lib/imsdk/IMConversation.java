@@ -102,12 +102,12 @@ public class IMConversation
         }
 
         final IMMessage message = IMFactory.newMessageSend();
-        message.senderId = loginUser.getId();
         message.peer = peer;
         message.conversationType = type;
         message.isSelf = true;
         message.isRead = true;
         message.item = item;
+        message.sender = loginUser;
         item.message = message;
 
         return sendInternal(message, callback);
