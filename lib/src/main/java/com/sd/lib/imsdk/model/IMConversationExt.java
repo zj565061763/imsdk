@@ -9,6 +9,14 @@ public class IMConversationExt
     private String avatar;
     private String extra;
 
+    public void read(IMConversationExt read)
+    {
+        this.id = read.id;
+        this.name = read.name;
+        this.avatar = read.avatar;
+        this.extra = read.extra;
+    }
+
     public String getId()
     {
         return id;

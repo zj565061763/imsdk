@@ -9,6 +9,7 @@ import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOtherExceptionCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
 import com.sd.lib.imsdk.exception.IMSDKException;
+import com.sd.lib.imsdk.model.IMConversationExt;
 import com.sd.lib.imsdk.model.IMUser;
 import com.sd.lib.imsdk.model.ReceiveMessage;
 
@@ -540,7 +541,10 @@ public class IMManager
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = imMessage;
-        conversation.setConversationExt(receiveMessage.conversationExt);
+
+        final IMConversationExt conversationExt = receiveMessage.conversationExt;
+        if (conversation != null)
+            conversation.getExt().read(conversationExt);
         saveConversationLocal(conversation);
 
         return imMessage;
