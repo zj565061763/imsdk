@@ -15,7 +15,6 @@ import com.sd.lib.imsdk.model.ReceiveMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,7 +44,7 @@ public class IMManager
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new ConcurrentHashMap<>();
     private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
 
-    private final Map<String, IMConversation> mMapConversationLocal = new LinkedHashMap<>();
+    private final Map<String, IMConversation> mMapConversationLocal = new ConcurrentHashMap<>();
 
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOutgoingCallback> mListIMOutgoingCallback = new CopyOnWriteArraySet<>();
@@ -358,24 +357,24 @@ public class IMManager
     public synchronized List<IMConversation> getAllConversation()
     {
         final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
+
+        mMapConversationLocal.clear();
         if (list != null)
         {
             for (IMConversation item : list)
             {
-                final String key = item.getPeer() + "#" + item.getType();
-                final IMConversation cache = mMapConversation.get(key);
-                if (cache != null)
-                {
-                    cache.read(item);
-                } else
-                {
-                    mMapConversation.put(key, item);
-                }
+                final IMConversation cache = getConversation(item.getPeer(), item.getType());
+                cache.read(item);
 
-                mMapConversationLocal.put(key, item);
+                if (cache.getLastTimestamp() > 0)
+                {
+                    final String key = item.getPeer() + "#" + item.getType();
+                    mMapConversationLocal.put(key, cache);
+                }
             }
         }
 
+        final List<IMConversation> listResult = new ArrayList<>(mMapConversationLocal.values());
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
@@ -383,7 +382,7 @@ public class IMManager
             {
                 for (IMConversationChangeCallback item : mListIMConversationChangeCallback)
                 {
-                    item.onConversationLoad(list);
+                    item.onConversationLoad(listResult);
                 }
             }
         });

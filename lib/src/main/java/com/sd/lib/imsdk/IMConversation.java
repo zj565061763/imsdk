@@ -23,6 +23,10 @@ public class IMConversation
     int unreadCount;
     long lastTimestamp;
 
+    IMConversation()
+    {
+    }
+
     private IMConversationExt ext;
 
     public String getPeer()
