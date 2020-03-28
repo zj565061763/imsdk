@@ -111,6 +111,7 @@ public class IMConversation
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.setMessageRead(this);
+        this.unreadCount = 0;
     }
 
     /**
