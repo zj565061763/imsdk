@@ -16,12 +16,12 @@ import java.util.List;
 
 public class IMConversation
 {
-    String peer;
-    IMConversationType type;
+    private String peer;
+    private IMConversationType type;
 
-    IMMessage lastMessage;
-    int unreadCount;
-    long lastTimestamp;
+    private IMMessage lastMessage;
+    private int unreadCount;
+    private long lastTimestamp;
 
     private IMConversationExt ext;
 
@@ -69,10 +69,10 @@ public class IMConversation
         if (!type.equals(conversation.type))
             throw new IllegalArgumentException("read conversation error type");
 
-        this.lastMessage = conversation.getLastMessage();
-        this.unreadCount = conversation.getUnreadCount();
-        this.lastTimestamp = conversation.getLastTimestamp();
-        this.ext = conversation.getExt();
+        setLastMessage(conversation.getLastMessage());
+        setUnreadCount(conversation.getUnreadCount());
+        setLastTimestamp(conversation.getLastTimestamp());
+        getExt().read(conversation.getExt());
     }
 
     /**
@@ -307,6 +307,31 @@ public class IMConversation
         });
     }
 
+    void setPeer(String peer)
+    {
+        this.peer = peer;
+    }
+
+    void setType(IMConversationType type)
+    {
+        this.type = type;
+    }
+
+    void setLastMessage(IMMessage lastMessage)
+    {
+        this.lastMessage = lastMessage;
+    }
+
+    void setUnreadCount(int unreadCount)
+    {
+        this.unreadCount = unreadCount;
+    }
+
+    void setLastTimestamp(long lastTimestamp)
+    {
+        this.lastTimestamp = lastTimestamp;
+    }
+
     @Override
     public int hashCode()
     {
@@ -353,27 +378,27 @@ public class IMConversation
 
         public void setPeer(String peer)
         {
-            IMConversation.this.peer = peer;
+            IMConversation.this.setPeer(peer);
         }
 
         public void setType(IMConversationType type)
         {
-            IMConversation.this.type = type;
+            IMConversation.this.setType(type);
         }
 
         public void setLastMessage(IMMessage message)
         {
-            IMConversation.this.lastMessage = message;
+            IMConversation.this.setLastMessage(message);
         }
 
         public void setUnreadCount(int count)
         {
-            IMConversation.this.unreadCount = count;
+            IMConversation.this.setUnreadCount(count);
         }
 
         public void setLastTimestamp(long timestamp)
         {
-            IMConversation.this.lastTimestamp = timestamp;
+            IMConversation.this.setLastTimestamp(timestamp);
         }
     }
 
