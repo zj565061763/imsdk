@@ -5,11 +5,13 @@ import com.sd.lib.imsdk.handler.IMJsonSerializer;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
 import com.sd.lib.imsdk.handler.IMMessageItemSerializer;
 import com.sd.lib.imsdk.handler.IMMessageSender;
+import com.sd.lib.imsdk.handler.IMPersistenceHandler;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.handler.impl.IMJsonSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageHandlerWrapper;
 import com.sd.lib.imsdk.handler.impl.IMMessageItemSerializerGson;
 import com.sd.lib.imsdk.handler.impl.IMMessageSenderEmpty;
+import com.sd.lib.imsdk.handler.impl.IMPersistenceHandlerWrapper;
 
 public class IMHandlerHolder
 {
@@ -20,6 +22,7 @@ public class IMHandlerHolder
     private IMMessageHandlerWrapper mMessageHandler;
     private IMConversationHandlerWrapper mConversationHandler;
     private IMJsonSerializer mJsonSerializer;
+    private IMPersistenceHandlerWrapper mPersistenceHandler;
 
     public IMHandlerHolder(CallbackHandler callbackHandler)
     {
@@ -86,6 +89,18 @@ public class IMHandlerHolder
     public void setJsonSerializer(IMJsonSerializer jsonSerializer)
     {
         mJsonSerializer = jsonSerializer;
+    }
+
+    public IMPersistenceHandlerWrapper getPersistenceHandler()
+    {
+        if (mPersistenceHandler == null)
+            mPersistenceHandler = new IMPersistenceHandlerWrapper(null, mCallbackHandler);
+        return mPersistenceHandler;
+    }
+
+    public void setPersistenceHandler(IMPersistenceHandler persistenceHandler)
+    {
+        mPersistenceHandler = new IMPersistenceHandlerWrapper(persistenceHandler, mCallbackHandler);
     }
 
     public interface CallbackHandler
