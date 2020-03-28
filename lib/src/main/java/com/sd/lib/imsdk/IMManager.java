@@ -528,7 +528,7 @@ public class IMManager
         imMessage.isSelf = false;
         imMessage.item = item;
         imMessage.sender = receiveMessage.sender;
-        imMessage.conversationExt = receiveMessage.conversationExt;
+        imMessage.peerExt = receiveMessage.peerExt;
         item.message = imMessage;
 
         if (mChattingConversation != null)

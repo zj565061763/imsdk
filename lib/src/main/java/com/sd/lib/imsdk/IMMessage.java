@@ -1,7 +1,7 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMSendCallback;
-import com.sd.lib.imsdk.model.IMConversationExt;
+import com.sd.lib.imsdk.model.IMExt;
 import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
@@ -17,7 +17,7 @@ public class IMMessage
 
     IMMessageItem item;
     IMUser sender;
-    IMConversationExt conversationExt;
+    IMExt peerExt;
 
     IMMessage()
     {
@@ -98,16 +98,16 @@ public class IMMessage
         return sender;
     }
 
-    public IMConversationExt getConversationExt()
+    public IMExt getPeerExt()
     {
-        if (conversationExt == null)
-            conversationExt = new IMConversationExt();
-        return conversationExt;
+        if (peerExt == null)
+            peerExt = new IMExt();
+        return peerExt;
     }
 
-    public void setConversationExt(IMConversationExt conversationExt)
+    public void setPeerExt(IMExt peerExt)
     {
-        this.conversationExt = conversationExt;
+        this.peerExt = peerExt;
     }
 
     @Override
