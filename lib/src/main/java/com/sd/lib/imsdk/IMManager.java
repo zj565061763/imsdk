@@ -3,6 +3,7 @@ package com.sd.lib.imsdk;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
+import com.sd.lib.imsdk.callback.IMChattingSenderExtChangeCallback;
 import com.sd.lib.imsdk.callback.IMConversationChangeCallback;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
@@ -55,6 +56,7 @@ public class IMManager
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
     private final Map<String, IMUser> mMapChattingSender = new ConcurrentHashMap<>();
+    private final Collection<IMChattingSenderExtChangeCallback> mListIMChattingSenderExtChangeCallback = new CopyOnWriteArraySet<>();
 
     public IMHandlerHolder getHandlerHolder()
     {
@@ -232,7 +234,7 @@ public class IMManager
     }
 
     /**
-     * 移除新消息回调
+     * 移除回调
      *
      * @param callback
      */
@@ -253,7 +255,7 @@ public class IMManager
     }
 
     /**
-     * 移除消息发送回调
+     * 移除回调
      *
      * @param callback
      */
@@ -279,7 +281,7 @@ public class IMManager
     }
 
     /**
-     * 移除IM登陆状态回调
+     * 移除回调
      *
      * @param callback
      */
@@ -300,7 +302,7 @@ public class IMManager
     }
 
     /**
-     * 移除其他异常回调
+     * 移除回调
      *
      * @param callback
      */
@@ -321,13 +323,34 @@ public class IMManager
     }
 
     /**
-     * 移除会话变更回调
+     * 移除回调
      *
      * @param callback
      */
     public void removeIMConversationChangeCallback(IMConversationChangeCallback callback)
     {
         mListIMConversationChangeCallback.remove(callback);
+    }
+
+    /**
+     * 添加会话中发送者扩展信息变更回调
+     *
+     * @param callback
+     */
+    public void addIMChattingSenderExtChangeCallback(IMChattingSenderExtChangeCallback callback)
+    {
+        if (callback != null)
+            mListIMChattingSenderExtChangeCallback.add(callback);
+    }
+
+    /**
+     * 移除回调
+     *
+     * @param callback
+     */
+    public void removeIMChattingSenderExtChangeCallback(IMChattingSenderExtChangeCallback callback)
+    {
+        mListIMChattingSenderExtChangeCallback.remove(callback);
     }
 
     /**
@@ -558,20 +581,10 @@ public class IMManager
 
         final IMConversation conversation = imMessage.getConversation();
         if (conversation.equals(mChattingConversation))
-        {
             imMessage.setRead(true);
-
-            final IMUser sender = imMessage.getSender();
-            final IMUser cache = mMapChattingSender.get(sender.getId());
-            if (cache != null && cache.isExtChanged(sender))
-            {
-                // TODO 通知sender变化，并更新数据库
-            }
-            mMapChattingSender.put(sender.getId(), sender);
-        } else
-        {
+        else
             imMessage.setRead(false);
-        }
+
         getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
         conversation.setLastMessage(imMessage);
@@ -580,6 +593,28 @@ public class IMManager
             conversation.getExt().read(conversationExt);
 
         saveConversationLocal(conversation);
+
+        if (conversation.equals(mChattingConversation))
+        {
+            final IMUser sender = imMessage.getSender();
+            final IMUser cache = mMapChattingSender.get(sender.getId());
+            if (cache != null && cache.isExtChanged(sender))
+            {
+                // 通知sender变化，并更新数据库
+                IMUtils.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        for (IMChattingSenderExtChangeCallback item : mListIMChattingSenderExtChangeCallback)
+                        {
+                            item.onSenderExtChanged(conversation, sender);
+                        }
+                    }
+                });
+            }
+            mMapChattingSender.put(sender.getId(), sender);
+        }
 
         return imMessage;
     }
