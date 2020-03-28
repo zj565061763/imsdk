@@ -11,14 +11,6 @@ public class IMConversationExt
     private String avatar;
     private String extra;
 
-    public <T> T parseExtra(Class<T> clazz)
-    {
-        if (clazz == null)
-            return null;
-
-        final T object = IMManager.getInstance().getHandlerHolder().getExtraSerializer().deserialize(extra, clazz);
-        return object;
-    }
 
     public String getId()
     {
@@ -60,5 +52,24 @@ public class IMConversationExt
     public void setExtra(String extra)
     {
         this.extra = extra;
+    }
+
+    public <T> T parseExtra(Class<T> clazz)
+    {
+        if (clazz == null)
+            return null;
+
+        final T object = IMManager.getInstance().getHandlerHolder().getJsonSerializer().deserialize(extra, clazz);
+        return object;
+    }
+
+    public String serialize()
+    {
+        return IMManager.getInstance().getHandlerHolder().getJsonSerializer().serialize(this);
+    }
+
+    public static IMConversationExt deserialize(String content)
+    {
+        return IMManager.getInstance().getHandlerHolder().getJsonSerializer().deserialize(content, IMConversationExt.class);
     }
 }
