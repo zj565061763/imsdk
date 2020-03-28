@@ -29,6 +29,12 @@ class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
+    public int loadUnreadCount(IMConversation conversation) throws Exception
+    {
+        return 0;
+    }
+
+    @Override
     public List<IMConversation> getAllConversation() throws Exception
     {
         return null;

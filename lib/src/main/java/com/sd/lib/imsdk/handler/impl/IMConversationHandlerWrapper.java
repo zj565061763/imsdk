@@ -59,6 +59,19 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
     }
 
     @Override
+    public int loadUnreadCount(IMConversation conversation)
+    {
+        try
+        {
+            return mOriginal.loadUnreadCount(conversation);
+        } catch (Exception e)
+        {
+            mCallbackHandler.notifyOtherException("error loadUnreadCount peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
+        }
+        return 0;
+    }
+
+    @Override
     public List<IMConversation> getAllConversation()
     {
         try

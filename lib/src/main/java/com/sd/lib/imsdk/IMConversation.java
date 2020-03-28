@@ -88,6 +88,20 @@ public class IMConversation
     }
 
     /**
+     * 加载未读数量
+     */
+    public int loadUnreadCount()
+    {
+        if (!IMManager.getInstance().isLogin())
+            return 0;
+
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        final int unreadCount = handler.loadUnreadCount(this);
+        this.unreadCount = unreadCount;
+        return this.unreadCount;
+    }
+
+    /**
      * 保存会话
      */
     public void save()

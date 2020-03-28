@@ -14,6 +14,8 @@ public interface IMConversationHandler
 
     void loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception;
 
+    int loadUnreadCount(IMConversation conversation) throws Exception;
+
     List<IMConversation> getAllConversation() throws Exception;
 
     void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback) throws Exception;
