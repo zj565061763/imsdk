@@ -165,13 +165,12 @@ public class IMConversation
         }
 
         final IMMessage message = IMFactory.newMessageSend();
-        message.peer = peer;
-        message.conversationType = type;
-        message.isSelf = true;
-        message.isRead = true;
-        message.item = item;
-        message.sender = loginUser;
-        item.message = message;
+        message.setPeer(peer);
+        message.setConversationType(type);
+        message.setSelf(true);
+        message.setRead(true);
+        message.setItem(item);
+        message.setSender(loginUser);
 
         return sendInternal(message, callback);
     }
@@ -180,7 +179,7 @@ public class IMConversation
     {
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
-        message.state = IMMessageState.SendPrepare;
+        message.setState(IMMessageState.SendPrepare);
         message.save();
 
         this.lastTimestamp = System.currentTimeMillis();
@@ -205,7 +204,7 @@ public class IMConversation
             @Override
             public void run()
             {
-                message.state = IMMessageState.Sending;
+                message.setState(IMMessageState.Sending);
                 holder.getMessageHandler().updateMessageState(message);
 
                 holder.getMessageSender().sendMessage(message, new IMCallback()
@@ -213,7 +212,7 @@ public class IMConversation
                     @Override
                     public void onSuccess()
                     {
-                        message.state = IMMessageState.SendSuccess;
+                        message.setState(IMMessageState.SendSuccess);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackSuccess(message, callback);
                     }
@@ -221,7 +220,7 @@ public class IMConversation
                     @Override
                     public void onError(int code, String desc)
                     {
-                        message.state = IMMessageState.SendFail;
+                        message.setState(IMMessageState.SendFail);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, code, desc, callback);
                     }
@@ -232,7 +231,7 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
-            message.state = IMMessageState.UploadItem;
+            message.setState(IMMessageState.UploadItem);
             holder.getMessageHandler().updateMessageState(message);
 
             messageItem.upload(new IMMessageItem.UploadCallback()
@@ -240,14 +239,14 @@ public class IMConversation
                 @Override
                 public void onProgress(int progress)
                 {
-                    if (message.state == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.UploadItem)
                         notifyCallbackProgress(message, messageItem, progress, callback);
                 }
 
                 @Override
                 public void onSuccess()
                 {
-                    if (message.state == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.UploadItem)
                     {
                         message.updateItem();
                         sendRunnable.run();
@@ -257,9 +256,9 @@ public class IMConversation
                 @Override
                 public void onError(String desc)
                 {
-                    if (message.state == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.UploadItem)
                     {
-                        message.state = IMMessageState.SendFail;
+                        message.setState(IMMessageState.SendFail);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
                     }

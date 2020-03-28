@@ -5,17 +5,17 @@ import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
 {
-    String id;
-    long timestamp;
+    private String id;
+    private long timestamp;
 
-    String peer;
-    IMConversationType conversationType;
-    IMMessageState state = IMMessageState.None;
-    boolean isSelf;
-    boolean isRead;
+    private String peer;
+    private IMConversationType conversationType;
+    private IMMessageState state = IMMessageState.None;
+    private boolean isSelf;
+    private boolean isRead;
 
-    IMMessageItem item;
-    IMUser sender;
+    private IMMessageItem item;
+    private IMUser sender;
 
     IMMessage()
     {
@@ -115,6 +115,54 @@ public class IMMessage
         return sender;
     }
 
+    //---------- setter ----------
+
+    void setId(String id)
+    {
+        this.id = id;
+    }
+
+    void setTimestamp(long timestamp)
+    {
+        this.timestamp = timestamp;
+    }
+
+    void setPeer(String peer)
+    {
+        this.peer = peer;
+    }
+
+    void setConversationType(IMConversationType conversationType)
+    {
+        this.conversationType = conversationType;
+    }
+
+    void setState(IMMessageState state)
+    {
+        this.state = state;
+    }
+
+    void setSelf(boolean self)
+    {
+        isSelf = self;
+    }
+
+    void setRead(boolean read)
+    {
+        isRead = read;
+    }
+
+    void setItem(IMMessageItem item)
+    {
+        this.item = item;
+        item.message = IMMessage.this;
+    }
+
+    void setSender(IMUser sender)
+    {
+        this.sender = sender;
+    }
+
     @Override
     public int hashCode()
     {
@@ -162,48 +210,47 @@ public class IMMessage
 
         public void setId(String id)
         {
-            IMMessage.this.id = id;
+            IMMessage.this.setId(id);
         }
 
         public void setTimestamp(long timestamp)
         {
-            IMMessage.this.timestamp = timestamp;
+            IMMessage.this.setTimestamp(timestamp);
         }
 
         public void setPeer(String peer)
         {
-            IMMessage.this.peer = peer;
+            IMMessage.this.setPeer(peer);
         }
 
         public void setConversationType(IMConversationType conversationType)
         {
-            IMMessage.this.conversationType = conversationType;
+            IMMessage.this.setConversationType(conversationType);
         }
 
         public void setState(IMMessageState state)
         {
-            IMMessage.this.state = state;
+            IMMessage.this.setState(state);
         }
 
         public void setSelf(boolean self)
         {
-            IMMessage.this.isSelf = self;
+            IMMessage.this.setSelf(self);
         }
 
         public void setRead(boolean read)
         {
-            IMMessage.this.isRead = read;
+            IMMessage.this.setRead(read);
         }
 
         public void setItem(IMMessageItem item)
         {
-            IMMessage.this.item = item;
-            item.message = IMMessage.this;
+            IMMessage.this.setItem(item);
         }
 
         public void setSender(IMUser sender)
         {
-            IMMessage.this.sender = sender;
+            IMMessage.this.setSender(sender);
         }
     }
 }

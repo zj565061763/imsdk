@@ -543,20 +543,19 @@ public class IMManager
             throw new IMSDKException.DeserializeMessageItemException("deserialize message item return null for type:" + receiveMessage.itemType);
 
         final IMMessage imMessage = IMFactory.newMessageReceive();
-        imMessage.id = receiveMessage.id;
-        imMessage.timestamp = receiveMessage.timestamp;
-        imMessage.peer = receiveMessage.peer;
-        imMessage.conversationType = receiveMessage.conversationType;
-        imMessage.state = IMMessageState.Receive;
-        imMessage.isSelf = false;
-        imMessage.item = item;
-        imMessage.sender = receiveMessage.sender.copy();
-        item.message = imMessage;
+        imMessage.setId(receiveMessage.id);
+        imMessage.setTimestamp(receiveMessage.timestamp);
+        imMessage.setPeer(receiveMessage.peer);
+        imMessage.setConversationType(receiveMessage.conversationType);
+        imMessage.setState(IMMessageState.Receive);
+        imMessage.setSelf(false);
+        imMessage.setItem(item);
+        imMessage.setSender(receiveMessage.sender.copy());
 
         if (mChattingConversation != null)
-            imMessage.isRead = imMessage.peer.equals(mChattingConversation.getPeer());
+            imMessage.setRead(imMessage.getPeer().equals(mChattingConversation.getPeer()));
         else
-            imMessage.isRead = false;
+            imMessage.setRead(false);
 
         getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
