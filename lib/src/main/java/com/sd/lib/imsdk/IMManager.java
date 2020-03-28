@@ -333,7 +333,12 @@ public class IMManager
      * @param type
      * @return
      */
-    public synchronized IMConversation getConversation(String peer, IMConversationType type)
+    public IMConversation getConversation(String peer, IMConversationType type)
+    {
+        return getConversationInternal(peer, type, true);
+    }
+
+    private synchronized IMConversation getConversationInternal(String peer, IMConversationType type, boolean load)
     {
         if (TextUtils.isEmpty(peer) || type == null)
             return null;
@@ -343,7 +348,8 @@ public class IMManager
         if (conversation == null)
         {
             conversation = IMFactory.newConversation(peer, type);
-            conversation.load();
+            if (load)
+                conversation.load();
             mMapConversation.put(key, conversation);
         }
         return conversation;
@@ -363,7 +369,7 @@ public class IMManager
         {
             for (IMConversation item : list)
             {
-                final IMConversation cache = getConversation(item.getPeer(), item.getType());
+                final IMConversation cache = getConversationInternal(item.getPeer(), item.getType(), false);
                 cache.read(item);
 
                 if (cache.getLastTimestamp() > 0)
