@@ -19,9 +19,9 @@ public class IMConversation
     private String peer;
     private IMConversationType type;
 
-    private IMMessage lastMessage;
-    private int unreadCount;
-    private long lastTimestamp;
+    private volatile IMMessage lastMessage;
+    private volatile int unreadCount;
+    private volatile long lastTimestamp;
 
     private IMConversationExt ext;
 
@@ -97,8 +97,8 @@ public class IMConversation
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         final int unreadCount = handler.loadUnreadCount(this);
-        this.unreadCount = unreadCount;
-        return this.unreadCount;
+        setUnreadCount(unreadCount);
+        return getUnreadCount();
     }
 
     /**
@@ -111,7 +111,7 @@ public class IMConversation
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.setMessageRead(this);
-        this.unreadCount = 0;
+        setUnreadCount(0);
     }
 
     /**
@@ -182,8 +182,8 @@ public class IMConversation
         message.setState(IMMessageState.SendPrepare);
         message.save();
 
-        this.lastTimestamp = System.currentTimeMillis();
-        this.lastMessage = message;
+        setLastTimestamp(System.currentTimeMillis());
+        setLastMessage(message);
         IMManager.getInstance().saveConversationLocal(this);
 
         IMUtils.runOnUiThread(new Runnable()
