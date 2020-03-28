@@ -11,7 +11,6 @@ public class IMConversationExt
     private String avatar;
     private String extra;
 
-
     public String getId()
     {
         return id;
