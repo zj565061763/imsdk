@@ -544,8 +544,9 @@ public class IMManager
         conversation.lastMessage = imMessage;
 
         final IMConversationExt conversationExt = receiveMessage.conversationExt;
-        if (conversation != null)
+        if (conversationExt != null)
             conversation.getExt().read(conversationExt);
+
         saveConversationLocal(conversation);
 
         return imMessage;
