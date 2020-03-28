@@ -28,6 +28,23 @@ public class IMUser
         return copy;
     }
 
+    public boolean isExtChanged(IMUser user)
+    {
+        if (!TextUtils.equals(extName, user.extName))
+            return true;
+
+        if (!TextUtils.equals(extAvatar, user.extAvatar))
+            return true;
+
+        if (!TextUtils.equals(extExtra, user.extExtra))
+            return true;
+
+        if (!TextUtils.equals(extId, user.extId))
+            return true;
+
+        return false;
+    }
+
     public String getId()
     {
         return id;

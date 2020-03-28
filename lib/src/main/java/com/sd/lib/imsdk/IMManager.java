@@ -54,6 +54,7 @@ public class IMManager
 
     private volatile IMUser mLoginUser;
     private volatile IMConversation mChattingConversation;
+    private final Map<String, IMUser> mMapChattingSender = new ConcurrentHashMap<>();
 
     public IMHandlerHolder getHandlerHolder()
     {
@@ -213,7 +214,10 @@ public class IMManager
             return;
 
         if (conversation.equals(mChattingConversation))
+        {
             mChattingConversation = null;
+            mMapChattingSender.clear();
+        }
     }
 
     /**
@@ -556,6 +560,14 @@ public class IMManager
         if (conversation.equals(mChattingConversation))
         {
             imMessage.setRead(true);
+
+            final IMUser sender = imMessage.getSender();
+            final IMUser cache = mMapChattingSender.get(sender.getId());
+            if (cache != null && cache.isExtChanged(sender))
+            {
+                // TODO 通知sender变化，并更新数据库
+            }
+            mMapChattingSender.put(sender.getId(), sender);
         } else
         {
             imMessage.setRead(false);
