@@ -146,6 +146,7 @@ public class IMManager
 
         mLoginUser = user;
         mMapConversation.clear();
+        mMapConversationLocal.clear();
 
         if (old != null)
         {
