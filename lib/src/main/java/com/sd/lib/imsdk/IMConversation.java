@@ -61,7 +61,7 @@ public class IMConversation
         return ext;
     }
 
-    void read(IMConversation conversation)
+    synchronized void read(IMConversation conversation)
     {
         if (!peer.equals(conversation.peer))
             throw new IllegalArgumentException("read conversation error peer");
@@ -331,7 +331,7 @@ public class IMConversation
             setLastTimestamp(lastMessage.getTimestamp());
     }
 
-    synchronized void setUnreadCount(int unreadCount)
+    void setUnreadCount(int unreadCount)
     {
         this.unreadCount = unreadCount;
     }
