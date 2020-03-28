@@ -23,7 +23,7 @@ public class IMConversation
     int unreadCount;
     long lastTimestamp;
 
-    private IMConversationExt conversationExt;
+    private IMConversationExt ext;
 
     public String getPeer()
     {
@@ -50,14 +50,11 @@ public class IMConversation
         return lastTimestamp;
     }
 
-    public IMConversationExt getConversationExt()
+    public IMConversationExt getExt()
     {
-        return conversationExt;
-    }
-
-    public void setConversationExt(IMConversationExt conversationExt)
-    {
-        this.conversationExt = conversationExt;
+        if (ext == null)
+            ext = new IMConversationExt();
+        return ext;
     }
 
     void read(IMConversation conversation)
@@ -71,7 +68,7 @@ public class IMConversation
         this.lastMessage = conversation.getLastMessage();
         this.unreadCount = conversation.getUnreadCount();
         this.lastTimestamp = conversation.getLastTimestamp();
-        this.conversationExt = conversation.getConversationExt();
+        this.ext = conversation.getExt();
     }
 
     /**
