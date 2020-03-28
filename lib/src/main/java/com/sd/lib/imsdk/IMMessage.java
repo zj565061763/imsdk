@@ -1,7 +1,6 @@
 package com.sd.lib.imsdk;
 
 import com.sd.lib.imsdk.callback.IMSendCallback;
-import com.sd.lib.imsdk.model.IMExt;
 import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessage
@@ -17,10 +16,14 @@ public class IMMessage
 
     IMMessageItem item;
     IMUser sender;
-    IMExt peerExt;
 
     IMMessage()
     {
+    }
+
+    public IMConversation getConversation()
+    {
+        return IMManager.getInstance().getConversation(peer, conversationType);
     }
 
     /**
@@ -34,7 +37,7 @@ public class IMMessage
         if (isSelf && state == IMMessageState.SendFail)
         {
             IMManager.getInstance().getHandlerHolder().getMessageHandler().removeMessage(this);
-            IMManager.getInstance().getConversation(peer, conversationType).send(getItem(), callback);
+            getConversation().send(getItem(), callback);
             return true;
         }
         return false;
@@ -96,18 +99,6 @@ public class IMMessage
     public IMUser getSender()
     {
         return sender;
-    }
-
-    public IMExt getPeerExt()
-    {
-        if (peerExt == null)
-            peerExt = new IMExt();
-        return peerExt;
-    }
-
-    public void setPeerExt(IMExt peerExt)
-    {
-        this.peerExt = peerExt;
     }
 
     @Override

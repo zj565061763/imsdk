@@ -1,9 +1,9 @@
 package com.sd.lib.imsdk.handler;
 
 import com.sd.lib.imsdk.IMConversationType;
-import com.sd.lib.imsdk.model.IMExt;
+import com.sd.lib.imsdk.model.IMConversationExt;
 
 public interface IMPersistenceHandler
 {
-    void updateMessagePeerExt(String peer, IMConversationType conversationType, IMExt ext) throws Exception;
+    void updateConversationExt(String peer, IMConversationType conversationType, IMConversationExt ext) throws Exception;
 }

@@ -6,6 +6,7 @@ import com.sd.lib.imsdk.callback.IMSendCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
+import com.sd.lib.imsdk.model.IMConversationExt;
 import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.Collection;
@@ -21,6 +22,8 @@ public class IMConversation
     IMMessage lastMessage;
     int unreadCount;
     long lastTimestamp;
+
+    private IMConversationExt conversationExt;
 
     public String getPeer()
     {
@@ -47,6 +50,16 @@ public class IMConversation
         return lastTimestamp;
     }
 
+    public IMConversationExt getConversationExt()
+    {
+        return conversationExt;
+    }
+
+    public void setConversationExt(IMConversationExt conversationExt)
+    {
+        this.conversationExt = conversationExt;
+    }
+
     void read(IMConversation conversation)
     {
         if (!peer.equals(conversation.peer))
@@ -58,20 +71,19 @@ public class IMConversation
         this.lastMessage = conversation.getLastMessage();
         this.unreadCount = conversation.getUnreadCount();
         this.lastTimestamp = conversation.getLastTimestamp();
+        this.conversationExt = conversation.getConversationExt();
     }
 
     /**
      * 加载会话
-     *
-     * @return true-加载成功；false-加载失败
      */
-    public boolean load()
+    public void load()
     {
         if (!IMManager.getInstance().isLogin())
-            return false;
+            return;
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
-        return handler.loadConversation(this, accessor());
+        handler.loadConversation(this, accessor());
     }
 
     /**

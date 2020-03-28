@@ -2,7 +2,7 @@ package com.sd.lib.imsdk.model;
 
 import com.sd.lib.imsdk.IMManager;
 
-public class IMExt
+public class IMConversationExt
 {
     private String id;
     private String name;

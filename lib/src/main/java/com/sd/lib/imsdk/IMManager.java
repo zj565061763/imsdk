@@ -408,7 +408,7 @@ public class IMManager
 
     synchronized void saveConversationLocal(final IMConversation conversation)
     {
-        getHandlerHolder().getConversationHandler().saveConversation(conversation);
+        mHandlerHolder.getConversationHandler().saveConversation(conversation);
         final int oldSize = mMapConversationLocal.size();
 
         final String key = conversation.getPeer() + "#" + conversation.getType();
@@ -528,7 +528,6 @@ public class IMManager
         imMessage.isSelf = false;
         imMessage.item = item;
         imMessage.sender = receiveMessage.sender;
-        imMessage.peerExt = receiveMessage.peerExt;
         item.message = imMessage;
 
         if (mChattingConversation != null)
@@ -541,6 +540,7 @@ public class IMManager
         final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.lastTimestamp = System.currentTimeMillis();
         conversation.lastMessage = imMessage;
+        conversation.setConversationExt(receiveMessage.conversationExt);
         saveConversationLocal(conversation);
 
         return imMessage;

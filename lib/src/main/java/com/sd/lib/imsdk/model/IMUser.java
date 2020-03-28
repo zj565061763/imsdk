@@ -5,7 +5,11 @@ import android.text.TextUtils;
 public class IMUser
 {
     private final String id;
-    private IMExt ext;
+
+    private String extId;
+    private String extName;
+    private String extAvatar;
+    private String extExtra;
 
     public IMUser(String id)
     {
@@ -19,16 +23,44 @@ public class IMUser
         return id;
     }
 
-    public IMExt getExt()
+    public String getExtId()
     {
-        if (ext == null)
-            ext = new IMExt();
-        return ext;
+        return extId;
     }
 
-    public void setExt(IMExt ext)
+    public void setExtId(String extId)
     {
-        this.ext = ext;
+        this.extId = extId;
+    }
+
+    public String getExtName()
+    {
+        return extName;
+    }
+
+    public void setExtName(String extName)
+    {
+        this.extName = extName;
+    }
+
+    public String getExtAvatar()
+    {
+        return extAvatar;
+    }
+
+    public void setExtAvatar(String extAvatar)
+    {
+        this.extAvatar = extAvatar;
+    }
+
+    public String getExtExtra()
+    {
+        return extExtra;
+    }
+
+    public void setExtExtra(String extExtra)
+    {
+        this.extExtra = extExtra;
     }
 
     @Override

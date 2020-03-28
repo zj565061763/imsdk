@@ -3,7 +3,7 @@ package com.sd.lib.imsdk.handler.impl;
 import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMHandlerHolder;
 import com.sd.lib.imsdk.handler.IMPersistenceHandler;
-import com.sd.lib.imsdk.model.IMExt;
+import com.sd.lib.imsdk.model.IMConversationExt;
 
 public class IMPersistenceHandlerWrapper implements IMPersistenceHandler
 {
@@ -20,14 +20,14 @@ public class IMPersistenceHandlerWrapper implements IMPersistenceHandler
     }
 
     @Override
-    public void updateMessagePeerExt(String peer, IMConversationType conversationType, IMExt ext)
+    public void updateConversationExt(String peer, IMConversationType conversationType, IMConversationExt ext)
     {
         try
         {
-            mOriginal.updateMessagePeerExt(peer, conversationType, ext);
+            mOriginal.updateConversationExt(peer, conversationType, ext);
         } catch (Exception e)
         {
-            mCallbackHandler.notifyOtherException("error updateMessagePeerExt peer:" + peer + " type:" + conversationType, e);
+            mCallbackHandler.notifyOtherException("error updateConversationExt peer:" + peer + " type:" + conversationType, e);
         }
     }
 }

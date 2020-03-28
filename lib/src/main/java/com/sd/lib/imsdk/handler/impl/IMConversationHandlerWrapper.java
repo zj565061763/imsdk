@@ -47,16 +47,15 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
     }
 
     @Override
-    public boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor)
+    public void loadConversation(IMConversation conversation, IMConversation.Accessor accessor)
     {
         try
         {
-            return mOriginal.loadConversation(conversation, accessor);
+            mOriginal.loadConversation(conversation, accessor);
         } catch (Exception e)
         {
             mCallbackHandler.notifyOtherException("error loadConversation peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
         }
-        return false;
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface IMConversationHandler
 
     void removeConversation(IMConversation conversation) throws Exception;
 
-    boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception;
+    void loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception;
 
     List<IMConversation> getAllConversation() throws Exception;
 

@@ -23,9 +23,9 @@ class IMConversationHandlerEmpty implements IMConversationHandler
     }
 
     @Override
-    public boolean loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception
+    public void loadConversation(IMConversation conversation, IMConversation.Accessor accessor) throws Exception
     {
-        return false;
+
     }
 
     @Override
