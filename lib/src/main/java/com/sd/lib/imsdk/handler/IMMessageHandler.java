@@ -12,6 +12,8 @@ public interface IMMessageHandler
 
     void updateMessageItem(IMMessage message) throws Exception;
 
+    void updateMessageExt(IMMessage message) throws Exception;
+
     void removeMessage(IMMessage message) throws Exception;
 
     void checkInterruptedMessage() throws Exception;

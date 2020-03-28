@@ -48,6 +48,14 @@ public class IMMessage
         IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
     }
 
+    /**
+     * 更新会话端扩展信息
+     */
+    public void updatePeerExt()
+    {
+        IMManager.getInstance().getHandlerHolder().getMessageHandler().updateMessageExt(this);
+    }
+
     public String getId()
     {
         return id;

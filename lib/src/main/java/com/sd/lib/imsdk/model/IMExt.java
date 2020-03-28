@@ -4,39 +4,39 @@ import com.sd.lib.imsdk.IMManager;
 
 public class IMExt
 {
-    private String extId;
-    private String extName;
-    private String extAvatar;
+    private String id;
+    private String name;
+    private String avatar;
     private String extra;
 
-    public String getExtId()
+    public String getId()
     {
-        return extId;
+        return id;
     }
 
-    public void setExtId(String extId)
+    public void setId(String id)
     {
-        this.extId = extId;
+        this.id = id;
     }
 
-    public String getExtName()
+    public String getName()
     {
-        return extName;
+        return name;
     }
 
-    public void setExtName(String extName)
+    public void setName(String name)
     {
-        this.extName = extName;
+        this.name = name;
     }
 
-    public String getExtAvatar()
+    public String getAvatar()
     {
-        return extAvatar;
+        return avatar;
     }
 
-    public void setExtAvatar(String extAvatar)
+    public void setAvatar(String avatar)
     {
-        this.extAvatar = extAvatar;
+        this.avatar = avatar;
     }
 
     public String getExtra()

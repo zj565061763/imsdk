@@ -30,6 +30,12 @@ class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
+    public void updateMessageExt(IMMessage message) throws Exception
+    {
+
+    }
+
+    @Override
     public void removeMessage(IMMessage message) throws Exception
     {
 
