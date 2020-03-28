@@ -335,7 +335,7 @@ public class IMManager
      */
     public IMConversation getConversation(String peer, IMConversationType type)
     {
-        return getConversationInternal(peer, type, true);
+        return getConversationInternal(peer, type, false);
     }
 
     private synchronized IMConversation getConversationInternal(String peer, IMConversationType type, boolean load)
@@ -466,6 +466,21 @@ public class IMManager
                 }
             });
         }
+    }
+
+    /**
+     * 获得总的未读数量
+     *
+     * @return
+     */
+    public synchronized int getTotalUnreadCount()
+    {
+        int count = 0;
+        for (IMConversation item : mMapConversationLocal.values())
+        {
+            count += item.getUnreadCount();
+        }
+        return count;
     }
 
     /**
