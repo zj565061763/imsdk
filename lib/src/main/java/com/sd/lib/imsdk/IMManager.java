@@ -528,7 +528,7 @@ public class IMManager
         imMessage.state = IMMessageState.Receive;
         imMessage.isSelf = false;
         imMessage.item = item;
-        imMessage.sender = receiveMessage.sender;
+        imMessage.sender = receiveMessage.sender.copy();
         item.message = imMessage;
 
         if (mChattingConversation != null)
