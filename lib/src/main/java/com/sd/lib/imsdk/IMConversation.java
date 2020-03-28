@@ -305,11 +305,6 @@ public class IMConversation
         });
     }
 
-    synchronized void increaseUnreadCount()
-    {
-        this.unreadCount++;
-    }
-
     //---------- setter ----------
 
     void setPeer(String peer)
@@ -341,9 +336,10 @@ public class IMConversation
         this.unreadCount = unreadCount;
     }
 
-    private void setLastTimestamp(long lastTimestamp)
+    private synchronized void setLastTimestamp(long lastTimestamp)
     {
-        this.lastTimestamp = lastTimestamp;
+        if (lastTimestamp > this.lastTimestamp)
+            this.lastTimestamp = lastTimestamp;
     }
 
     @Override
