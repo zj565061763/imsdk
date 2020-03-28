@@ -115,7 +115,7 @@ public class IMConversation
     }
 
     /**
-     * 更新本地扩展内容
+     * 保存扩展内容到本地
      */
     public void updateExt()
     {
@@ -129,8 +129,11 @@ public class IMConversation
     /**
      * 保存会话
      */
-    public void save()
+    void save()
     {
+        if (!IMManager.getInstance().isLogin())
+            return;
+
         IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversation(this);
     }
 
@@ -246,7 +249,7 @@ public class IMConversation
                 {
                     if (message.state == IMMessageState.UploadItem)
                     {
-                        holder.getMessageHandler().updateMessageItem(message);
+                        message.updateItem();
                         sendRunnable.run();
                     }
                 }

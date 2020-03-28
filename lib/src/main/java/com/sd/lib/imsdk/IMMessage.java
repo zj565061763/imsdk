@@ -44,10 +44,24 @@ public class IMMessage
     }
 
     /**
+     * 把Item保存到本地
+     */
+    public void updateItem()
+    {
+        if (!IMManager.getInstance().isLogin())
+            return;
+
+        IMManager.getInstance().getHandlerHolder().getMessageHandler().updateMessageItem(this);
+    }
+
+    /**
      * 保存当前消息
      */
-    public void save()
+    void save()
     {
+        if (!IMManager.getInstance().isLogin())
+            return;
+
         IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
     }
 
