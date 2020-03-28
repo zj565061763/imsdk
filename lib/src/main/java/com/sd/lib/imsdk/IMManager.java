@@ -552,16 +552,17 @@ public class IMManager
         imMessage.setItem(item);
         imMessage.setSender(receiveMessage.sender.copy());
 
-        if (mChattingConversation != null)
-            imMessage.setRead(imMessage.getPeer().equals(mChattingConversation.getPeer()));
-        else
+        final IMConversation conversation = imMessage.getConversation();
+        if (conversation.equals(mChattingConversation))
+        {
+            imMessage.setRead(true);
+        } else
+        {
             imMessage.setRead(false);
-
+        }
         getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
-        final IMConversation conversation = getConversation(imMessage.getPeer(), imMessage.getConversationType());
         conversation.setLastMessage(imMessage);
-
         final IMConversationExt conversationExt = receiveMessage.conversationExt;
         if (conversationExt != null)
             conversation.getExt().read(conversationExt);
