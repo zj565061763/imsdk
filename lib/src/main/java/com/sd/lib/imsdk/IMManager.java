@@ -3,7 +3,7 @@ package com.sd.lib.imsdk;
 import android.text.TextUtils;
 
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
-import com.sd.lib.imsdk.callback.IMChattingSenderExtChangeCallback;
+import com.sd.lib.imsdk.callback.IMChattingConversationEventCallback;
 import com.sd.lib.imsdk.callback.IMConversationChangeCallback;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
@@ -57,7 +57,7 @@ public class IMManager
 
     private volatile IMConversation mChattingConversation;
     private final Map<IMUser, IMMessage> mMapChattingMessageLatest = new ConcurrentHashMap<>();
-    private final Collection<IMChattingSenderExtChangeCallback> mListIMChattingSenderExtChangeCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMChattingConversationEventCallback> mListIMChattingConversationEventCallback = new CopyOnWriteArraySet<>();
 
     public IMHandlerHolder getHandlerHolder()
     {
@@ -340,10 +340,10 @@ public class IMManager
      *
      * @param callback
      */
-    public void addIMChattingSenderExtChangeCallback(IMChattingSenderExtChangeCallback callback)
+    public void addIMChattingConversationEventCallback(IMChattingConversationEventCallback callback)
     {
         if (callback != null)
-            mListIMChattingSenderExtChangeCallback.add(callback);
+            mListIMChattingConversationEventCallback.add(callback);
     }
 
     /**
@@ -351,9 +351,9 @@ public class IMManager
      *
      * @param callback
      */
-    public void removeIMChattingSenderExtChangeCallback(IMChattingSenderExtChangeCallback callback)
+    public void removeIMChattingConversationEventCallback(IMChattingConversationEventCallback callback)
     {
-        mListIMChattingSenderExtChangeCallback.remove(callback);
+        mListIMChattingConversationEventCallback.remove(callback);
     }
 
     /**
@@ -561,18 +561,17 @@ public class IMManager
         }
     }
 
-    private void notifyChattingSenderChanged(IMMessage imMessage)
+    private void notifyChattingSenderChanged(final IMMessage imMessage)
     {
         final IMConversation conversation = imMessage.getConversation();
-        final IMUser sender = imMessage.getSender();
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
-                for (IMChattingSenderExtChangeCallback item : mListIMChattingSenderExtChangeCallback)
+                for (IMChattingConversationEventCallback item : mListIMChattingConversationEventCallback)
                 {
-                    item.onSenderExtChanged(conversation, sender);
+                    item.onSenderExtChanged(conversation, imMessage);
                 }
             }
         });
