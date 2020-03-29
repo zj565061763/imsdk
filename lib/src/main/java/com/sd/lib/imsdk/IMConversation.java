@@ -7,7 +7,6 @@ import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.impl.IMConversationHandlerWrapper;
 import com.sd.lib.imsdk.model.IMConversationExt;
-import com.sd.lib.imsdk.model.IMUser;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -148,34 +147,33 @@ public class IMConversation
         if (item == null)
             throw new NullPointerException("item is null");
 
-        if (item.isEmpty())
-        {
-            if (callback != null)
-                callback.onError(null, IMCode.ERROR_EMPTY_ITEM, "empty message item");
-            return null;
-        }
-
-        final IMUser loginUser = IMManager.getInstance().getLoginUser();
-        if (loginUser == null)
-        {
-            if (callback != null)
-                callback.onError(null, IMCode.ERROR_NOT_LOGIN, "not login");
-            return null;
-        }
-
         final IMMessage message = IMFactory.newMessageSend();
         message.setPeer(peer);
         message.setConversationType(type);
         message.setSelf(true);
         message.setRead(true);
         message.setItem(item);
-        message.setSender(loginUser);
+        message.setSender(IMManager.getInstance().getLoginUser());
 
         return sendInternal(message, callback);
     }
 
     private IMMessage sendInternal(final IMMessage message, final IMSendCallback callback)
     {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(null, IMCode.ERROR_NOT_LOGIN, "not login");
+            return message;
+        }
+
+        if (message.getItem().isEmpty())
+        {
+            if (callback != null)
+                callback.onError(null, IMCode.ERROR_EMPTY_ITEM, "empty message item");
+            return null;
+        }
+
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
         message.setState(IMMessageState.send_prepare);

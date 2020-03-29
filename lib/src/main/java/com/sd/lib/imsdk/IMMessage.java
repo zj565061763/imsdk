@@ -32,15 +32,17 @@ public class IMMessage
      * @param callback
      * @return
      */
-    public boolean resend(IMSendCallback callback)
+    public IMMessage resend(IMSendCallback callback)
     {
-        if (isSelf && state == IMMessageState.send_fail)
+        if (!isSelf)
+            throw new RuntimeException("can not send other user message");
+
+        if (state == IMMessageState.send_fail)
         {
             IMManager.getInstance().getHandlerHolder().getMessageHandler().removeMessage(this);
-            getConversation().send(getItem(), callback);
-            return true;
+            return getConversation().send(getItem(), callback);
         }
-        return false;
+        return this;
     }
 
     /**
