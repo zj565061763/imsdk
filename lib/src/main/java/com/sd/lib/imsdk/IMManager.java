@@ -204,7 +204,7 @@ public class IMManager
         if (conversation == null)
             throw new NullPointerException("conversation is null");
 
-        if (conversation.equals(mChattingConversation))
+        if (!conversation.equals(mChattingConversation))
         {
             mChattingConversation = conversation;
             mMapChattingMessageLatest.clear();
