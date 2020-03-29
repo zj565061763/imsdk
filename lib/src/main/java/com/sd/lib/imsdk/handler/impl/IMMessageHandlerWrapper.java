@@ -67,6 +67,18 @@ public class IMMessageHandlerWrapper implements IMMessageHandler
     }
 
     @Override
+    public void updateMessageSender(IMMessage message)
+    {
+        try
+        {
+            mOriginal.updateMessageSender(message);
+        } catch (Exception e)
+        {
+            mCallbackHandler.notifyOtherException("error updateMessageSender id:" + message.getId(), e);
+        }
+    }
+
+    @Override
     public void removeMessage(IMMessage message)
     {
         try

@@ -54,8 +54,10 @@ public class IMManager
     private final Collection<IMConversationChangeCallback> mListIMConversationChangeCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
+
     private volatile IMConversation mChattingConversation;
-    private final Map<String, IMUser> mMapChattingSender = new ConcurrentHashMap<>();
+    private final Map<IMUser, IMMessage> mMapChattingMessageLatest = new ConcurrentHashMap<>();
+    private final Map<IMUser, Collection<IMMessage>> mMapChattingMessage = new ConcurrentHashMap<>();
     private final Collection<IMChattingSenderExtChangeCallback> mListIMChattingSenderExtChangeCallback = new CopyOnWriteArraySet<>();
 
     public IMHandlerHolder getHandlerHolder()
@@ -206,7 +208,8 @@ public class IMManager
         if (conversation.equals(mChattingConversation))
         {
             mChattingConversation = conversation;
-            mMapChattingSender.clear();
+            mMapChattingMessageLatest.clear();
+            mMapChattingMessage.clear();
         }
     }
 
@@ -220,7 +223,8 @@ public class IMManager
         if (mChattingConversation != null && mChattingConversation.equals(conversation))
         {
             mChattingConversation = null;
-            mMapChattingSender.clear();
+            mMapChattingMessageLatest.clear();
+            mMapChattingMessage.clear();
         }
     }
 
@@ -520,6 +524,69 @@ public class IMManager
         mHandlerHolder.getMessageHandler().checkInterruptedMessage();
     }
 
+    synchronized void processChattingConversation(IMMessage imMessage)
+    {
+        if (imMessage.isSelf())
+            return;
+
+        final IMConversation conversation = imMessage.getConversation();
+        if (conversation.equals(mChattingConversation))
+        {
+            boolean senderChanged = false;
+
+            final IMUser sender = imMessage.getSender();
+            final IMMessage cache = mMapChattingMessageLatest.get(sender);
+            if (cache == null)
+            {
+                mMapChattingMessageLatest.put(sender, imMessage);
+            } else
+            {
+                if (imMessage.getTimestamp() > cache.getTimestamp())
+                {
+                    // 更新的消息
+                    mMapChattingMessageLatest.put(sender, imMessage);
+                    final IMUser cacheSender = cache.getSender();
+                    if (cacheSender.isExtChanged(sender))
+                    {
+                        // sender变化
+                        senderChanged = true;
+                    }
+                }
+            }
+
+            Collection<IMMessage> listSenderMessage = mMapChattingMessage.get(sender);
+            if (listSenderMessage == null)
+                listSenderMessage = new CopyOnWriteArraySet<>();
+            listSenderMessage.add(imMessage);
+
+            if (senderChanged)
+            {
+                for (IMMessage item : listSenderMessage)
+                {
+                    item.getSender().read(sender);
+                }
+                notifyChattingSenderChanged(imMessage);
+            }
+        }
+    }
+
+    private void notifyChattingSenderChanged(IMMessage imMessage)
+    {
+        final IMConversation conversation = imMessage.getConversation();
+        final IMUser sender = imMessage.getSender();
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (IMChattingSenderExtChangeCallback item : mListIMChattingSenderExtChangeCallback)
+                {
+                    item.onSenderExtChanged(conversation, sender);
+                }
+            }
+        });
+    }
+
     /**
      * 处理消息接收
      *
@@ -529,6 +596,7 @@ public class IMManager
     public void handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
     {
         final IMMessage imMessage = handleReceiveMessageInternal(receiveMessage);
+
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
@@ -595,28 +663,7 @@ public class IMManager
             conversation.getExt().read(conversationExt);
 
         saveConversationLocal(conversation);
-
-        if (conversation.equals(mChattingConversation))
-        {
-            final IMUser sender = imMessage.getSender();
-            final IMUser cache = mMapChattingSender.get(sender.getId());
-            if (cache != null && cache.isExtChanged(sender))
-            {
-                // 通知sender变化，并更新数据库
-                IMUtils.runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        for (IMChattingSenderExtChangeCallback item : mListIMChattingSenderExtChangeCallback)
-                        {
-                            item.onSenderExtChanged(conversation, sender);
-                        }
-                    }
-                });
-            }
-            mMapChattingSender.put(sender.getId(), sender);
-        }
+        processChattingConversation(imMessage);
 
         return imMessage;
     }

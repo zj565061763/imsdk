@@ -18,6 +18,14 @@ public class IMUser
         this.id = id;
     }
 
+    public void read(IMUser user)
+    {
+        this.extId = user.extId;
+        this.extName = user.extName;
+        this.extAvatar = user.extAvatar;
+        this.extExtra = user.extExtra;
+    }
+
     public IMUser copy()
     {
         final IMUser copy = new IMUser(this.id);
