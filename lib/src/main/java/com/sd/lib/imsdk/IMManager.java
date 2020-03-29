@@ -202,7 +202,12 @@ public class IMManager
     {
         if (conversation == null)
             throw new NullPointerException("conversation is null");
-        mChattingConversation = conversation;
+
+        if (conversation.equals(mChattingConversation))
+        {
+            mChattingConversation = conversation;
+            mMapChattingSender.clear();
+        }
     }
 
     /**
@@ -212,10 +217,7 @@ public class IMManager
      */
     public synchronized void removeChattingConversation(IMConversation conversation)
     {
-        if (conversation == null)
-            return;
-
-        if (conversation.equals(mChattingConversation))
+        if (mChattingConversation != null && mChattingConversation.equals(conversation))
         {
             mChattingConversation = null;
             mMapChattingSender.clear();
