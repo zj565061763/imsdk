@@ -1,6 +1,8 @@
 package com.sd.lib.imsdk.handler;
 
+import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMMessage;
+import com.sd.lib.imsdk.model.IMUser;
 
 public interface IMMessageHandler
 {
@@ -12,7 +14,7 @@ public interface IMMessageHandler
 
     void updateMessageItem(IMMessage message) throws Exception;
 
-    void updateMessageSender(IMMessage message) throws Exception;
+    void updateMessageSender(String peer, IMConversationType conversationType, IMUser sender) throws Exception;
 
     void removeMessage(IMMessage message) throws Exception;
 

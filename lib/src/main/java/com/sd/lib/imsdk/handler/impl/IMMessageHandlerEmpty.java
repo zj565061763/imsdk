@@ -1,7 +1,9 @@
 package com.sd.lib.imsdk.handler.impl;
 
+import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMMessage;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
+import com.sd.lib.imsdk.model.IMUser;
 
 class IMMessageHandlerEmpty implements IMMessageHandler
 {
@@ -30,7 +32,7 @@ class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
-    public void updateMessageSender(IMMessage message) throws Exception
+    public void updateMessageSender(String peer, IMConversationType conversationType, IMUser sender) throws Exception
     {
 
     }

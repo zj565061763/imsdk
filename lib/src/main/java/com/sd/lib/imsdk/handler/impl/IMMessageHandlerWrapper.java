@@ -1,8 +1,10 @@
 package com.sd.lib.imsdk.handler.impl;
 
+import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMHandlerHolder;
 import com.sd.lib.imsdk.IMMessage;
 import com.sd.lib.imsdk.handler.IMMessageHandler;
+import com.sd.lib.imsdk.model.IMUser;
 
 public class IMMessageHandlerWrapper implements IMMessageHandler
 {
@@ -67,14 +69,14 @@ public class IMMessageHandlerWrapper implements IMMessageHandler
     }
 
     @Override
-    public void updateMessageSender(IMMessage message)
+    public void updateMessageSender(String peer, IMConversationType conversationType, IMUser sender)
     {
         try
         {
-            mOriginal.updateMessageSender(message);
+            mOriginal.updateMessageSender(peer, conversationType, sender);
         } catch (Exception e)
         {
-            mCallbackHandler.notifyOtherException("error updateMessageSender id:" + message.getId(), e);
+            mCallbackHandler.notifyOtherException("error updateMessageSender peer:" + peer + " type:" + conversationType, e);
         }
     }
 
