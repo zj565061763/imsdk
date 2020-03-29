@@ -57,7 +57,6 @@ public class IMManager
 
     private volatile IMConversation mChattingConversation;
     private final Map<IMUser, IMMessage> mMapChattingMessageLatest = new ConcurrentHashMap<>();
-    private final Map<IMUser, Collection<IMMessage>> mMapChattingMessage = new ConcurrentHashMap<>();
     private final Collection<IMChattingSenderExtChangeCallback> mListIMChattingSenderExtChangeCallback = new CopyOnWriteArraySet<>();
 
     public IMHandlerHolder getHandlerHolder()
@@ -209,7 +208,6 @@ public class IMManager
         {
             mChattingConversation = conversation;
             mMapChattingMessageLatest.clear();
-            mMapChattingMessage.clear();
         }
     }
 
@@ -224,7 +222,6 @@ public class IMManager
         {
             mChattingConversation = null;
             mMapChattingMessageLatest.clear();
-            mMapChattingMessage.clear();
         }
     }
 
