@@ -129,10 +129,10 @@ public abstract class IMMessageItem
         /**
          * 持久化到本地
          */
-        Persistence,
+        persistence,
         /**
          * 发送消息
          */
-        Send
+        send
     }
 }

@@ -10,7 +10,7 @@ public class IMMessage
 
     private String peer;
     private IMConversationType conversationType;
-    private IMMessageState state = IMMessageState.None;
+    private IMMessageState state = IMMessageState.none;
     private boolean isSelf;
     private boolean isRead;
 
@@ -34,7 +34,7 @@ public class IMMessage
      */
     public boolean resend(IMSendCallback callback)
     {
-        if (isSelf && state == IMMessageState.SendFail)
+        if (isSelf && state == IMMessageState.send_fail)
         {
             IMManager.getInstance().getHandlerHolder().getMessageHandler().removeMessage(this);
             getConversation().send(getItem(), callback);

@@ -178,7 +178,7 @@ public class IMConversation
     {
         final IMHandlerHolder holder = IMManager.getInstance().getHandlerHolder();
 
-        message.setState(IMMessageState.SendPrepare);
+        message.setState(IMMessageState.send_prepare);
         message.save();
 
         setLastMessage(message);
@@ -202,7 +202,7 @@ public class IMConversation
             @Override
             public void run()
             {
-                message.setState(IMMessageState.Sending);
+                message.setState(IMMessageState.sending);
                 holder.getMessageHandler().updateMessageState(message);
 
                 holder.getMessageSender().sendMessage(message, new IMCallback()
@@ -210,7 +210,7 @@ public class IMConversation
                     @Override
                     public void onSuccess()
                     {
-                        message.setState(IMMessageState.SendSuccess);
+                        message.setState(IMMessageState.send_success);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackSuccess(message, callback);
                     }
@@ -218,7 +218,7 @@ public class IMConversation
                     @Override
                     public void onError(int code, String desc)
                     {
-                        message.setState(IMMessageState.SendFail);
+                        message.setState(IMMessageState.send_fail);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, code, desc, callback);
                     }
@@ -229,7 +229,7 @@ public class IMConversation
         final IMMessageItem messageItem = message.getItem();
         if (messageItem.isNeedUpload())
         {
-            message.setState(IMMessageState.UploadItem);
+            message.setState(IMMessageState.upload_item);
             holder.getMessageHandler().updateMessageState(message);
 
             messageItem.upload(new IMMessageItem.UploadCallback()
@@ -237,14 +237,14 @@ public class IMConversation
                 @Override
                 public void onProgress(int progress)
                 {
-                    if (message.getState() == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.upload_item)
                         notifyCallbackProgress(message, messageItem, progress, callback);
                 }
 
                 @Override
                 public void onSuccess()
                 {
-                    if (message.getState() == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.upload_item)
                     {
                         message.updateItem();
                         sendRunnable.run();
@@ -254,9 +254,9 @@ public class IMConversation
                 @Override
                 public void onError(String desc)
                 {
-                    if (message.getState() == IMMessageState.UploadItem)
+                    if (message.getState() == IMMessageState.upload_item)
                     {
-                        message.setState(IMMessageState.SendFail);
+                        message.setState(IMMessageState.send_fail);
                         holder.getMessageHandler().updateMessageState(message);
                         notifyCallbackError(message, IMCode.ERROR_UPLOAD_ITEM, desc, callback);
                     }

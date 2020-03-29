@@ -634,7 +634,7 @@ public class IMManager
         imMessage.setTimestamp(receiveMessage.timestamp);
         imMessage.setPeer(receiveMessage.peer);
         imMessage.setConversationType(receiveMessage.conversationType);
-        imMessage.setState(IMMessageState.Receive);
+        imMessage.setState(IMMessageState.receive);
         imMessage.setSelf(false);
         imMessage.setItem(item);
         imMessage.setSender(receiveMessage.sender.copy());

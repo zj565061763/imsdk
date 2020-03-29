@@ -2,29 +2,29 @@ package com.sd.lib.imsdk;
 
 public enum IMMessageState
 {
-    None,
+    none,
     /**
      * 准备发送
      */
-    SendPrepare,
+    send_prepare,
     /**
      * 上传消息Item
      */
-    UploadItem,
+    upload_item,
     /**
      * 发送中
      */
-    Sending,
+    sending,
     /**
      * 发送成功
      */
-    SendSuccess,
+    send_success,
     /**
      * 发送失败
      */
-    SendFail,
+    send_fail,
     /**
      * 接收的消息
      */
-    Receive,
+    receive,
 }
