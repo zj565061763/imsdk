@@ -530,43 +530,46 @@ public class IMManager
             return;
 
         final IMConversation conversation = imMessage.getConversation();
-        if (conversation.equals(mChattingConversation))
+        if (!conversation.equals(mChattingConversation))
+            return;
+
+        boolean senderChanged = false;
+
+        final IMUser sender = imMessage.getSender();
+        final IMMessage cache = mMapChattingMessageLatest.get(sender);
+        if (cache == null)
         {
-            boolean senderChanged = false;
-
-            final IMUser sender = imMessage.getSender();
-            final IMMessage cache = mMapChattingMessageLatest.get(sender);
-            if (cache == null)
+            mMapChattingMessageLatest.put(sender, imMessage);
+        } else
+        {
+            if (imMessage.getTimestamp() > cache.getTimestamp())
             {
+                // 更新的消息
                 mMapChattingMessageLatest.put(sender, imMessage);
-            } else
-            {
-                if (imMessage.getTimestamp() > cache.getTimestamp())
+                final IMUser cacheSender = cache.getSender();
+                if (cacheSender.isExtChanged(sender))
                 {
-                    // 更新的消息
-                    mMapChattingMessageLatest.put(sender, imMessage);
-                    final IMUser cacheSender = cache.getSender();
-                    if (cacheSender.isExtChanged(sender))
-                    {
-                        // sender变化
-                        senderChanged = true;
-                    }
+                    // sender变化
+                    senderChanged = true;
                 }
             }
+        }
 
-            Collection<IMMessage> listSenderMessage = mMapChattingMessage.get(sender);
-            if (listSenderMessage == null)
-                listSenderMessage = new CopyOnWriteArraySet<>();
-            listSenderMessage.add(imMessage);
+        Collection<IMMessage> listSenderMessage = mMapChattingMessage.get(sender);
+        if (listSenderMessage == null)
+        {
+            listSenderMessage = new CopyOnWriteArraySet<>();
+            mMapChattingMessage.put(sender, listSenderMessage);
+        }
+        listSenderMessage.add(imMessage);
 
-            if (senderChanged)
+        if (senderChanged)
+        {
+            for (IMMessage item : listSenderMessage)
             {
-                for (IMMessage item : listSenderMessage)
-                {
-                    item.getSender().read(sender);
-                }
-                notifyChattingSenderChanged(imMessage);
+                item.getSender().read(sender);
             }
+            notifyChattingSenderChanged(imMessage);
         }
     }
 

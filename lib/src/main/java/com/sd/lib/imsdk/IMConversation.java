@@ -292,6 +292,14 @@ public class IMConversation
             @Override
             public void onSuccess(List<IMMessage> list)
             {
+                if (list != null && list.size() > 0)
+                {
+                    for (IMMessage item : list)
+                    {
+                        IMManager.getInstance().processChattingConversation(item);
+                    }
+                }
+
                 if (callback != null)
                     callback.onSuccess(list);
             }
