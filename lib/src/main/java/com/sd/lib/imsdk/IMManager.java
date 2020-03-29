@@ -541,6 +541,7 @@ public class IMManager
         {
             // 如果缓存不存在，则当前消息就是最新的消息
             mMapChattingMessageLatest.put(sender, imMessage);
+            return;
         }
 
         if (imMessage.getTimestamp() < cache.getTimestamp())
