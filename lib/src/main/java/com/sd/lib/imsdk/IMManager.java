@@ -524,7 +524,12 @@ public class IMManager
         mHandlerHolder.getMessageHandler().checkInterruptedMessage();
     }
 
-    synchronized void processChattingConversation(IMMessage imMessage)
+    /**
+     * 处理正在聊天中的会话消息
+     *
+     * @param imMessage
+     */
+    public synchronized void processChattingConversationMessage(IMMessage imMessage)
     {
         if (imMessage.isSelf())
             return;
@@ -533,43 +538,28 @@ public class IMManager
         if (!conversation.equals(mChattingConversation))
             return;
 
-        boolean senderChanged = false;
-
         final IMUser sender = imMessage.getSender();
         final IMMessage cache = mMapChattingMessageLatest.get(sender);
         if (cache == null)
         {
+            // 如果缓存不存在，则当前消息就是最新的消息
             mMapChattingMessageLatest.put(sender, imMessage);
+        }
+
+        if (imMessage.getTimestamp() < cache.getTimestamp())
+        {
+            // 如果当前消息比较旧，则更新发送者信息
+            imMessage.getSender().read(cache.getSender());
         } else
         {
-            if (imMessage.getTimestamp() > cache.getTimestamp())
+            // 更新的消息
+            mMapChattingMessageLatest.put(sender, imMessage);
+            final IMUser cacheSender = cache.getSender();
+            if (cacheSender.isExtChanged(sender))
             {
-                // 更新的消息
-                mMapChattingMessageLatest.put(sender, imMessage);
-                final IMUser cacheSender = cache.getSender();
-                if (cacheSender.isExtChanged(sender))
-                {
-                    // sender变化
-                    senderChanged = true;
-                }
+                // sender变化
+                notifyChattingSenderChanged(imMessage);
             }
-        }
-
-        Collection<IMMessage> listSenderMessage = mMapChattingMessage.get(sender);
-        if (listSenderMessage == null)
-        {
-            listSenderMessage = new CopyOnWriteArraySet<>();
-            mMapChattingMessage.put(sender, listSenderMessage);
-        }
-        listSenderMessage.add(imMessage);
-
-        if (senderChanged)
-        {
-            for (IMMessage item : listSenderMessage)
-            {
-                item.getSender().read(sender);
-            }
-            notifyChattingSenderChanged(imMessage);
         }
     }
 
@@ -666,7 +656,7 @@ public class IMManager
             conversation.getExt().read(conversationExt);
 
         saveConversationLocal(conversation);
-        processChattingConversation(imMessage);
+        processChattingConversationMessage(imMessage);
 
         return imMessage;
     }
