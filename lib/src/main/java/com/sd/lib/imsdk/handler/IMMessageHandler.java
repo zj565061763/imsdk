@@ -14,7 +14,7 @@ public interface IMMessageHandler
 
     void updateMessageItem(IMMessage message) throws Exception;
 
-    void updateMessageSender(String peer, IMConversationType conversationType, IMUser sender) throws Exception;
+    void updateMessageSender(IMUser sender) throws Exception;
 
     void removeMessage(IMMessage message) throws Exception;
 

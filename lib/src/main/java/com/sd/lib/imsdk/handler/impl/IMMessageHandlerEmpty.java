@@ -32,7 +32,7 @@ class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
-    public void updateMessageSender(String peer, IMConversationType conversationType, IMUser sender) throws Exception
+    public void updateMessageSender(IMUser sender) throws Exception
     {
 
     }
