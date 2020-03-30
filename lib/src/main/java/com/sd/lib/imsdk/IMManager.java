@@ -9,6 +9,7 @@ import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOtherExceptionCallback;
 import com.sd.lib.imsdk.callback.IMOutgoingCallback;
+import com.sd.lib.imsdk.callback.IMUnreadCountChangeCallback;
 import com.sd.lib.imsdk.exception.IMSDKException;
 import com.sd.lib.imsdk.model.IMConversationExt;
 import com.sd.lib.imsdk.model.IMUser;
@@ -52,8 +53,10 @@ public class IMManager
     private final Collection<IMLoginStateCallback> mListIMLoginStateCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMOtherExceptionCallback> mListIMOtherExceptionCallback = new CopyOnWriteArraySet<>();
     private final Collection<IMConversationChangeCallback> mListIMConversationChangeCallback = new CopyOnWriteArraySet<>();
+    private final Collection<IMUnreadCountChangeCallback> mListIMUnreadCountChangeCallback = new CopyOnWriteArraySet<>();
 
     private volatile IMUser mLoginUser;
+    private volatile int mUnreadCount;
 
     private volatile IMConversation mChattingConversation;
     private final Map<IMUser, IMMessage> mMapChattingMessageLatest = new ConcurrentHashMap<>();
@@ -357,6 +360,42 @@ public class IMManager
     }
 
     /**
+     * 添加未读数量变化通知
+     *
+     * @param callback
+     */
+    public void addIMUnreadCountChangeCallback(IMUnreadCountChangeCallback callback)
+    {
+        if (callback != null)
+            mListIMUnreadCountChangeCallback.add(callback);
+    }
+
+    /**
+     * 移除回调
+     *
+     * @param callback
+     */
+    public void removeIMUnreadCountChangeCallback(IMUnreadCountChangeCallback callback)
+    {
+        mListIMUnreadCountChangeCallback.remove(callback);
+    }
+
+    void notifyIMUnreadCountChangeCallback(final int count)
+    {
+        IMUtils.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (IMUnreadCountChangeCallback item : mListIMUnreadCountChangeCallback)
+                {
+                    item.onUnreadCountChanged(count);
+                }
+            }
+        });
+    }
+
+    /**
      * 返回某个会话
      *
      * @param peer
@@ -397,6 +436,7 @@ public class IMManager
         mMapConversationLocal.clear();
         if (list != null)
         {
+            int unreadCount = 0;
             for (IMConversation item : list)
             {
                 final IMConversation cache = getConversationInternal(item.getPeer(), item.getType(), false);
@@ -407,7 +447,10 @@ public class IMManager
                     final String key = item.getPeer() + "#" + item.getType();
                     mMapConversationLocal.put(key, cache);
                 }
+
+                unreadCount += item.getUnreadCount();
             }
+            setUnreadCount(unreadCount);
         }
 
         final List<IMConversation> listResult = new ArrayList<>(mMapConversationLocal.values());
@@ -510,7 +553,17 @@ public class IMManager
         {
             count += item.getUnreadCount();
         }
+        setUnreadCount(count);
         return count;
+    }
+
+    private synchronized void setUnreadCount(int unreadCount)
+    {
+        if (mUnreadCount != unreadCount)
+        {
+            mUnreadCount = unreadCount;
+            notifyIMUnreadCountChangeCallback(mUnreadCount);
+        }
     }
 
     /**
