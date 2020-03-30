@@ -69,7 +69,7 @@ public class IMConversation
             throw new IllegalArgumentException("read conversation error type");
 
         setLastMessage(conversation.getLastMessage());
-        setUnreadCount(conversation.getUnreadCount());
+        setUnreadCount(conversation.getUnreadCount(), false);
         getExt().read(conversation.getExt());
     }
 
@@ -95,7 +95,7 @@ public class IMConversation
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         final int unreadCount = handler.loadUnreadCount(this);
-        setUnreadCount(unreadCount);
+        setUnreadCount(unreadCount, true);
         return getUnreadCount();
     }
 
@@ -109,7 +109,7 @@ public class IMConversation
 
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.setMessageRead(this);
-        setUnreadCount(0);
+        setUnreadCount(0, true);
     }
 
     /**
@@ -329,12 +329,14 @@ public class IMConversation
             setLastTimestamp(lastMessage.getTimestamp());
     }
 
-    synchronized void setUnreadCount(int unreadCount)
+    synchronized void setUnreadCount(int unreadCount, boolean notifyUnreadCount)
     {
         if (this.unreadCount != unreadCount)
         {
             this.unreadCount = unreadCount;
-            IMManager.getInstance().getTotalUnreadCount();
+
+            if (notifyUnreadCount)
+                IMManager.getInstance().getTotalUnreadCount();
         }
     }
 
@@ -405,7 +407,7 @@ public class IMConversation
 
         public void setUnreadCount(int count)
         {
-            IMConversation.this.setUnreadCount(count);
+            IMConversation.this.setUnreadCount(count, false);
         }
 
         public void setLastTimestamp(long timestamp)

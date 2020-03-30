@@ -485,8 +485,8 @@ public class IMManager
 
         if (conversation != null)
         {
+            conversation.setUnreadCount(0, true);
             removeConversationLocal(conversation);
-            conversation.setUnreadCount(0);
         }
     }
 
