@@ -44,8 +44,8 @@ public class IMManager
     }
 
     private final Map<String, Class<? extends IMMessageItem>> mMapMessageItemClass = new ConcurrentHashMap<>();
-    private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
 
+    private final Map<String, IMConversation> mMapConversation = new ConcurrentHashMap<>();
     private final Map<String, IMConversation> mMapConversationLocal = new ConcurrentHashMap<>();
 
     private final Collection<IMIncomingCallback> mListIMIncomingCallback = new CopyOnWriteArraySet<>();
@@ -153,6 +153,7 @@ public class IMManager
         mLoginUser = user;
         mMapConversation.clear();
         mMapConversationLocal.clear();
+        setUnreadCount(0);
 
         if (old != null)
         {
