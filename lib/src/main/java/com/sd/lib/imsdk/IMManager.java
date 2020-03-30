@@ -484,7 +484,10 @@ public class IMManager
         final IMConversation conversation = mMapConversation.remove(key);
 
         if (conversation != null)
+        {
             removeConversationLocal(conversation);
+            conversation.setUnreadCount(0);
+        }
     }
 
     synchronized void saveConversationLocal(final IMConversation conversation)

@@ -329,9 +329,13 @@ public class IMConversation
             setLastTimestamp(lastMessage.getTimestamp());
     }
 
-    void setUnreadCount(int unreadCount)
+    synchronized void setUnreadCount(int unreadCount)
     {
-        this.unreadCount = unreadCount;
+        if (this.unreadCount != unreadCount)
+        {
+            this.unreadCount = unreadCount;
+            IMManager.getInstance().getTotalUnreadCount();
+        }
     }
 
     private synchronized void setLastTimestamp(long lastTimestamp)
