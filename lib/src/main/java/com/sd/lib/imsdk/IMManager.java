@@ -562,6 +562,9 @@ public class IMManager
 
     private synchronized void setUnreadCount(int unreadCount)
     {
+        if (unreadCount < 0)
+            unreadCount = 0;
+
         if (mUnreadCount != unreadCount)
         {
             mUnreadCount = unreadCount;
