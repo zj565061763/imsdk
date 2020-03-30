@@ -431,6 +431,9 @@ public class IMManager
      */
     public synchronized List<IMConversation> getAllConversation()
     {
+        if (!isLogin())
+            return null;
+
         final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
 
         mMapConversationLocal.clear();
