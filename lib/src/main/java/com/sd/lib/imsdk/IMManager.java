@@ -439,8 +439,7 @@ public class IMManager
         if (!isLogin())
             return Collections.emptyList();
 
-        final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
-        return Collections.unmodifiableList(list);
+        return new ArrayList<>(mMapConversationLocal.values());
     }
 
     /**
