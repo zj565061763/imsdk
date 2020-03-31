@@ -152,10 +152,12 @@ public class IMManager
         if (user != null && user.equals(old))
             return;
 
+        setUnreadCount(0);
+
         mLoginUser = user;
+
         mMapConversation.clear();
         mMapConversationLocal.clear();
-        setUnreadCount(0);
 
         if (old != null)
         {
