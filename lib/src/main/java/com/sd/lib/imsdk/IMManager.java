@@ -429,6 +429,19 @@ public class IMManager
     }
 
     /**
+     * 返回所有已经缓存在内存中的会话
+     *
+     * @return
+     */
+    public Collection<IMConversation> getAllConversation()
+    {
+        if (!isLogin())
+            return Collections.emptyList();
+
+        return Collections.unmodifiableCollection(mMapConversationLocal.values());
+    }
+
+    /**
      * 加载所有会话
      *
      * @return
