@@ -552,11 +552,16 @@ public class IMManager
     }
 
     /**
-     * 获得总的未读数量
+     * 获得未读数量
      *
      * @return
      */
-    public synchronized int getTotalUnreadCount()
+    public int getUnreadCount()
+    {
+        return mUnreadCount;
+    }
+
+    synchronized void updateUnreadCount()
     {
         int count = 0;
         for (IMConversation item : mMapConversationLocal.values())
@@ -564,7 +569,6 @@ public class IMManager
             count += item.getUnreadCount();
         }
         setUnreadCount(count);
-        return count;
     }
 
     private synchronized void setUnreadCount(int unreadCount)

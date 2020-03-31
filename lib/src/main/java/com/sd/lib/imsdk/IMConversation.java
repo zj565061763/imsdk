@@ -343,7 +343,7 @@ public class IMConversation
         }
 
         if (notifyUnreadCount && changed)
-            IMManager.getInstance().getTotalUnreadCount();
+            IMManager.getInstance().updateUnreadCount();
     }
 
     private synchronized void setLastTimestamp(long lastTimestamp)
