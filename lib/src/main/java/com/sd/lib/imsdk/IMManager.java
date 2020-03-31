@@ -434,12 +434,13 @@ public class IMManager
      *
      * @return
      */
-    public Collection<IMConversation> getAllConversation()
+    public List<IMConversation> getAllConversation()
     {
         if (!isLogin())
             return Collections.emptyList();
 
-        return Collections.unmodifiableCollection(mMapConversationLocal.values());
+        final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
+        return Collections.unmodifiableList(list);
     }
 
     /**
@@ -478,7 +479,8 @@ public class IMManager
         mMapConversationLocal.putAll(mapConversationLocal);
         setUnreadCount(unreadCount);
 
-        final List<IMConversation> listResult = new ArrayList<>(mapConversationLocal.values());
+        final List<IMConversation> listResult = getAllConversation();
+
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
@@ -491,7 +493,7 @@ public class IMManager
             }
         });
 
-        return list;
+        return listResult;
     }
 
     /**
@@ -527,7 +529,7 @@ public class IMManager
         if (newSize != oldSize)
         {
             // 通知会话新增
-            final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
+            final List<IMConversation> list = getAllConversation();
             IMUtils.runOnUiThread(new Runnable()
             {
                 @Override
@@ -554,7 +556,7 @@ public class IMManager
         if (newSize != oldSize)
         {
             // 通知会话移除
-            final List<IMConversation> list = new ArrayList<>(mMapConversationLocal.values());
+            final List<IMConversation> list = getAllConversation();
             IMUtils.runOnUiThread(new Runnable()
             {
                 @Override
