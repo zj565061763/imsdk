@@ -17,6 +17,7 @@ import com.sd.lib.imsdk.model.ReceiveMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,7 +174,6 @@ public class IMManager
         if (user != null)
         {
             checkInterruptedMessage();
-
             IMUtils.runOnUiThread(new Runnable()
             {
                 @Override
@@ -383,6 +383,9 @@ public class IMManager
 
     void notifyIMUnreadCountChangeCallback(final int count)
     {
+        if (!isLogin())
+            return;
+
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
@@ -433,7 +436,7 @@ public class IMManager
     public synchronized List<IMConversation> getAllConversation()
     {
         if (!isLogin())
-            return null;
+            return Collections.emptyList();
 
         final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
 
