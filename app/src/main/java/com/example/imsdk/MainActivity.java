@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final List<IMConversation> list = IMManager.getInstance().getAllConversation();
+        final List<IMConversation> list = IMManager.getInstance().loadAllConversation();
         Log.i(TAG, "size:" + list.size());
     }
 }

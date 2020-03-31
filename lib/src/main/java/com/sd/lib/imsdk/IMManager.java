@@ -429,11 +429,11 @@ public class IMManager
     }
 
     /**
-     * 返回所有会话
+     * 加载所有会话
      *
      * @return
      */
-    public synchronized List<IMConversation> getAllConversation()
+    public synchronized List<IMConversation> loadAllConversation()
     {
         if (!isLogin())
             return Collections.emptyList();
