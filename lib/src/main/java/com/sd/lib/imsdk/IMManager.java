@@ -18,6 +18,7 @@ import com.sd.lib.imsdk.model.ReceiveMessage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -453,10 +454,11 @@ public class IMManager
 
         final List<IMConversation> list = mHandlerHolder.getConversationHandler().getAllConversation();
 
-        mMapConversationLocal.clear();
+        final Map<String, IMConversation> mapConversationLocal = new HashMap<>();
+        int unreadCount = 0;
+
         if (list != null)
         {
-            int unreadCount = 0;
             for (IMConversation item : list)
             {
                 final IMConversation cache = getConversationInternal(item.getPeer(), item.getType(), false);
@@ -465,15 +467,18 @@ public class IMManager
                 if (cache.getLastTimestamp() > 0)
                 {
                     final String key = item.getPeer() + "#" + item.getType();
-                    mMapConversationLocal.put(key, cache);
+                    mapConversationLocal.put(key, cache);
                 }
 
                 unreadCount += item.getUnreadCount();
             }
-            setUnreadCount(unreadCount);
         }
 
-        final List<IMConversation> listResult = new ArrayList<>(mMapConversationLocal.values());
+        mMapConversationLocal.clear();
+        mMapConversationLocal.putAll(mapConversationLocal);
+        setUnreadCount(unreadCount);
+
+        final List<IMConversation> listResult = new ArrayList<>(mapConversationLocal.values());
         IMUtils.runOnUiThread(new Runnable()
         {
             @Override
