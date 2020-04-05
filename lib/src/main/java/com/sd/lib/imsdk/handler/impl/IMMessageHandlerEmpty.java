@@ -38,7 +38,7 @@ class IMMessageHandlerEmpty implements IMMessageHandler
     }
 
     @Override
-    public void removeMessage(IMMessage message) throws Exception
+    public void deleteMessage(IMMessage message) throws Exception
     {
 
     }

@@ -115,6 +115,10 @@ public abstract class IMMessageItem
         return false;
     }
 
+    protected void delete()
+    {
+    }
+
     public interface UploadCallback
     {
         void onProgress(int progress);

@@ -1,6 +1,5 @@
 package com.sd.lib.imsdk.handler;
 
-import com.sd.lib.imsdk.IMConversationType;
 import com.sd.lib.imsdk.IMMessage;
 import com.sd.lib.imsdk.model.IMUser;
 
@@ -16,7 +15,7 @@ public interface IMMessageHandler
 
     void updateMessageSender(IMUser sender) throws Exception;
 
-    void removeMessage(IMMessage message) throws Exception;
+    void deleteMessage(IMMessage message) throws Exception;
 
     void checkInterruptedMessage() throws Exception;
 }

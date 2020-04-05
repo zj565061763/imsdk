@@ -39,7 +39,7 @@ public class IMMessage
 
         if (state == IMMessageState.send_fail)
         {
-            IMManager.getInstance().getHandlerHolder().getMessageHandler().removeMessage(this);
+            IMManager.getInstance().getHandlerHolder().getMessageHandler().deleteMessage(this);
             return getConversation().send(getItem(), callback);
         }
         return this;
@@ -54,6 +54,16 @@ public class IMMessage
             return;
 
         IMManager.getInstance().getHandlerHolder().getMessageHandler().updateMessageItem(this);
+    }
+
+    /**
+     * 删除消息
+     */
+    public void delete()
+    {
+        if (item != null)
+            item.delete();
+        IMManager.getInstance().getHandlerHolder().getMessageHandler().deleteMessage(this);
     }
 
     /**

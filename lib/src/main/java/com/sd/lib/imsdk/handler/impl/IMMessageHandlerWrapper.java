@@ -80,14 +80,14 @@ public class IMMessageHandlerWrapper implements IMMessageHandler
     }
 
     @Override
-    public void removeMessage(IMMessage message)
+    public void deleteMessage(IMMessage message)
     {
         try
         {
-            mOriginal.removeMessage(message);
+            mOriginal.deleteMessage(message);
         } catch (Exception e)
         {
-            mCallbackHandler.notifyOtherException("error removeMessage id:" + message.getId(), e);
+            mCallbackHandler.notifyOtherException("error deleteMessage id:" + message.getId(), e);
         }
     }
 
