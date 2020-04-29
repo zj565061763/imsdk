@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.sd.lib.imsdk.annotation.AIMMessageItem;
 import com.sd.lib.imsdk.callback.IMChattingConversationEventCallback;
 import com.sd.lib.imsdk.callback.IMConversationChangeCallback;
+import com.sd.lib.imsdk.callback.IMHandleReceiveMessageCallback;
 import com.sd.lib.imsdk.callback.IMIncomingCallback;
 import com.sd.lib.imsdk.callback.IMLoginStateCallback;
 import com.sd.lib.imsdk.callback.IMOtherExceptionCallback;
@@ -674,9 +675,9 @@ public class IMManager
      * @param receiveMessage
      * @throws IMSDKException
      */
-    public void handleReceiveMessage(ReceiveMessage receiveMessage) throws IMSDKException
+    public void handleReceiveMessage(ReceiveMessage receiveMessage, IMHandleReceiveMessageCallback callback) throws IMSDKException
     {
-        final IMMessage imMessage = handleReceiveMessageInternal(receiveMessage);
+        final IMMessage imMessage = handleReceiveMessageInternal(receiveMessage, callback);
 
         IMUtils.runOnUiThread(new Runnable()
         {
@@ -695,9 +696,10 @@ public class IMManager
      * 处理消息接收
      *
      * @param receiveMessage {@link ReceiveMessage}
+     * @param callback
      * @return
      */
-    private synchronized IMMessage handleReceiveMessageInternal(ReceiveMessage receiveMessage) throws IMSDKException
+    private synchronized IMMessage handleReceiveMessageInternal(ReceiveMessage receiveMessage, IMHandleReceiveMessageCallback callback) throws IMSDKException
     {
         if (!isLogin())
             throw new IMSDKException.UnLoginException("imsdk unlogin");
@@ -735,6 +737,9 @@ public class IMManager
             imMessage.setRead(true);
         else
             imMessage.setRead(false);
+
+        if (callback != null)
+            callback.onCreate(imMessage);
 
         getHandlerHolder().getMessageHandler().saveMessage(imMessage);
 
