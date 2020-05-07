@@ -23,4 +23,6 @@ public interface IMConversationHandler
     List<IMConversation> getAllConversation() throws Exception;
 
     void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback) throws Exception;
+
+    void loadFirstMessage(IMConversation conversation, IMValueCallback<IMMessage> callback) throws Exception;
 }

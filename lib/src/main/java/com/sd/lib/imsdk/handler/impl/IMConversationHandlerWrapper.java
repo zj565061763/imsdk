@@ -119,4 +119,16 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
             mCallbackHandler.notifyOtherException("error loadMessageBefore peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
         }
     }
+
+    @Override
+    public void loadFirstMessage(IMConversation conversation, IMValueCallback<IMMessage> callback)
+    {
+        try
+        {
+            mOriginal.loadFirstMessage(conversation, callback);
+        } catch (Exception e)
+        {
+            mCallbackHandler.notifyOtherException("error loadFirstMessage peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
+        }
+    }
 }

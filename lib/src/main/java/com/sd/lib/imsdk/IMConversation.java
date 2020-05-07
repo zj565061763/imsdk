@@ -24,6 +24,7 @@ public class IMConversation
 
     private IMConversationExt ext;
     private final Config config = new Config();
+    private IMMessage firstMessage;
 
     IMConversation()
     {
@@ -64,6 +65,30 @@ public class IMConversation
     public Config getConfig()
     {
         return config;
+    }
+
+    public IMMessage getFirstMessage()
+    {
+        if (firstMessage == null)
+        {
+            if (IMManager.getInstance().isLogin())
+            {
+                IMManager.getInstance().getHandlerHolder().getConversationHandler().loadFirstMessage(this, new IMValueCallback<IMMessage>()
+                {
+                    @Override
+                    public void onSuccess(IMMessage value)
+                    {
+                        firstMessage = value;
+                    }
+
+                    @Override
+                    public void onError(int code, String desc)
+                    {
+                    }
+                });
+            }
+        }
+        return firstMessage;
     }
 
     synchronized void read(IMConversation conversation)
@@ -359,6 +384,11 @@ public class IMConversation
             this.lastTimestamp = lastTimestamp;
     }
 
+    private void setFirstMessage(IMMessage message)
+    {
+        this.firstMessage = message;
+    }
+
     @Override
     public int hashCode()
     {
@@ -421,6 +451,11 @@ public class IMConversation
         public void setLastTimestamp(long timestamp)
         {
             IMConversation.this.setLastTimestamp(timestamp);
+        }
+
+        public void setFirstMessage(IMMessage message)
+        {
+            IMConversation.this.setFirstMessage(message);
         }
     }
 
