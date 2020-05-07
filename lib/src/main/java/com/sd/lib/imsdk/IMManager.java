@@ -396,10 +396,10 @@ public class IMManager
      */
     public IMConversation getConversation(String peer, IMConversationType type)
     {
-        return getConversationInternal(peer, type, false);
+        return getConversationInternal(peer, type);
     }
 
-    private synchronized IMConversation getConversationInternal(String peer, IMConversationType type, boolean load)
+    private synchronized IMConversation getConversationInternal(String peer, IMConversationType type)
     {
         if (TextUtils.isEmpty(peer) || type == null)
             return null;
@@ -409,8 +409,6 @@ public class IMManager
         if (conversation == null)
         {
             conversation = IMFactory.newConversation(peer, type);
-            if (load)
-                conversation.load();
             mMapConversation.put(key, conversation);
         }
         return conversation;
@@ -448,7 +446,7 @@ public class IMManager
         {
             for (IMConversation item : list)
             {
-                final IMConversation cache = getConversationInternal(item.getPeer(), item.getType(), false);
+                final IMConversation cache = getConversationInternal(item.getPeer(), item.getType());
                 cache.read(item);
 
                 if (cache.getLastTimestamp() > 0)
