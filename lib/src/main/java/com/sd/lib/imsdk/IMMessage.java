@@ -74,7 +74,9 @@ public class IMMessage
         if (!IMManager.getInstance().isLogin())
             return;
 
-        IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
+        final IMConversation conversation = getConversation();
+        if (conversation.getConfig().saveMessage)
+            IMManager.getInstance().getHandlerHolder().getMessageHandler().saveMessage(this);
     }
 
     public String getId()

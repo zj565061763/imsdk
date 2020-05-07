@@ -23,6 +23,7 @@ public class IMConversation
     private volatile long lastTimestamp;
 
     private IMConversationExt ext;
+    private final Config config = new Config();
 
     IMConversation()
     {
@@ -58,6 +59,11 @@ public class IMConversation
         if (ext == null)
             ext = new IMConversationExt();
         return ext;
+    }
+
+    public Config getConfig()
+    {
+        return config;
     }
 
     synchronized void read(IMConversation conversation)
@@ -132,7 +138,8 @@ public class IMConversation
         if (!IMManager.getInstance().isLogin())
             return;
 
-        IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversation(this);
+        if (getConfig().saveLocal)
+            IMManager.getInstance().getHandlerHolder().getConversationHandler().saveConversation(this);
     }
 
     /**
@@ -415,6 +422,12 @@ public class IMConversation
         {
             IMConversation.this.setLastTimestamp(timestamp);
         }
+    }
+
+    public static final class Config
+    {
+        public volatile boolean saveLocal = true;
+        public volatile boolean saveMessage = true;
     }
 
     public static void sort(List<IMConversation> list)

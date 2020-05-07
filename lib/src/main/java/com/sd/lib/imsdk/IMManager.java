@@ -503,6 +503,9 @@ public class IMManager
 
     synchronized void saveConversationLocal(final IMConversation conversation)
     {
+        if (!conversation.getConfig().saveLocal)
+            return;
+
         conversation.save();
         final int oldSize = mMapConversationLocal.size();
 
@@ -723,7 +726,7 @@ public class IMManager
         if (callback != null)
             callback.onCreate(imMessage);
 
-        getHandlerHolder().getMessageHandler().saveMessage(imMessage);
+        imMessage.save();
 
         conversation.setLastMessage(imMessage);
         final IMConversationExt conversationExt = receiveMessage.conversationExt;
