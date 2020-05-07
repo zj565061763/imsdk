@@ -428,6 +428,7 @@ public class IMConversation
     {
         public volatile boolean saveLocal = true;
         public volatile boolean saveMessage = true;
+        public volatile boolean receiveMessageTips = true;
     }
 
     public static void sort(List<IMConversation> list)
