@@ -361,14 +361,9 @@ public class IMConversation
     @Override
     public boolean equals(Object obj)
     {
-        if (obj == this)
-            return true;
-
-        if (obj == null)
-            return false;
-
-        if (obj.getClass() != getClass())
-            return false;
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
 
         final IMConversation other = (IMConversation) obj;
         return IMUtils.equals(peer, other.getPeer()) && IMUtils.equals(type, other.getType());

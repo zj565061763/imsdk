@@ -61,7 +61,7 @@ public class IMManager
     private volatile IMUser mLoginUser;
     private volatile int mUnreadCount;
 
-    private volatile IMConversation mChattingConversation;
+    private final Map<IMConversation, String> mMapChattingConversation = new ConcurrentHashMap<>();
     private final Map<IMUser, IMMessage> mMapChattingMessageLatest = new ConcurrentHashMap<>();
     private final Collection<IMChattingConversationEventCallback> mListIMChattingConversationEventCallback = new CopyOnWriteArraySet<>();
 
@@ -193,30 +193,16 @@ public class IMManager
     }
 
     /**
-     * 返回当前正在聊天的会话
-     *
-     * @return
-     */
-    public IMConversation getChattingConversation()
-    {
-        return mChattingConversation;
-    }
-
-    /**
-     * 设置当前正在聊天的会话
+     * 添加当前正在聊天的会话
      *
      * @param conversation
      */
-    public synchronized void setChattingConversation(IMConversation conversation)
+    public synchronized void addChattingConversation(IMConversation conversation)
     {
         if (conversation == null)
             throw new NullPointerException("conversation is null");
 
-        if (!conversation.equals(mChattingConversation))
-        {
-            mChattingConversation = conversation;
-            mMapChattingMessageLatest.clear();
-        }
+        mMapChattingConversation.put(conversation, "");
     }
 
     /**
@@ -226,11 +212,9 @@ public class IMManager
      */
     public synchronized void removeChattingConversation(IMConversation conversation)
     {
-        if (mChattingConversation != null && mChattingConversation.equals(conversation))
-        {
-            mChattingConversation = null;
+        mMapChattingConversation.remove(conversation);
+        if (mMapChattingConversation.isEmpty())
             mMapChattingMessageLatest.clear();
-        }
     }
 
     /**
@@ -624,7 +608,7 @@ public class IMManager
             return;
 
         final IMConversation conversation = imMessage.getConversation();
-        if (!conversation.equals(mChattingConversation))
+        if (!mMapChattingConversation.containsKey(conversation))
             return;
 
         final IMUser sender = imMessage.getSender();
@@ -733,7 +717,7 @@ public class IMManager
         imMessage.setSender(receiveMessage.sender.copy());
 
         final IMConversation conversation = imMessage.getConversation();
-        if (conversation.equals(mChattingConversation))
+        if (mMapChattingConversation.containsKey(conversation))
             imMessage.setRead(true);
         else
             imMessage.setRead(false);
