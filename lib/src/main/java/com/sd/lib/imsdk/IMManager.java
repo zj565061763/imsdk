@@ -686,7 +686,8 @@ public class IMManager
      */
     private synchronized IMMessage handleReceiveMessageInternal(ReceiveMessage receiveMessage, IMHandleReceiveMessageCallback callback) throws IMSDKException
     {
-        if (!isLogin())
+        final IMUser loginUser = mLoginUser;
+        if (loginUser == null)
             throw new IMSDKException.UnLoginException("imsdk unlogin");
 
         receiveMessage.check();
@@ -707,21 +708,30 @@ public class IMManager
         if (item == null)
             throw new IMSDKException.DeserializeMessageItemException("deserialize message item return null for type:" + receiveMessage.itemType);
 
+        final boolean isSelf = TextUtils.equals(loginUser.getId(), receiveMessage.sender.getId());
+
         final IMMessage imMessage = IMFactory.newMessageReceive();
         imMessage.setId(receiveMessage.id);
         imMessage.setTimestamp(receiveMessage.timestamp);
         imMessage.setPeer(receiveMessage.peer);
         imMessage.setConversationType(receiveMessage.conversationType);
-        imMessage.setState(IMMessageState.receive);
-        imMessage.setSelf(false);
         imMessage.setItem(item);
-        imMessage.setSender(receiveMessage.sender.copy());
+        imMessage.setSelf(isSelf);
+
+        if (isSelf)
+        {
+            imMessage.setState(IMMessageState.send_success);
+            imMessage.setSender(loginUser.copy());
+            imMessage.setRead(true);
+        } else
+        {
+            imMessage.setState(IMMessageState.receive);
+            imMessage.setSender(receiveMessage.sender.copy());
+        }
 
         final IMConversation conversation = imMessage.getConversation();
         if (mMapChattingConversation.containsKey(conversation))
             imMessage.setRead(true);
-        else
-            imMessage.setRead(false);
 
         if (callback != null)
             callback.onCreate(imMessage);
@@ -738,7 +748,7 @@ public class IMManager
 
         if (conversation.getConfig().saveMessage)
         {
-            if (!imMessage.isRead())
+            if (!imMessage.isRead() && !isSelf)
                 conversation.postUnreadCountRunnable();
         }
 
