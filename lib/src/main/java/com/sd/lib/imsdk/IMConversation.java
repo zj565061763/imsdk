@@ -112,6 +112,8 @@ public class IMConversation
         if (!IMManager.getInstance().isLogin())
             return;
 
+        removeUnreadCountRunnable();
+
         final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
         handler.loadConversation(this, accessor());
     }
@@ -357,12 +359,15 @@ public class IMConversation
         }
 
         this.lastMessage = lastMessage;
+
         if (lastMessage != null)
             setLastTimestamp(lastMessage.getTimestamp());
     }
 
     void setUnreadCount(int unreadCount, boolean notifyUnreadCount)
     {
+        removeUnreadCountRunnable();
+
         boolean changed = false;
         synchronized (IMConversation.this)
         {
@@ -465,6 +470,26 @@ public class IMConversation
         public volatile boolean saveMessage = true;
         public volatile boolean receiveMessageTips = true;
     }
+
+    void postUnreadCountRunnable()
+    {
+        removeUnreadCountRunnable();
+        IMUtils.HANDLER.postDelayed(mLoadUnreadCountRunnable, 1000);
+    }
+
+    private void removeUnreadCountRunnable()
+    {
+        IMUtils.HANDLER.removeCallbacks(mLoadUnreadCountRunnable);
+    }
+
+    private final Runnable mLoadUnreadCountRunnable = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            loadUnreadCount();
+        }
+    };
 
     public static void sort(List<IMConversation> list)
     {

@@ -736,6 +736,12 @@ public class IMManager
         saveConversationLocal(conversation);
         processChattingConversationMessage(imMessage);
 
+        if (conversation.getConfig().saveMessage)
+        {
+            if (!imMessage.isRead())
+                conversation.postUnreadCountRunnable();
+        }
+
         return imMessage;
     }
 }

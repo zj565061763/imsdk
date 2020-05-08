@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 class IMUtils
 {
-    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    public static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
     public static void runOnUiThread(Runnable runnable)
     {
