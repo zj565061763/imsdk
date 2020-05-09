@@ -8,6 +8,7 @@ public interface IMHandleReceiveMessageCallback
      * 消息被创建
      *
      * @param message
+     * @param accessor
      */
-    void onCreate(IMMessage message);
+    void onCreate(IMMessage message, IMMessage.Accessor accessor);
 }

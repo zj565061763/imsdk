@@ -734,7 +734,7 @@ public class IMManager
             imMessage.setRead(true);
 
         if (callback != null)
-            callback.onCreate(imMessage);
+            callback.onCreate(imMessage, imMessage.accessor());
 
         imMessage.save();
 
