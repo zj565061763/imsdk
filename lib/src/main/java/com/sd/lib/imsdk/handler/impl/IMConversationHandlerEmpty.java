@@ -57,10 +57,4 @@ class IMConversationHandlerEmpty implements IMConversationHandler
     {
         callback.onError(IMCode.ERROR_OTHER, "empty implementation");
     }
-
-    @Override
-    public void loadFirstMessage(IMConversation conversation, IMValueCallback<IMMessage> callback) throws Exception
-    {
-        callback.onError(IMCode.ERROR_OTHER, "empty implementation");
-    }
 }
