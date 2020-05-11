@@ -641,7 +641,7 @@ public class IMManager
     private void notifyChattingSenderChanged(final IMMessage imMessage)
     {
         final IMConversation conversation = imMessage.getConversation();
-        IMUtils.runOnUiThread(new Runnable()
+        IMUtils.post(new Runnable()
         {
             @Override
             public void run()

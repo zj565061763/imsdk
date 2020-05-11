@@ -20,6 +20,11 @@ class IMUtils
         }
     }
 
+    public static void post(Runnable runnable)
+    {
+        HANDLER.post(runnable);
+    }
+
     public static boolean equals(Object a, Object b)
     {
         return a != null && a.equals(b);
