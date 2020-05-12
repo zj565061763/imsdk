@@ -76,7 +76,7 @@ public class IMManager
         public void notifyOtherException(String message, Exception e)
         {
             final IMSDKException.OtherException exception = new IMSDKException.OtherException(message, e);
-            IMUtils.runOnUiThread(new Runnable()
+            IMUtils.post(new Runnable()
             {
                 @Override
                 public void run()
@@ -374,7 +374,7 @@ public class IMManager
         if (!isLogin())
             return;
 
-        IMUtils.runOnUiThread(new Runnable()
+        IMUtils.post(new Runnable()
         {
             @Override
             public void run()
@@ -465,7 +465,7 @@ public class IMManager
 
         final List<IMConversation> listResult = getAllConversation();
 
-        IMUtils.runOnUiThread(new Runnable()
+        IMUtils.post(new Runnable()
         {
             @Override
             public void run()
@@ -517,7 +517,7 @@ public class IMManager
         {
             // 通知会话新增
             final List<IMConversation> list = getAllConversation();
-            IMUtils.runOnUiThread(new Runnable()
+            IMUtils.post(new Runnable()
             {
                 @Override
                 public void run()
@@ -544,7 +544,7 @@ public class IMManager
         {
             // 通知会话移除
             final List<IMConversation> list = getAllConversation();
-            IMUtils.runOnUiThread(new Runnable()
+            IMUtils.post(new Runnable()
             {
                 @Override
                 public void run()
@@ -664,7 +664,7 @@ public class IMManager
     {
         final IMMessage imMessage = handleReceiveMessageInternal(receiveMessage, callback);
 
-        IMUtils.runOnUiThread(new Runnable()
+        IMUtils.post(new Runnable()
         {
             @Override
             public void run()
