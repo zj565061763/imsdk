@@ -75,6 +75,7 @@ public class IMConversation
             throw new IllegalArgumentException("read conversation error type");
 
         setLastMessage(conversation.getLastMessage());
+        setLastTimestamp(conversation.getLastTimestamp());
         setUnreadCount(conversation.getUnreadCount(), false);
         getExt().read(conversation.getExt());
     }
