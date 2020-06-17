@@ -2,6 +2,7 @@ package com.sd.lib.imsdk.handler.impl;
 
 import com.sd.lib.imsdk.IMConversation;
 import com.sd.lib.imsdk.IMMessage;
+import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.constant.IMCode;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
@@ -54,6 +55,12 @@ class IMConversationHandlerEmpty implements IMConversationHandler
 
     @Override
     public void loadMessageBefore(IMConversation conversation, int count, IMMessage lastMessage, IMValueCallback<List<IMMessage>> callback) throws Exception
+    {
+        callback.onError(IMCode.ERROR_OTHER, "empty implementation");
+    }
+
+    @Override
+    public void deleteConversationMessage(IMConversation conversation, IMCallback callback) throws Exception
     {
         callback.onError(IMCode.ERROR_OTHER, "empty implementation");
     }

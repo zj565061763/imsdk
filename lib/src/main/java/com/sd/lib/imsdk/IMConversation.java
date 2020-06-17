@@ -312,6 +312,37 @@ public class IMConversation
         });
     }
 
+    /**
+     * 删除当前会话的所有消息
+     */
+    public void deleteAllMessage(final IMCallback callback)
+    {
+        if (!IMManager.getInstance().isLogin())
+        {
+            if (callback != null)
+                callback.onError(IMCode.ERROR_NOT_LOGIN, "not login");
+            return;
+        }
+
+        final IMConversationHandlerWrapper handler = IMManager.getInstance().getHandlerHolder().getConversationHandler();
+        handler.deleteConversationMessage(this, new IMCallback()
+        {
+            @Override
+            public void onSuccess()
+            {
+                if (callback != null)
+                    callback.onSuccess();
+            }
+
+            @Override
+            public void onError(int code, String desc)
+            {
+                if (callback != null)
+                    callback.onError(code, desc);
+            }
+        });
+    }
+
     //---------- setter ----------
 
     void setPeer(String peer)

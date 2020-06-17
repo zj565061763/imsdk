@@ -3,6 +3,7 @@ package com.sd.lib.imsdk.handler.impl;
 import com.sd.lib.imsdk.IMConversation;
 import com.sd.lib.imsdk.IMHandlerHolder;
 import com.sd.lib.imsdk.IMMessage;
+import com.sd.lib.imsdk.callback.IMCallback;
 import com.sd.lib.imsdk.callback.IMValueCallback;
 import com.sd.lib.imsdk.handler.IMConversationHandler;
 
@@ -117,6 +118,18 @@ public class IMConversationHandlerWrapper implements IMConversationHandler
         } catch (Exception e)
         {
             mCallbackHandler.notifyOtherException("error loadMessageBefore peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
+        }
+    }
+
+    @Override
+    public void deleteConversationMessage(IMConversation conversation, IMCallback callback)
+    {
+        try
+        {
+            mOriginal.deleteConversationMessage(conversation, callback);
+        } catch (Exception e)
+        {
+            mCallbackHandler.notifyOtherException("error deleteConversationMessage peer:" + conversation.getPeer() + " type:" + conversation.getType(), e);
         }
     }
 }
